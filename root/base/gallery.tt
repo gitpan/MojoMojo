@@ -1,0 +1,26 @@
+[%PROCESS header.tt%]
+<div id="header"><h1>
+ [% c.pref("name") || "MojoMojo" %]
+gallery -
+ [% c.expand_wikiword(page.name_orig) %]
+[%IF tag; %]([%tag%])[%END%]
+</h1></div>
+[% PROCESS breadcrumbs.tt %]
+[% PROCESS navbar.tt %]
+<div id="content">
+[% PROCESS gallery/pager.tt %]
+<div id="imageinfo" class="imageinfo">
+<small>Hoover over an image to get more info.</small>
+</div>
+<div id="images">
+[%WHILE(picture=pictures.next)%]
+[% imgid = 'img_' _ picture.id %]
+<a  id="[%imgid%]" href="[%c.uri_for('p')%][%
+IF tag%]_by_tag/[%tag%][%END%]/[%picture.id%]"><img alt="Show picture" class="thumb" 
+width="80" height="80" src="[%c.uri_for('attachment',picture.id,'thumb')%]"/></a>
+[% c.prototype.observe_hover(imgid,{url=>c.uri_for('jsrpc/imginfo',picture.id),frequency=>2,update=>'imageinfo'});%]
+[%END%]
+</div>
+</div>
+        <div id="bottomnav">&nbsp;<a href="[%c.uri_for('attachments')%]">View as files</a> 
+[%PROCESS footer.tt%]

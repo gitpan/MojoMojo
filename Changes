@@ -1,0 +1,7 @@
+0.999001  2007-08-29 16:29:00
+       - Initial Release. There are bugs, but the basic functionality works, 
+         and the test suite passes all tests here. Please to be contributing
+         tests for bugs you want fixed.
+         
+         Once we fix it all, we'll consider it 1.0
+

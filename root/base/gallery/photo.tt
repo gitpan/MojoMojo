@@ -1,0 +1,44 @@
+[%PROCESS header.tt%]
+<div id="header"><h1>
+[% IF page.name == "/" %]
+ [% c.pref("name") || "MojoMojo" %]
+[% ELSE %]
+ [% c.expand_wikiword(page.name_orig) %]
+[% END %] gallery -
+[%photo.title%]
+[%IF tag %]
+(<a href="[%c.uri_for('gallery/by_tag',tag)%]">[%tag%]</a>)[%END%]
+</h1></div>
+[% PROCESS breadcrumbs.tt %]
+[% PROCESS navbar.tt %]
+</script>
+<div id="content">
+[% IF photo %]
+<h2 id="title">[%c.unicode(photo.title)%]</span></h2>
+<div class="navigation">
+<a name="nav">
+[% IF prev %]
+<a href="[%c.uri_for('p')%][%IF tag%]_by_tag/[%tag%][%END%]/[%prev.id%]#nav">&lt;</a>
+[%END%]
+<a href="#" onClick="toggleInfo();">(i)</a>
+<div id="hidden_info" class="framedpopup">
+[%PROCESS gallery/photo_info.tt%]
+</div>
+[% IF next%]
+<a href="[%c.uri_for('p')%][%IF tag%]_by_tag/[%tag%][%END%]/[%next.id%]#nav">&gt;</a>
+[%END%]
+</div>
+<div class="photo">
+<a href="[%c.uri_for('attachment',photo.id)%]" title="Click for hi-res version"
+><img width="700" src="[%c.uri_for('attachment',photo.id,'inline')%]"></a>
+</div>
+<p id="description" >[%photo.description||"no description"%]<p>
+<script language="JavaScript">
+[% IF c.user.obj.can_edit(page)%]
+ new Ajax.InPlaceEditor('title', '[%c.uri_for('gallery/title',photo.id)%]', {rows:1,cols:30,callback: function(form,value) {return 'title='+value}});
+new Ajax.InPlaceEditor('description', '[%c.uri_for('gallery/description',photo.id)%]', {rows:4,cols:60,callback: function(form,value) {return 'description='+value}});
+[% END %]
+ </script>
+[%END%]
+</div>
+[%PROCESS gallery/footer.tt%]

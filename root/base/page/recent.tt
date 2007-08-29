@@ -1,0 +1,36 @@
+[% SET title = "Recent pages in " _ page.path _ ( activetag ? ' tagged with ' _ activetag : '' ) %]
+[% SET now = objects.first.content.created.ymd; %]
+[% WRAPPER page/wrapper.tt title=title %]
+
+<div id="content">
+<div id="categories">
+[% IF tags.count%]
+  <strong>tags</strong>: <small>
+  [% WHILE (tag = tags.next) %]
+  [% IF tag.tag==activetag %]
+  <b>[% tag.tag %]</b>
+  [% ELSE %]
+  <a href="[% c.uri_for('recent' tag.tag) %]">[% tag.tag %]</a> ([% tag.refcount %]) 
+  [% END %]
+  [% END %]</small>
+[% END %]
+</div>
+<br/>
+<b>[% now %]</b>
+[% first=1 %]
+[% FOREACH page IN pages %]
+[% IF now != page.content.created.ymd; %]
+  [%IF first;first=0;ELSE%]</ul>[%END%]
+  [% SET now = page.content.created.ymd; %]
+  <b>[% now %]</b><ul>
+[% END %]
+ <li>
+    <a href="[% c.uri_for('/', page.path)%]">[% page.name_orig %]</a>
+    <div class="byline" style="margin-bottom: 0px">
+      by [% c.wikiword(page.content.creator.link,base) %]
+      at [% page.content.created.hms(":") %]
+    </div>
+  </li>
+[% END %]
+</ul></div>
+[% END %]
