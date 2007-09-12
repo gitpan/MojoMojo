@@ -1,3 +1,15 @@
+0.999002  2007-09-12 23:08:00
+        - Fixed relative linking ([[../Sibling]])/
+        - Cleaned up attachments.
+        - Wrote database tests for attachments
+        - Add Formatter Base Class
+        - Add support for different Primary Formatters
+        - Update default to be Path, rather than Private
+        - Fix tests is t/c/
+        - More documentation
+        - Updated Installation instructions. lib/MojoMojo/Installation.pod is 
+          now the master.
+
 0.999001  2007-08-29 16:29:00
        - Initial Release. There are bugs, but the basic functionality works, 
          and the test suite passes all tests here. Please to be contributing

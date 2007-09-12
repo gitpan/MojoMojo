@@ -26,9 +26,11 @@ lib/MojoMojo/Controller/PageAdmin.pm
 lib/MojoMojo/Controller/Root.pm
 lib/MojoMojo/Controller/Tag.pm
 lib/MojoMojo/Controller/User.pm
+lib/MojoMojo/Formatter.pm
 lib/MojoMojo/Formatter/Comment.pm
 lib/MojoMojo/Formatter/Include.pm
 lib/MojoMojo/Formatter/IRCLog.pm
+lib/MojoMojo/Formatter/Markdown.pm
 lib/MojoMojo/Formatter/Pod.pm
 lib/MojoMojo/Formatter/Scrub.pm
 lib/MojoMojo/Formatter/Textile.pm
@@ -56,7 +58,6 @@ lib/MojoMojo/Schema/WantedPage.pm
 lib/MojoMojo/View/TT.pm
 lib/Text/SmartyPants.pm
 lib/Text/Textile2.pm
-magic
 Makefile.PL
 MANIFEST			This list of files
 META.yml
@@ -121,6 +122,7 @@ root/base/user/register.tt
 root/base/user/validate.tt
 root/favicon.ico
 root/static/catalyst.png
+root/static/css/progress.css
 root/static/emote/47_47.gif
 root/static/emote/48_48.gif
 root/static/emote/49_49.gif
@@ -204,6 +206,9 @@ root/static/js/effects.js
 root/static/js/effects2.js
 root/static/js/fat.js
 root/static/js/getElementsBySelector.js
+root/static/js/progress.jmpl
+root/static/js/progress.jmpl.js
+root/static/js/progress.js
 root/static/js/prototype-useful.js
 root/static/js/prototype.js
 root/static/js/scriptaculous.js
@@ -256,6 +261,7 @@ t/formatter_irclog.t
 t/formatter_wiki.t
 t/lib/MojoMojoTestSchema.pm
 t/model_DBIC.t
+t/model_DBIC_Attachment.t
 t/model_DBIC_Page.t
 t/schema_DBIC.t
 t/schema_DBIC_Content.t
