@@ -63,6 +63,7 @@ MANIFEST			This list of files
 META.yml
 mojomojo.conf
 mojomojo.db
+mojomojo.db.moof
 root/base/attachments/complete.tt
 root/base/attachments/progress.tt
 root/base/breadcrumbs.tt
@@ -84,12 +85,15 @@ root/base/gallery/photo_info.tt
 root/base/gallery/tags.tt
 root/base/header.tt
 root/base/message.tt
+root/base/mimetypes/default.tt
+root/base/mimetypes/image.tt
 root/base/navbar.tt
 root/base/page/atom.tt
 root/base/page/attachments.tt
 root/base/page/bottomnav.tt
 root/base/page/edit.tt
 root/base/page/info.tt
+root/base/page/insert.tt
 root/base/page/list.tt
 root/base/page/print.tt
 root/base/page/recent.tt
@@ -261,9 +265,9 @@ t/formatter_irclog.t
 t/formatter_wiki.t
 t/lib/MojoMojoTestSchema.pm
 t/model_DBIC.t
-t/model_DBIC_Attachment.t
 t/model_DBIC_Page.t
 t/schema_DBIC.t
+t/schema_DBIC_Attachment.t
 t/schema_DBIC_Content.t
 t/schema_DBIC_Page.t
 t/schema_DBIC_Person.t

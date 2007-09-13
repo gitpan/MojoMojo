@@ -75,11 +75,11 @@ __PACKAGE__->belongs_to("creator", "Person", { id => "creator" });
 	my ( $self, $c ) = @_;
 	my $this_content = $self->formatted($c);
 
-	# FIXME: This may return undef. What do we do then?
 	my $previous_content = (
 	    defined $self->previous
 	    ? $self->previous->formatted($c)
 	    : $this_content );
+
 	my $this = [ split /\n\n/,                  $this_content ];
 	my $prev = [ split /\n\n/,                  $previous_content ];
 	my @diff = Algorithm::Diff::sdiff( $prev, $this );
@@ -240,11 +240,12 @@ sub store_links {
     return unless ($self->status eq 'released');
     my $content = $self->body;
     my $page = $self->page;
+    $page->result_source->resultset->set_paths($page);
+    $page->links_from->delete();
+    $page->wantedpages->delete();
     require MojoMojo::Formatter::Wiki;
     my ($linked_pages, $wanted_pages) = MojoMojo::Formatter::Wiki->find_links( \$content, $page );
     return unless (@$linked_pages || @$wanted_pages);
-    $self->page->links_from->delete();
-    $self->page->wantedpages->delete();
     for (@$linked_pages) {
 	my $link = $self->result_source->schema->resultset('Link')->
 	    find_or_create(
