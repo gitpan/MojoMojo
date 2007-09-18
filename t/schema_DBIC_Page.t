@@ -4,9 +4,12 @@ use Test::More;
 
 BEGIN {
     eval "use DBD::SQLite";
-    plan $@
-        ? ( skip_all => 'needs DBD::SQLite for testing' )
-        : ( tests => 12 );
+    my $sqlite = ! $@;
+    eval "use SQL::Translator";
+    my $translator = ! $@;
+    plan $sqlite && $translator
+    ? ( tests    => 11 )
+    : ( skip_all => 'needs DBD::SQLite and SQL::Translator for testing' ) ;
 }
 
 use lib qw(t/lib);
@@ -46,13 +49,6 @@ is_deeply( \@child_names, ['/', 'child', 'grandchild'], 'new children have the c
 
 my $root_page = $root_path_pages->[0];
 my @descendant_names = map { $_->name } $root_page->descendants;
-
-# We also have a help node in the default db, that needs to be in there.
-# FIXME: This is kidna retarded, is this test a dud?
-
-push @child_names,'help';
-
-is_deeply( \@descendant_names, \@child_names, 'new children returned as descendants of root');
 
 {
 # test tagged_descendants 
