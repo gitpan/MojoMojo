@@ -149,6 +149,7 @@ root/formfu/start_block
 root/formfu/start_form
 root/formfu/textarea_tag
 root/forms/user/prefs.yml
+root/forms/user/register.yml
 root/static/catalyst.png
 root/static/css/progress.css
 root/static/emote/47_47.gif
