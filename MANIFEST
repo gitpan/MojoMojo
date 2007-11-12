@@ -63,6 +63,8 @@ MANIFEST			This list of files
 META.yml
 mojomojo.conf
 mojomojo.db
+root/base/admin/update_user.tt
+root/base/admin/user.tt
 root/base/attachments/complete.tt
 root/base/attachments/progress.tt
 root/base/breadcrumbs.tt
@@ -109,7 +111,6 @@ root/base/pager.tt
 root/base/rest/page/recent.tt
 root/base/rest/page/view.tt
 root/base/settings.tt
-root/base/settings/user.tt
 root/base/sidebar.tt
 root/base/tag/cloud.tt
 root/base/tag/list.tt
@@ -295,3 +296,4 @@ t/schema_DBIC_Content.t
 t/schema_DBIC_Page.t
 t/schema_DBIC_Person.t
 t/schema_DBIC_Tag.t
+t/var/bugs.jpg
