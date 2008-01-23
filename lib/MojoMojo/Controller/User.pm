@@ -30,7 +30,7 @@ Log in through the authentication system.
 
 sub login : Global {
     my ($self,$c) = @_;
-    my $message:Stashed = 'please enter username & password';
+    my $message:Stashed = 'please enter username &amp; password';
     if ( $c->req->params->{login} ) {
         if ( $c->login() ) {
 	    $c->stash->{user}=$c->user->obj;
@@ -229,15 +229,16 @@ Show user profile.
 sub profile : Global {
     my ($self,$c)=@_;
     my $page=$c->stash->{page};
-    my $user=$c->model('DBIC::Person')->get_user( $c->stash->{proto_pages}[-1] 
-	? $c->stash->{proto_pages}[-1]->{name_orig}
-	: $page->name_orig);
+    my $login=($c->stash->{proto_pages}[-1] 
+        ? $c->stash->{proto_pages}[-1]->{name}
+	    : $page->name);
+    my $user=$c->model('DBIC::Person')->get_user( $login);
     if ( $user ) {
           $c->stash->{person}=$user;
           $c->stash->{template}='user/profile.tt';
     } else { 
         $c->stash->{template}='message.tt';
-        $c->stash->{message}='User not found!';
+        $c->stash->{message}='User '.$login.' not found!';
     }
 }
 
