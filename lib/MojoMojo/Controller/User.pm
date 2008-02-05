@@ -32,8 +32,10 @@ sub login : Global {
     my ($self,$c) = @_;
     my $message:Stashed = 'please enter username &amp; password';
     if ( $c->req->params->{login} ) {
-        if ( $c->login() ) {
-	    $c->stash->{user}=$c->user->obj;
+         if ( $c->authenticate( { login => $c->req->params->{'login'}, 
+                                  pass => $c->req->params->{'pass'} } ) ) {
+                                      
+    	    $c->stash->{user}=$c->user->obj;
             $c->res->redirect($c->uri_for($c->stash->{path}))
                 unless $c->stash->{template};
             return;
@@ -182,15 +184,13 @@ sub do_register : Private {
     my ( $self, $c, $user ) = @_;
     $c->forward('/user/login');
     $c->pref('entropy') || $c->pref('entropy',rand);
+    $c->stash->{secret}=md5_hex($c->form->valid('email').$c->pref('entropy'));
     $c->email( header => [
             From    => $c->form->valid('email'),
             To      => $c->form->valid('email'),
             Subject => '[MojoMojo] New User Validation'
         ],
-        body => 'Hi. This is a mail to validate your email address, '.
-            $c->form->valid('name').'. To confirm, please click '.
-            "the url below:\n\n".$c->req->base.'/.validate/'.
-            $user->id.'/'.md5_hex$c->form->valid('email').$c->pref('entropy')
+        body => $c->view('TT')->render($c,'mail/validate.tt'),
     );
     $c->stash->{user}=$user;
     $c->stash->{template}='user/validate.tt';
@@ -251,7 +251,10 @@ sub editprofile : Global {
     if ( $user && $c->stash->{user} && ($c->stash->{user}->is_admin || 
 		   $user->id eq $c->stash->{user}->id ) ) {
           $c->stash->{person}=$user;
-	  $c->stash->{years} = [ 1905 .. 2005 ];
+
+      my $now = DateTime->now();
+      my $curryear = $now->year();     
+	  $c->stash->{years} = [ ($curryear - 90) .. $curryear ];
 	  $c->stash->{months} = [ 1 .. 12 ];
 	  $c->stash->{days} = [ 1 .. 31 ];
           $c->stash->{template}='user/editprofile.tt';

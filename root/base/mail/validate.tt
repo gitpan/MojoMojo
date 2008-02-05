@@ -1,0 +1,4 @@
+Hi. This is a mail to validate your email address, [%c->form->valid('name')%]. 
+To confirm, please click the url below:
+
+[% c.uri_for('validate',user.id,secret) %]
