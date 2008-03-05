@@ -95,6 +95,7 @@ root/base/page/atom.tt
 root/base/page/attachments.tt
 root/base/page/bottomnav.tt
 root/base/page/edit.tt
+root/base/page/editbar.tt
 root/base/page/info.tt
 root/base/page/insert.tt
 root/base/page/list.tt
@@ -252,6 +253,7 @@ root/static/js/yaml_load.js
 root/static/mojomojo.css
 root/static/overrides.css
 root/static/pod.css
+root/static/reset.css
 root/static/shrinkenhead.jpg
 root/static/spinner.gif
 root/static/themes/thefeed/theme.css
