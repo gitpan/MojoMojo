@@ -9,7 +9,6 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
-inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 INSTALL
@@ -86,6 +85,7 @@ root/base/gallery/photo.tt
 root/base/gallery/photo_info.tt
 root/base/gallery/tags.tt
 root/base/header.tt
+root/base/mail/reset_password.tt
 root/base/mail/validate.tt
 root/base/message.tt
 root/base/mimetypes/default.tt
@@ -125,6 +125,7 @@ root/base/user/login.tt
 root/base/user/password.tt
 root/base/user/prefs.tt
 root/base/user/profile.tt
+root/base/user/recover_pass.tt
 root/base/user/register.tt
 root/base/user/validate.tt
 root/favicon.ico
@@ -256,7 +257,6 @@ root/static/pod.css
 root/static/reset.css
 root/static/shrinkenhead.jpg
 root/static/spinner.gif
-root/static/themes/thefeed/theme.css
 root/static/toolbar/bold.png
 root/static/toolbar/center.png
 root/static/toolbar/drawing.png
