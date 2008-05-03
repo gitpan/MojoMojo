@@ -62,7 +62,6 @@ Makefile.PL
 MANIFEST			This list of files
 META.yml
 mojomojo.conf
-mojomojo.db
 root/base/admin/update_user.tt
 root/base/admin/user.tt
 root/base/attachments/complete.tt
