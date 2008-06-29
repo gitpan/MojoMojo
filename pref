@@ -1,0 +1,1681 @@
+lib/MojoMojo/Controller/Admin.pm:8:MojoMojo::Controller::Admin - Catalyst component
+lib/MojoMojo/Controller/Admin.pm:26:    my $user = $c->stash->{user};
+lib/MojoMojo/Controller/Admin.pm:27:    unless ( $user && $user->is_admin ) {
+lib/MojoMojo/Controller/Admin.pm:28:        $c->stash->{message}='Sorry bubba, gotta be admin';
+lib/MojoMojo/Controller/Admin.pm:29:        $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/Admin.pm:43:    my $admins =  $c->pref('admins');
+lib/MojoMojo/Controller/Admin.pm:44:    my $user   =  $c->stash->{user}->login;
+lib/MojoMojo/Controller/Admin.pm:46:    $c->stash->{template}       = 'settings.tt';
+lib/MojoMojo/Controller/Admin.pm:47:    $c->stash->{admins}         = $admins;
+lib/MojoMojo/Controller/Admin.pm:48:    $c->stash->{anonymous_user} = $c->pref( 'anonymous_user' );
+lib/MojoMojo/Controller/Admin.pm:59:    $c->stash->{template} = 'settings.tt';
+lib/MojoMojo/Controller/Admin.pm:60:    $c->form( required => [qw/name/],
+lib/MojoMojo/Controller/Admin.pm:62:    if ( $c->form->has_missing ) {
+lib/MojoMojo/Controller/Admin.pm:63:        $c->stash->{message} = "Can't update, missing fields:" .
+lib/MojoMojo/Controller/Admin.pm:64:        join( ', ', $c->form->missing()).'</b>';
+lib/MojoMojo/Controller/Admin.pm:67:    my @users =  split(m/\s+/,$c->form->valid('admins'));
+lib/MojoMojo/Controller/Admin.pm:69:        unless ($c->model("DBIC::Person")->get_user($user)) {
+lib/MojoMojo/Controller/Admin.pm:70:            $c->stash->{message}='Cant find admin user: '.$user;
+lib/MojoMojo/Controller/Admin.pm:75:	if ($c->form->valid('registration')) {
+lib/MojoMojo/Controller/Admin.pm:76:		$c->pref('open_registration',1);
+lib/MojoMojo/Controller/Admin.pm:79:		$c->pref('open_registration',0);
+lib/MojoMojo/Controller/Admin.pm:81:	if ($c->form->valid('restricted')) {
+lib/MojoMojo/Controller/Admin.pm:82:		$c->pref('restricted_user',1);
+lib/MojoMojo/Controller/Admin.pm:85:		$c->pref('restricted_user',0);
+lib/MojoMojo/Controller/Admin.pm:87:    $c->pref( 'admins',join(' ',@users,$c->stash->{user}->login));
+lib/MojoMojo/Controller/Admin.pm:88:    $c->pref( 'name',$c->form->valid('name'));
+lib/MojoMojo/Controller/Admin.pm:89:    $c->pref( 'anonymous_user',$c->form->valid('anonymous_user')||'');
+lib/MojoMojo/Controller/Admin.pm:91:    $c->stash->{message} = "Updated successfully.";
+lib/MojoMojo/Controller/Admin.pm:102:    my $iterator =$c->model("DBIC::Person")->search( 
+lib/MojoMojo/Controller/Admin.pm:104:            page           =>$c->req->param('page') || 1,
+lib/MojoMojo/Controller/Admin.pm:108:    $c->stash->{users} = $iterator;
+lib/MojoMojo/Controller/Admin.pm:109:    $c->stash->{pager} = $iterator->pager;
+lib/MojoMojo/Controller/Admin.pm:120:    $user=$c->model("DBIC::Person")->find($user) || return;
+lib/MojoMojo/Controller/Admin.pm:122:        $user->active(! $user->active);
+lib/MojoMojo/Controller/Admin.pm:124:    $user->update;
+lib/MojoMojo/Controller/Admin.pm:125:    $c->stash->{user}=$user;
+lib/MojoMojo/Controller/Attachment.pm:11:MojoMojo::Controller::Attachment - Attachment controller
+lib/MojoMojo/Controller/Attachment.pm:36:    return $c->forward('/user/login') unless $c->stash->{user};
+lib/MojoMojo/Controller/Attachment.pm:38:    my $perms = $c->check_permissions($c->stash->{'path'}, ($c->user_exists ? $c->user->obj : undef));
+lib/MojoMojo/Controller/Attachment.pm:39:    if ($perms->{'attachment'}) {
+lib/MojoMojo/Controller/Attachment.pm:43:    $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/Attachment.pm:44:    $c->stash->{message}='sorry bubba, you aint got no rights';
+lib/MojoMojo/Controller/Attachment.pm:56:    return unless $c->forward('auth');
+lib/MojoMojo/Controller/Attachment.pm:57:    $c->stash->{template} = 'page/attachments.tt';
+lib/MojoMojo/Controller/Attachment.pm:58:    $page = $c->stash->{page};
+lib/MojoMojo/Controller/Attachment.pm:59:    if ( my $file = $c->req->params->{file} ) {
+lib/MojoMojo/Controller/Attachment.pm:60:        my $upload=$c->request->upload('file');
+lib/MojoMojo/Controller/Attachment.pm:61:        my (@att) =$c->model("DBIC::Attachment")
+lib/MojoMojo/Controller/Attachment.pm:62:            ->create_from_file ( $page, $file, $upload->tempname,$c->path_to('/') );
+lib/MojoMojo/Controller/Attachment.pm:64:            $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/Attachment.pm:65:            $c->stash->{message}= "Could not create attachment from $file.";
+lib/MojoMojo/Controller/Attachment.pm:67:        $c->res->redirect( $c->req->base . $c->stash->{path} . '.attachments' )
+lib/MojoMojo/Controller/Attachment.pm:68:	        unless $c->stash->{template} eq 'message.tt';
+lib/MojoMojo/Controller/Attachment.pm:83:    $c->stash->{att}=$c->model("DBIC::Attachment")->find($att);
+lib/MojoMojo/Controller/Attachment.pm:84:    $c->detach('default') unless ($c->stash->{att});
+lib/MojoMojo/Controller/Attachment.pm:90:    $c->forward('view');
+lib/MojoMojo/Controller/Attachment.pm:95:    $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/Attachment.pm:96:    $c->stash->{message}= "Attachment not found.";
+lib/MojoMojo/Controller/Attachment.pm:97:    return ( $c->res->status(404) );
+lib/MojoMojo/Controller/Attachment.pm:102:    $c->res->output( IO::File->new($c->stash->{att}->filename) ); 
+lib/MojoMojo/Controller/Attachment.pm:103:    $c->res->headers->header( 'content-type', $c->stash->{att}->contenttype );
+lib/MojoMojo/Controller/Attachment.pm:104:    $c->res->headers->header("Content-Disposition" => "inline; filename=".
+lib/MojoMojo/Controller/Attachment.pm:105:		$c->stash->{att}->name);
+lib/MojoMojo/Controller/Attachment.pm:111:content-disposition.
+lib/MojoMojo/Controller/Attachment.pm:117:	my $att=$c->stash->{att};
+lib/MojoMojo/Controller/Attachment.pm:118:	$c->forward('view');
+lib/MojoMojo/Controller/Attachment.pm:119:    $c->res->headers->header( 'content-type', $att->contenttype );
+lib/MojoMojo/Controller/Attachment.pm:120:    $c->res->headers->header(
+lib/MojoMojo/Controller/Attachment.pm:121:        "Content-Disposition" => "attachment; filename=" . $att->name 
+lib/MojoMojo/Controller/Attachment.pm:133:	my $att=$c->stash->{att};
+lib/MojoMojo/Controller/Attachment.pm:135:	unless ($photo=$att->photo) {
+lib/MojoMojo/Controller/Attachment.pm:136:	    return $c->res->body('Can only make thumbnails of photos');
+lib/MojoMojo/Controller/Attachment.pm:138:    $photo->make_thumb() unless -f $att->thumb_filename;
+lib/MojoMojo/Controller/Attachment.pm:139:    $c->res->output( IO::File->new($att->thumb_filename) );
+lib/MojoMojo/Controller/Attachment.pm:140:    $c->res->headers->header( 'content-type', $att->contenttype );
+lib/MojoMojo/Controller/Attachment.pm:141:    $c->res->headers->header(
+lib/MojoMojo/Controller/Attachment.pm:142:        "Content-Disposition" => "inline; filename=" . $att->name );
+lib/MojoMojo/Controller/Attachment.pm:153:    my $att=$c->stash->{att};
+lib/MojoMojo/Controller/Attachment.pm:155:	unless ($photo=$att->photo) {
+lib/MojoMojo/Controller/Attachment.pm:156:	    return $c->res->body('Can only make inline version of photos');
+lib/MojoMojo/Controller/Attachment.pm:158:    $photo->make_inline unless -f $att->inline_filename;
+lib/MojoMojo/Controller/Attachment.pm:159:    $c->res->output( IO::File->new($att->inline_filename) );
+lib/MojoMojo/Controller/Attachment.pm:160:    $c->detach('default') if $@ =~ m/^Could not open/;
+lib/MojoMojo/Controller/Attachment.pm:161:    $c->res->headers->header( 'content-type',
+lib/MojoMojo/Controller/Attachment.pm:162:        $c->stash->{att}->contenttype );
+lib/MojoMojo/Controller/Attachment.pm:163:    $c->res->headers->header(
+lib/MojoMojo/Controller/Attachment.pm:164:        "Content-Disposition" => "inline; filename=". $c->stash->{att}->name );
+lib/MojoMojo/Controller/Attachment.pm:177:    return unless $c->forward('auth');
+lib/MojoMojo/Controller/Attachment.pm:178:    $c->stash->{att}->delete();
+lib/MojoMojo/Controller/Attachment.pm:179:    $c->forward('/attachment/attachments');
+lib/MojoMojo/Controller/Attachment.pm:192:    return unless $c->forward('auth');
+lib/MojoMojo/Controller/Attachment.pm:193:    my $att=$c->stash->{att};
+lib/MojoMojo/Controller/Attachment.pm:194:    my ($family) = $att->contenttype =~ m|^([^/]+)|; 
+lib/MojoMojo/Controller/Attachment.pm:195:    $c->stash->{family} = 'mimetypes/' . $family . '.tt';
+lib/MojoMojo/Controller/Attachment.pm:196:    $c->stash->{type} = 'mimetypes/'. $att->contenttype . '.tt'; 
+lib/MojoMojo/Controller/Attachment.pm:197:    $c->stash->{append}=$c->view('TT')->render($c,'page/insert.tt');
+lib/MojoMojo/Controller/Attachment.pm:198:    $c->forward('/pageadmin/edit');
+lib/MojoMojo/Controller/Comment.pm:9:MojoMojo::Controller::Comment - MojoMojo Comment controller
+lib/MojoMojo/Controller/Comment.pm:29:    $c->stash->{template}='comment.tt';
+lib/MojoMojo/Controller/Comment.pm:30:    $c->form(
+lib/MojoMojo/Controller/Comment.pm:33:            page=>$c->stash->{page},
+lib/MojoMojo/Controller/Comment.pm:34:            poster=>$c->stash->{user},
+lib/MojoMojo/Controller/Comment.pm:35:            posted=>DateTime->now(),
+lib/MojoMojo/Controller/Comment.pm:38:    unless (! $c->stash->{user} || 
+lib/MojoMojo/Controller/Comment.pm:39:              $c->form->has_missing || 
+lib/MojoMojo/Controller/Comment.pm:40:              $c->form->has_invalid ) {
+lib/MojoMojo/Controller/Comment.pm:41:        $c->model("DBIC::Comment")->create({
+lib/MojoMojo/Controller/Comment.pm:42:            page    => $c->stash->{page}->id,
+lib/MojoMojo/Controller/Comment.pm:43:            poster  => $c->stash->{user}->id,
+lib/MojoMojo/Controller/Comment.pm:44:            posted  => DateTime->now(),
+lib/MojoMojo/Controller/Comment.pm:45:            body    => $c->req->param('body'),
+lib/MojoMojo/Controller/Comment.pm:48:    $c->stash->{comments} = $c->model("DBIC::Comment")->search({
+lib/MojoMojo/Controller/Comment.pm:49:        page=>$c->stash->{page}->id } , 
+lib/MojoMojo/Controller/Comment.pm:62:    $c->forward('/user/login');
+lib/MojoMojo/Controller/Comment.pm:63:    if ($c->stash->{message}) {
+lib/MojoMojo/Controller/Comment.pm:64:        $c->stash->{template}='comment/login.tt';
+lib/MojoMojo/Controller/Comment.pm:66:        $c->stash->{template}='comment/post.tt';
+lib/MojoMojo/Controller/Comment.pm:78:    if ($comment=$c->model("DBIC::Comment")->find($comment)) {
+lib/MojoMojo/Controller/Comment.pm:79:        if ( $comment->page->id == $c->stash->{page}->id &&
+lib/MojoMojo/Controller/Comment.pm:80:             $c->stash->{user}->can_edit($comment->page->path)) {
+lib/MojoMojo/Controller/Comment.pm:81:            $comment->delete();
+lib/MojoMojo/Controller/Comment.pm:84:    $c->forward('/page/view');
+lib/MojoMojo/Controller/Export.pm:9:my $model = '$c->model("DBIC::Page")';
+lib/MojoMojo/Controller/Export.pm:13:MojoMojo::Controller::Export - Export / Import related controller
+lib/MojoMojo/Controller/Export.pm:41:        $c->fixw( $c->pref('name') ) . "-"
+lib/MojoMojo/Controller/Export.pm:42:      . $c->stash->{page}->path 
+lib/MojoMojo/Controller/Export.pm:43:      . "-export-"
+lib/MojoMojo/Controller/Export.pm:44:      . DateTime->now->ymd('-') . '-'
+lib/MojoMojo/Controller/Export.pm:45:      . DateTime->now->hour;
+lib/MojoMojo/Controller/Export.pm:47:    unless ($c->res->{body}=$c->cache->get($prefix)) {
+lib/MojoMojo/Controller/Export.pm:48:        $c->forward('/page/list');
+lib/MojoMojo/Controller/Export.pm:49:        my $pages = $c->stash->{pages};
+lib/MojoMojo/Controller/Export.pm:50:        my $archive = Archive::Zip->new();
+lib/MojoMojo/Controller/Export.pm:51:        $archive->addDirectory("$prefix/");
+lib/MojoMojo/Controller/Export.pm:53:            next unless $page->content; 
+lib/MojoMojo/Controller/Export.pm:54:            $archive->addString( 
+lib/MojoMojo/Controller/Export.pm:55:                $page->content->body, $prefix .  
+lib/MojoMojo/Controller/Export.pm:56:                $page->path .($page->path eq '/' ? '' : '/').'index' 
+lib/MojoMojo/Controller/Export.pm:59:        my $fh = IO::Scalar->new( \$c->res->{body} );
+lib/MojoMojo/Controller/Export.pm:60:        $archive->writeToFileHandle( $fh );
+lib/MojoMojo/Controller/Export.pm:61:        $c->cache->set( $prefix,$c->res->body );
+lib/MojoMojo/Controller/Export.pm:63:    $c->res->headers->header( "Content-Type" => 'archive/zip' );
+lib/MojoMojo/Controller/Export.pm:64:    $c->res->headers->header(
+lib/MojoMojo/Controller/Export.pm:65:        "Content-Disposition" => "attachment; filename=$prefix.zip" 
+lib/MojoMojo/Controller/Export.pm:79:        $c->fixw( $c->pref('name') ) . "."
+lib/MojoMojo/Controller/Export.pm:80:      . $c->stash->{page}->name 
+lib/MojoMojo/Controller/Export.pm:81:        . "-html-"
+lib/MojoMojo/Controller/Export.pm:82:      . DateTime->now->ymd('-') . '-'
+lib/MojoMojo/Controller/Export.pm:83:      . DateTime->now->hour;
+lib/MojoMojo/Controller/Export.pm:85:    unless ($c->res->{body}=$c->cache->get($prefix)) {
+lib/MojoMojo/Controller/Export.pm:86:        $c->forward('/page/list');
+lib/MojoMojo/Controller/Export.pm:87:        my $pages = $c->stash->{pages};
+lib/MojoMojo/Controller/Export.pm:88:        my $archive = Archive::Zip->new();
+lib/MojoMojo/Controller/Export.pm:89:        $archive->addDirectory("$prefix/");
+lib/MojoMojo/Controller/Export.pm:90:        my $home = $c->pref("home_node");
+lib/MojoMojo/Controller/Export.pm:92:            $c->log->debug('Rendering '.$page->path);
+lib/MojoMojo/Controller/Export.pm:93:            $archive->addString( $c->subreq('/print',{path=>$page->path} ),
+lib/MojoMojo/Controller/Export.pm:94:                $prefix . $page->path ."/index.html" );
+lib/MojoMojo/Controller/Export.pm:96:        my $fh = IO::Scalar->new( \$c->res->{body} );
+lib/MojoMojo/Controller/Export.pm:97:        $archive->writeToFileHandle($fh);
+lib/MojoMojo/Controller/Export.pm:98:        $c->cache->set($prefix,$c->res->body);
+lib/MojoMojo/Controller/Export.pm:101:    $c->res->headers->header( "Content-Type" => 'archive/zip' );
+lib/MojoMojo/Controller/Export.pm:102:    $c->res->headers->header( "Content-Disposition" => "attachment; filename=$prefix.zip" );
+lib/MojoMojo/Controller/Gallery.pm:10:MojoMojo::Controller::Gallery - Page gallery.
+lib/MojoMojo/Controller/Gallery.pm:33:    $c->stash->{template} = 'gallery.tt';
+lib/MojoMojo/Controller/Gallery.pm:34:    $c->stash->{pictures} = $c->model("DBIC::Photo")->search({
+lib/MojoMojo/Controller/Gallery.pm:35:        'attachment.page'  => $c->stash->{page}->id }, 
+lib/MojoMojo/Controller/Gallery.pm:52:    $tag=$c->model("DBIC::Tag")->search(tag=>$tag)->next;
+lib/MojoMojo/Controller/Gallery.pm:53:    $c->stash->{template} = 'gallery.tt';
+lib/MojoMojo/Controller/Gallery.pm:54:    $c->stash->{tag}      = $tag->tag;
+lib/MojoMojo/Controller/Gallery.pm:55:    my $conditions        = { 'tags.tag' => $tag->tag };
+lib/MojoMojo/Controller/Gallery.pm:57:          map { $_->id  } ($c->stash->{page}->descendants,
+lib/MojoMojo/Controller/Gallery.pm:58:                           $c->stash->{page}) ] 
+lib/MojoMojo/Controller/Gallery.pm:59:        unless length($c->stash->{page}->path) == 1;  # root
+lib/MojoMojo/Controller/Gallery.pm:60:    $c->stash->{pictures} =$c->model("DBIC::Photo")->search(
+lib/MojoMojo/Controller/Gallery.pm:75:    $photo                   = $c->model("DBIC::Photo")->find($photo);
+lib/MojoMojo/Controller/Gallery.pm:76:    $c->stash->{photo}       = $photo;
+lib/MojoMojo/Controller/Gallery.pm:77:    $c->forward( 'inline_tags' );
+lib/MojoMojo/Controller/Gallery.pm:78:    $c->stash->{template}    =  'gallery/photo.tt';
+lib/MojoMojo/Controller/Gallery.pm:79:    $c->stash->{next}        =  $photo->next_sibling;
+lib/MojoMojo/Controller/Gallery.pm:80:    $c->stash->{prev}        =  $photo->previous_sibling;
+lib/MojoMojo/Controller/Gallery.pm:91:    $photo                = $c->model("DBIC::Photo")->find($photo);
+lib/MojoMojo/Controller/Gallery.pm:92:    $c->stash->{photo}    = $photo;
+lib/MojoMojo/Controller/Gallery.pm:93:    $c->stash->{tag}      = $tag; 
+lib/MojoMojo/Controller/Gallery.pm:94:    $c->forward( 'inline_tags' );
+lib/MojoMojo/Controller/Gallery.pm:95:    $c->stash->{template} = 'gallery/photo.tt';
+lib/MojoMojo/Controller/Gallery.pm:96:    $c->stash->{next}     = $photo->next_by_tag($tag);
+lib/MojoMojo/Controller/Gallery.pm:97:    $c->stash->{prev}     = $photo->prev_by_tag($tag);
+lib/MojoMojo/Controller/Gallery.pm:108:    $c->forward( 'tag', [ $photo,$c->req->params->{tag} ] );
+lib/MojoMojo/Controller/Gallery.pm:122:            $c->model("DBIC::Tag")->search(
+lib/MojoMojo/Controller/Gallery.pm:124:                person => $c->user->obj->id,
+lib/MojoMojo/Controller/Gallery.pm:126:            )->next() ) {
+lib/MojoMojo/Controller/Gallery.pm:127:            $c->model("DBIC::Tag")->create({
+lib/MojoMojo/Controller/Gallery.pm:130:                person => $c->user->obj->id
+lib/MojoMojo/Controller/Gallery.pm:134:    $c->stash->{photo}=$photo;
+lib/MojoMojo/Controller/Gallery.pm:135:    $c->forward( 'inline_tags', [ $tagname ] );
+lib/MojoMojo/Controller/Gallery.pm:146:    my $tag = $c->model("DBIC::Tag")->search(
+lib/MojoMojo/Controller/Gallery.pm:148:        person => $c->user->obj->id,
+lib/MojoMojo/Controller/Gallery.pm:150:    )->next();
+lib/MojoMojo/Controller/Gallery.pm:151:    $tag->delete() if $tag;
+lib/MojoMojo/Controller/Gallery.pm:152:    $c->stash->{photo}=$photo;
+lib/MojoMojo/Controller/Gallery.pm:153:    $c->forward('inline_tags', [ $tagname ]);
+lib/MojoMojo/Controller/Gallery.pm:166:    $c->stash->{template}  = 'gallery/tags.tt';
+lib/MojoMojo/Controller/Gallery.pm:167:    $c->stash->{highlight} = $highlight;
+lib/MojoMojo/Controller/Gallery.pm:168:    my $photo=$c->stash->{photo}||$c->req->params->{photo};
+lib/MojoMojo/Controller/Gallery.pm:169:    $photo=$c->model("DBIC::Photo")->find($photo) unless ref $photo;
+lib/MojoMojo/Controller/Gallery.pm:170:    $c->stash->{photo}=$photo;
+lib/MojoMojo/Controller/Gallery.pm:171:    if ($c->user_exists) {
+lib/MojoMojo/Controller/Gallery.pm:172:    my @tags = $photo->others_tags( $c->user->obj->id);
+lib/MojoMojo/Controller/Gallery.pm:173:    $c->stash->{others_tags} = [@tags];
+lib/MojoMojo/Controller/Gallery.pm:174:    @tags                    = $photo->user_tags( $c->user->obj->id );
+lib/MojoMojo/Controller/Gallery.pm:175:    $c->stash->{taglist}     = ' ' . join( ' ', map { $_->tag } @tags ) . ' ';
+lib/MojoMojo/Controller/Gallery.pm:176:    $c->stash->{tags}        = [@tags];
+lib/MojoMojo/Controller/Gallery.pm:178:      $c->stash->{others_tags}      = [ $photo->others_tags(undef) ];
+lib/MojoMojo/Controller/Gallery.pm:190:    $c->form(required=>[qw/description/]);
+lib/MojoMojo/Controller/Gallery.pm:191:    my $img=$c->model("DBIC::Photo")->find($photo);
+lib/MojoMojo/Controller/Gallery.pm:192:    if($c->req->param('description')) {
+lib/MojoMojo/Controller/Gallery.pm:193:      $img->description(encode_entities($c->req->param('description')));
+lib/MojoMojo/Controller/Gallery.pm:194:      $img->update;
+lib/MojoMojo/Controller/Gallery.pm:196:      $c->res->body($img->description);
+lib/MojoMojo/Controller/Gallery.pm:207:    $c->form(required=>[qw/title/]);
+lib/MojoMojo/Controller/Gallery.pm:208:    my $img=$c->model("DBIC::Photo")->find($photo);
+lib/MojoMojo/Controller/Gallery.pm:209:    if($c->req->param('title')) {
+lib/MojoMojo/Controller/Gallery.pm:210:      $img->title(encode_entities($c->req->param('title')));
+lib/MojoMojo/Controller/Gallery.pm:211:      $img->update;
+lib/MojoMojo/Controller/Gallery.pm:213:      $c->res->body($img->title);
+lib/MojoMojo/Controller/Gallery.pm:219:    $c->stash->{tags}=[ $c->model("DBIC::Tag")->by_photo ];
+lib/MojoMojo/Controller/Gallery.pm:220:    my $cloud=HTML::TagCloud->new();
+lib/MojoMojo/Controller/Gallery.pm:221:    foreach my $tag (@{$c->stash->{tags}}) {
+lib/MojoMojo/Controller/Gallery.pm:222:        $cloud->add($tag->tag,
+lib/MojoMojo/Controller/Gallery.pm:223:                    $c->req->base.$c->stash->{path}.'.gallery/by_tag/'.
+lib/MojoMojo/Controller/Gallery.pm:224:                    $tag->tag.'/'.$tag->photo,
+lib/MojoMojo/Controller/Gallery.pm:225:                    $tag->refcount);
+lib/MojoMojo/Controller/Gallery.pm:227:    $c->stash->{cloud}=$cloud;
+lib/MojoMojo/Controller/Gallery.pm:228:    $c->stash->{template}='gallery/cloud.tt';
+lib/MojoMojo/Controller/Journal.pm:9:MojoMojo::Controller::Journal - Journaling for MojoMojo?
+lib/MojoMojo/Controller/Jsrpc.pm:10:MojoMojo::Controller::Jsrpc - Various JsRPC functions.
+lib/MojoMojo/Controller/Jsrpc.pm:28:params->{content} and runs it through the formatter chain.
+lib/MojoMojo/Controller/Jsrpc.pm:35:    my $input   =  $c->req->params->{content};
+lib/MojoMojo/Controller/Jsrpc.pm:38:        $output =  $c->model("DBIC::Content")->format_content( $c, $input );
+lib/MojoMojo/Controller/Jsrpc.pm:43:        $c->res->status(500);
+lib/MojoMojo/Controller/Jsrpc.pm:47:    $c->res->output( $output );
+lib/MojoMojo/Controller/Jsrpc.pm:59:    $c->stash->{parent_page} = $c->model("DBIC::Page")->find( 
+lib/MojoMojo/Controller/Jsrpc.pm:60:        $c->req->params->{page_id} 
+lib/MojoMojo/Controller/Jsrpc.pm:62:    $c->stash->{template}    = 'child_menu.tt';
+lib/MojoMojo/Controller/Jsrpc.pm:76:        my $page=$c->model("DBIC::Page")->find( $page );
+lib/MojoMojo/Controller/Jsrpc.pm:77:        $revision=$page->content->id;
+lib/MojoMojo/Controller/Jsrpc.pm:79:    $revision = $c->model("DBIC::Content")->search({
+lib/MojoMojo/Controller/Jsrpc.pm:82:    })->next ;
+lib/MojoMojo/Controller/Jsrpc.pm:84:        $c->model("DBIC::Content")->search({
+lib/MojoMojo/Controller/Jsrpc.pm:87:        })->next : $revision->previous 
+lib/MojoMojo/Controller/Jsrpc.pm:89:        $c->res->output( $revision->formatted_diff( $c, $previous, $sparse ) );
+lib/MojoMojo/Controller/Jsrpc.pm:91:        $c->res->output("This is the first revision! Nothing to diff against.");
+lib/MojoMojo/Controller/Jsrpc.pm:103:    $c->forward('/jsrpc/tag', [$c->req->params->{tag}] );
+lib/MojoMojo/Controller/Jsrpc.pm:115:    my $page = $c->stash->{page};
+lib/MojoMojo/Controller/Jsrpc.pm:118:            $c->model("DBIC::Tag")->search(
+lib/MojoMojo/Controller/Jsrpc.pm:119:                page   => $page->id,
+lib/MojoMojo/Controller/Jsrpc.pm:120:                person => $c->req->{user_id},
+lib/MojoMojo/Controller/Jsrpc.pm:122:            )->next() 
+lib/MojoMojo/Controller/Jsrpc.pm:124:            $page->add_to_tags({
+lib/MojoMojo/Controller/Jsrpc.pm:126:                person => $c->stash->{user}->id
+lib/MojoMojo/Controller/Jsrpc.pm:130:    $c->req->args( [  $tagname ] );
+lib/MojoMojo/Controller/Jsrpc.pm:131:    $c->forward('/page/inline_tags');
+lib/MojoMojo/Controller/Jsrpc.pm:142:    my $page = $c->stash->{page};
+lib/MojoMojo/Controller/Jsrpc.pm:144:    my $tag = $c->model("DBIC::Tag")->search(
+lib/MojoMojo/Controller/Jsrpc.pm:145:        page   => $page->id,
+lib/MojoMojo/Controller/Jsrpc.pm:146:        person => $c->user->obj->id,
+lib/MojoMojo/Controller/Jsrpc.pm:148:    )->next();
+lib/MojoMojo/Controller/Jsrpc.pm:149:    $tag->delete() if $tag;
+lib/MojoMojo/Controller/Jsrpc.pm:150:    $c->req->args( [ $tagname ] );
+lib/MojoMojo/Controller/Jsrpc.pm:151:    $c->forward('/page/inline_tags');
+lib/MojoMojo/Controller/Jsrpc.pm:162:    $c->stash->{photo}    = $c->model("DBIC::Photo")->find($photo);
+lib/MojoMojo/Controller/Jsrpc.pm:163:    $c->stash->{template} = 'gallery/imginfo.tt';
+lib/MojoMojo/Controller/Page.pm:15:MojoMojo::Controller::Page - Page controller
+lib/MojoMojo/Controller/Page.pm:47:    my $stash = $c->stash;
+lib/MojoMojo/Controller/Page.pm:48:    $stash->{template} ||= 'page/view.tt';
+lib/MojoMojo/Controller/Page.pm:55:    return $c->forward('suggest')
+lib/MojoMojo/Controller/Page.pm:58:    my $page = $stash->{'page'};
+lib/MojoMojo/Controller/Page.pm:62:    if ($c->config->{'permissions'}{'check_permission_on_view'}) {
+lib/MojoMojo/Controller/Page.pm:63:        if ($c->user_exists()) { $user = $c->user->obj; }
+lib/MojoMojo/Controller/Page.pm:65:        my $perms = $c->check_permissions($stash->{'path'}, $user);
+lib/MojoMojo/Controller/Page.pm:66:        if (!$perms->{'view'}) {
+lib/MojoMojo/Controller/Page.pm:67:            $stash->{'message'} = 'Permission Denied to view '. $page->name;
+lib/MojoMojo/Controller/Page.pm:68:            $stash->{'template'} = 'message.tt';
+lib/MojoMojo/Controller/Page.pm:76:    my $rev = $c->req->params->{rev};
+lib/MojoMojo/Controller/Page.pm:77:    if ( $rev && defined $page->content_version ) {
+lib/MojoMojo/Controller/Page.pm:78:	    $content = $c->model("DBIC::Content")->find({
+lib/MojoMojo/Controller/Page.pm:79:		    page    => $page->id,
+lib/MojoMojo/Controller/Page.pm:82:	    $stash->{rev} = ( defined $content ? $content->version : undef );
+lib/MojoMojo/Controller/Page.pm:83:	    unless( $stash->{rev} ) {
+lib/MojoMojo/Controller/Page.pm:84:	        $stash->{message} = 'No such revision for '.$page->name;
+lib/MojoMojo/Controller/Page.pm:85:	        $stash->{template} = 'message.tt';
+lib/MojoMojo/Controller/Page.pm:89:        $content = $page->content;
+lib/MojoMojo/Controller/Page.pm:91:            $c->detach('/pageadmin/edit');
+lib/MojoMojo/Controller/Page.pm:94:        $stash->{rev} =  $content->version ;
+lib/MojoMojo/Controller/Page.pm:96:    $stash->{content} = $content;
+lib/MojoMojo/Controller/Page.pm:111:    my $stash=$c->stash;
+lib/MojoMojo/Controller/Page.pm:116:    my $page = $c->stash->{page};
+lib/MojoMojo/Controller/Page.pm:117:    $stash->{template} = 'page/search.tt';
+lib/MojoMojo/Controller/Page.pm:119:    my $q = $c->req->params->{q} || $c->stash->{query};
+lib/MojoMojo/Controller/Page.pm:120:    my $search_type = $c->req->params->{search_type} || "subtree";
+lib/MojoMojo/Controller/Page.pm:121:    $stash->{query} = $q;
+lib/MojoMojo/Controller/Page.pm:122:    $stash->{search_type} = $search_type;
+lib/MojoMojo/Controller/Page.pm:124:    my $strip = HTML::Strip->new;
+lib/MojoMojo/Controller/Page.pm:131:	    my $fixed_path = $page->path;
+lib/MojoMojo/Controller/Page.pm:136:    foreach my $key ( $c->model('Search::Plucene')->query( $q ) ) {
+lib/MojoMojo/Controller/Page.pm:138:	my ($path_pages) = $c->model('DBIC::Page')->path_pages( $key ) ;
+lib/MojoMojo/Controller/Page.pm:139:    my $page=$path_pages->[ @$path_pages - 1 ];
+lib/MojoMojo/Controller/Page.pm:141:	my $content = $strip->parse( $page->content->formatted($c) );
+lib/MojoMojo/Controller/Page.pm:142:	$strip->eof;
+lib/MojoMojo/Controller/Page.pm:145:	my $snippet = Text::Context->new( $content, split(/ /, $real_query) );
+lib/MojoMojo/Controller/Page.pm:148:	    snippet => $snippet->as_html,
+lib/MojoMojo/Controller/Page.pm:159:	my $pager = Data::Page->new;
+lib/MojoMojo/Controller/Page.pm:160:	$pager->total_entries( $result_count );
+lib/MojoMojo/Controller/Page.pm:161:	$pager->entries_per_page( $results_per_page );
+lib/MojoMojo/Controller/Page.pm:162:	$pager->current_page( $c->req->params->{p} || 1 );
+lib/MojoMojo/Controller/Page.pm:166:	    @$results = $pager->splice( $results );
+lib/MojoMojo/Controller/Page.pm:169:	$c->stash->{pager} = $pager;
+lib/MojoMojo/Controller/Page.pm:170:	my $last_page = ( $pager->last_page > 10 ) ? 10 : $pager->last_page;
+lib/MojoMojo/Controller/Page.pm:171:	$c->stash->{pages_to_link} = [ 1 .. $last_page ];
+lib/MojoMojo/Controller/Page.pm:172:	$c->stash->{results} = $results;
+lib/MojoMojo/Controller/Page.pm:173:	$c->stash->{result_count} = $result_count;
+lib/MojoMojo/Controller/Page.pm:185:    $c->stash->{template} = 'page/print.tt';
+lib/MojoMojo/Controller/Page.pm:186:    $c->forward('view');
+lib/MojoMojo/Controller/Page.pm:197:    $c->stash->{template}  = 'page/tags.tt';
+lib/MojoMojo/Controller/Page.pm:198:    $c->stash->{highlight} = $highlight;
+lib/MojoMojo/Controller/Page.pm:199:    my $page = $c->stash->{page};
+lib/MojoMojo/Controller/Page.pm:200:    if ($c->user_exists) {
+lib/MojoMojo/Controller/Page.pm:201:        my @tags = $page->others_tags( $c->user->obj->id );
+lib/MojoMojo/Controller/Page.pm:202:        $c->stash->{others_tags} = [@tags];
+lib/MojoMojo/Controller/Page.pm:203:        @tags                    = $page->user_tags( $c->user->obj->id );
+lib/MojoMojo/Controller/Page.pm:204:        $c->stash->{taglist}     = ' ' . join( ' ', map { $_->tag } @tags ) . ' ';
+lib/MojoMojo/Controller/Page.pm:205:        $c->stash->{tags}        = [@tags];
+lib/MojoMojo/Controller/Page.pm:207:        $c->stash->{others_tags}      = [ $page->tags_with_counts ];
+lib/MojoMojo/Controller/Page.pm:219:    my $page=$c->stash->{page};
+lib/MojoMojo/Controller/Page.pm:220:    $c->stash->{tags}      = $c->model("DBIC::Tag")->most_used();
+lib/MojoMojo/Controller/Page.pm:221:    $c->detach('/tag/list') if $tag;
+lib/MojoMojo/Controller/Page.pm:222:    $c->stash->{template} = 'page/list.tt';
+lib/MojoMojo/Controller/Page.pm:223:    $c->stash->{pages}    =  [$page->descendants];
+lib/MojoMojo/Controller/Page.pm:225:    # FIXME - real data here please
+lib/MojoMojo/Controller/Page.pm:226:    $c->stash->{orphans}   = [];
+lib/MojoMojo/Controller/Page.pm:227:    $c->stash->{backlinks} = [ $c->model("DBIC::Link")->search( to_page => $page->id ) ];
+lib/MojoMojo/Controller/Page.pm:228:    $c->stash->{wanted}    = [ $c->model("DBIC::WantedPage")->search()];
+lib/MojoMojo/Controller/Page.pm:239:    $c->detach('/tag/recent',[$tag]) if $tag;
+lib/MojoMojo/Controller/Page.pm:240:    $c->stash->{tags}     = $c->model("DBIC::Tag")->most_used;
+lib/MojoMojo/Controller/Page.pm:241:    my $page=$c->stash->{page};
+lib/MojoMojo/Controller/Page.pm:242:    $c->stash->{template} = 'page/recent.tt';
+lib/MojoMojo/Controller/Page.pm:243:    $c->stash->{pages}    = [ $page->descendants_by_date ];
+lib/MojoMojo/Controller/Page.pm:245:    # FIXME - needs to be populated even without tags
+lib/MojoMojo/Controller/Page.pm:256:    $c->stash->{template} = 'feeds.tt';
+lib/MojoMojo/Controller/Page.pm:267:    $c->forward('recent');
+lib/MojoMojo/Controller/Page.pm:268:    $c->stash->{template} = 'page/rss.tt';
+lib/MojoMojo/Controller/Page.pm:269:    $c->res->content_type('application/rss+xml');
+lib/MojoMojo/Controller/Page.pm:281:    $c->forward('recent');
+lib/MojoMojo/Controller/Page.pm:282:    $c->res->content_type('application/atom+xml');
+lib/MojoMojo/Controller/Page.pm:283:    $c->stash->{template} = 'page/atom.tt';
+lib/MojoMojo/Controller/Page.pm:294:    $c->forward('recent');
+lib/MojoMojo/Controller/Page.pm:295:    $c->res->content_type('application/rss+xml');
+lib/MojoMojo/Controller/Page.pm:296:    $c->stash->{template} = 'page/rss_full.tt';
+lib/MojoMojo/Controller/Page.pm:307:    $c->stash->{render} =  'highlight';
+lib/MojoMojo/Controller/Page.pm:308:    $c->forward('view');
+lib/MojoMojo/Controller/Page.pm:319:    $c->stash->{template} = 'export.tt';
+lib/MojoMojo/Controller/Page.pm:330:    $c->stash->{template} = 'page/suggest.tt';
+lib/MojoMojo/Controller/Page.pm:331:    $c->res->status(404);
+lib/MojoMojo/Controller/Page.pm:342:    $c->forward('search');
+lib/MojoMojo/Controller/Page.pm:343:    $c->stash->{template} = 'page/search_inline.tt';
+lib/MojoMojo/Controller/Page.pm:354:    $c->stash->{template} = 'page/info.tt';
+lib/MojoMojo/Controller/PageAdmin.pm:9:MojoMojo::Controller::PageAdmin - MojoMojo Page Administration
+lib/MojoMojo/Controller/PageAdmin.pm:31:    $c->forward('/user/login') if $c->req->params->{pass} && 
+lib/MojoMojo/Controller/PageAdmin.pm:32:                                ! $c->stash->{user};
+lib/MojoMojo/Controller/PageAdmin.pm:34:    return 1 if MojoMojo->pref('anonymous_user');
+lib/MojoMojo/Controller/PageAdmin.pm:35:    my $user = $c->stash->{user};
+lib/MojoMojo/Controller/PageAdmin.pm:36:    return 1 if $user && $user->can_edit($c->stash->{path});
+lib/MojoMojo/Controller/PageAdmin.pm:37:	return 1 if $user && ! $c->pref('restricted_user');
+lib/MojoMojo/Controller/PageAdmin.pm:38:    $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/PageAdmin.pm:39:    $c->stash->{message}='Sorry bubba, you aint got no rights to this page';
+lib/MojoMojo/Controller/PageAdmin.pm:55:    my $stash = $c->stash;
+lib/MojoMojo/Controller/PageAdmin.pm:56:    $stash->{template} = 'page/edit.tt';
+lib/MojoMojo/Controller/PageAdmin.pm:58:    my $user = $c->user_exists ? $c->user->obj->id : 1; # Anon edit
+lib/MojoMojo/Controller/PageAdmin.pm:65:        ( $path_pages, $proto_pages ) = $c->model('DBIC::Page')->path_pages($path);
+lib/MojoMojo/Controller/PageAdmin.pm:72:        ? $proto_pages->[ @$proto_pages - 1 ]
+lib/MojoMojo/Controller/PageAdmin.pm:73:        : $path_pages->[ @$path_pages - 1 ] );
+lib/MojoMojo/Controller/PageAdmin.pm:79:    $c->form(
+lib/MojoMojo/Controller/PageAdmin.pm:85:    my $perms = $c->check_permissions($stash->{'path'}, ($c->user_exists ? $c->user->obj : undef));
+lib/MojoMojo/Controller/PageAdmin.pm:87:    if (!$perms->{$permtocheck}) {
+lib/MojoMojo/Controller/PageAdmin.pm:88:        $stash->{'message'} = 'Permission Denied to ' . $permtocheck . ' ' . $page->name;
+lib/MojoMojo/Controller/PageAdmin.pm:89:        $stash->{'template'} = 'message.tt';
+lib/MojoMojo/Controller/PageAdmin.pm:95:    if ( $c->form->has_missing || $c->form->has_invalid ) {
+lib/MojoMojo/Controller/PageAdmin.pm:96:        $stash->{page}    = $page;
+lib/MojoMojo/Controller/PageAdmin.pm:99:        $stash->{content} = $c->model("DBIC::Content")->create_proto($page);
+lib/MojoMojo/Controller/PageAdmin.pm:100:        $stash->{content}->{creator} = $user;
+lib/MojoMojo/Controller/PageAdmin.pm:101:        $c->req->params->{body} = $stash->{content}->{body}
+lib/MojoMojo/Controller/PageAdmin.pm:102:           unless $c->req->params->{body};
+lib/MojoMojo/Controller/PageAdmin.pm:106:    if ($user == 1 && ! $c->pref('anonymous_user')) {
+lib/MojoMojo/Controller/PageAdmin.pm:107:      $c->stash->{message} ||= 'Anonymous Edit disabled';
+lib/MojoMojo/Controller/PageAdmin.pm:115:    my $valid   = $c->form->valid;
+lib/MojoMojo/Controller/PageAdmin.pm:116:    $valid->{creator} = $user;
+lib/MojoMojo/Controller/PageAdmin.pm:117:    my $unknown = $c->form->unknown;
+lib/MojoMojo/Controller/PageAdmin.pm:121:        $path_pages = $c->model('DBIC::Page')->create_path_pages(
+lib/MojoMojo/Controller/PageAdmin.pm:126:        $page = $path_pages->[ @$path_pages - 1 ];
+lib/MojoMojo/Controller/PageAdmin.pm:128:    $c->model("DBIC::Page")->set_paths(@$path_pages);
+lib/MojoMojo/Controller/PageAdmin.pm:129:    $page->update_content( %$valid, %$unknown );
+lib/MojoMojo/Controller/PageAdmin.pm:134:    $c->model('Search::Plucene')->index_page( $page ) unless $c->pref('disable_search');
+lib/MojoMojo/Controller/PageAdmin.pm:135:    $c->model("DBIC::Page")->set_paths($page);
+lib/MojoMojo/Controller/PageAdmin.pm:136:    $page->content->store_links();
+lib/MojoMojo/Controller/PageAdmin.pm:138:    $c->res->redirect( $c->req->base . $c->stash->{path} . '.highlight' );
+lib/MojoMojo/Controller/PageAdmin.pm:149:    if ($c->req->param('rev')) {
+lib/MojoMojo/Controller/PageAdmin.pm:150:      $c->stash->{page}->content_version($c->req->param('rev'));
+lib/MojoMojo/Controller/PageAdmin.pm:151:      $c->stash->{page}->update;
+lib/MojoMojo/Controller/PageAdmin.pm:152:      undef $c->req->params->{rev};
+lib/MojoMojo/Controller/PageAdmin.pm:153:      $c->forward('/page/view');
+lib/MojoMojo/Controller/Root.pm:5:__PACKAGE__->config->{namespace} = '';
+lib/MojoMojo/Controller/Root.pm:13:    if ( $c->stash->{path} ) {
+lib/MojoMojo/Controller/Root.pm:15:	    $c->model('DBIC::Page')->path_pages( $c->stash->{path} );
+lib/MojoMojo/Controller/Root.pm:16:        @{$c->stash}{qw/ path_pages proto_pages /} = ( $path_pages, $proto_pages );
+lib/MojoMojo/Controller/Root.pm:17:        $c->stash->{page} = $path_pages->[ @$path_pages - 1 ];
+lib/MojoMojo/Controller/Root.pm:18:        $c->stash->{user} = $c->user->obj() if $c->user_exists && $c->user;
+lib/MojoMojo/Controller/Root.pm:24:default action - serve the home node
+lib/MojoMojo/Controller/Root.pm:30:    $c->res->status(404);
+lib/MojoMojo/Controller/Root.pm:31:    $c->stash->{message}  = "Couldn't find that page, Jimmy ".
+lib/MojoMojo/Controller/Root.pm:32:    '('.$c->stash->{pre_hacked_uri}.')';
+lib/MojoMojo/Controller/Root.pm:34:    $c->stash->{template} = 'message.tt';
+lib/MojoMojo/Controller/Root.pm:48:    $c->stash->{path} ||= '/';
+lib/MojoMojo/Controller/Root.pm:53:    $c->req->uri->path($c->stash->{pre_hacked_uri}->path)
+lib/MojoMojo/Controller/Root.pm:54:	if ref $c->stash->{pre_hacked_uri};
+lib/MojoMojo/Controller/Root.pm:55:    $c->forward('render');
+lib/MojoMojo/Controller/Root.pm:68:    return 1 unless $c->stash->{user};
+lib/MojoMojo/Controller/Root.pm:69:    return 1 if $c->stash->{user}->active != -1;
+lib/MojoMojo/Controller/Root.pm:70:    return 1 if $c->req->action eq 'logout';
+lib/MojoMojo/Controller/Root.pm:71:    $c->stash->{template}='user/validate.tt';
+lib/MojoMojo/Controller/Tag.pm:9:MojoMojo::Controller::Attachment - Attachment controller
+lib/MojoMojo/Controller/Tag.pm:20:This controller handles tag-related actions
+lib/MojoMojo/Controller/Tag.pm:38:    $c->stash->{template} = 'page/list.tt';
+lib/MojoMojo/Controller/Tag.pm:40:    $c->stash->{activetag} = $tag;
+lib/MojoMojo/Controller/Tag.pm:41:    $c->stash->{pages}     = [ $c->stash->{page}->tagged_descendants($tag) ];
+lib/MojoMojo/Controller/Tag.pm:42:    $c->stash->{related}   = [ $c->model("DBIC::Tag")->related_to($tag) ];
+lib/MojoMojo/Controller/Tag.pm:55:    $c->stash->{template} = 'page/recent.tt';
+lib/MojoMojo/Controller/Tag.pm:57:    $c->stash->{activetag} = $tag;
+lib/MojoMojo/Controller/Tag.pm:58:    $c->stash->{pages}     = [ $c->stash->{page}->tagged_descendants_by_date($tag) ];
+lib/MojoMojo/Controller/Tag.pm:70:    $c->stash->{tags}=[ 
+lib/MojoMojo/Controller/Tag.pm:71:        $c->model("DBIC::Tag")->by_page($c->stash->{page}->id) 
+lib/MojoMojo/Controller/Tag.pm:73:    my $cloud=HTML::TagCloud->new();
+lib/MojoMojo/Controller/Tag.pm:74:    foreach my $tag (@{$c->stash->{tags}}) {
+lib/MojoMojo/Controller/Tag.pm:75:        $cloud->add($tag->tag,
+lib/MojoMojo/Controller/Tag.pm:76:                    $c->req->base.$c->stash->{path}.'.list/'.$tag->tag,
+lib/MojoMojo/Controller/Tag.pm:77:                    $tag->refcount);
+lib/MojoMojo/Controller/Tag.pm:79:    $c->stash->{cloud}=$cloud;
+lib/MojoMojo/Controller/Tag.pm:80:    $c->stash->{template}='tag/cloud.tt';
+lib/MojoMojo/Controller/User.pm:10:my $auth_class = MojoMojo->config->{auth_class};
+lib/MojoMojo/Controller/User.pm:14:MojoMojo::Controller::User - Login/User Management Controller
+lib/MojoMojo/Controller/User.pm:36:    if ( $c->req->params->{login} ) {
+lib/MojoMojo/Controller/User.pm:37:         if ( $c->authenticate( { login => $c->req->params->{'login'}, 
+lib/MojoMojo/Controller/User.pm:38:                                  pass => $c->req->params->{'pass'} } ) ) {
+lib/MojoMojo/Controller/User.pm:40:    	    $c->stash->{user}=$c->user->obj;
+lib/MojoMojo/Controller/User.pm:41:            $c->res->redirect($c->uri_for($c->stash->{path}))
+lib/MojoMojo/Controller/User.pm:42:                unless $c->stash->{template};
+lib/MojoMojo/Controller/User.pm:46:            $c->stash->{message} = 'could not authenticate that login.';
+lib/MojoMojo/Controller/User.pm:49:    $c->stash->{template} ||= "user/login.tt";
+lib/MojoMojo/Controller/User.pm:60:    $c->logout;
+lib/MojoMojo/Controller/User.pm:61:    undef $c->stash->{user};
+lib/MojoMojo/Controller/User.pm:62:    $c->forward('/page/view');
+lib/MojoMojo/Controller/User.pm:73:   my $res = $c->model("DBIC::Person")->search(
+lib/MojoMojo/Controller/User.pm:75:      page     => $c->req->param('page')||1,
+lib/MojoMojo/Controller/User.pm:78:   $c->stash->{users}=$res;
+lib/MojoMojo/Controller/User.pm:79:   $c->stash->{pager}=$res->pager;
+lib/MojoMojo/Controller/User.pm:80:   $c->stash->{template}='user/list.tt';  
+lib/MojoMojo/Controller/User.pm:94:    my @proto=@{$c->stash->{proto_pages}};
+lib/MojoMojo/Controller/User.pm:95:    my $page_user=$c->model("DBIC::Person")->get_user(
+lib/MojoMojo/Controller/User.pm:96:        $proto[0]->{name} || $c->stash->{page}->name
+lib/MojoMojo/Controller/User.pm:100:        $page_user->id eq $user->id ||
+lib/MojoMojo/Controller/User.pm:101:        $user->is_admin())) {
+lib/MojoMojo/Controller/User.pm:106:    $page_user->fill_formfu_values($form);
+lib/MojoMojo/Controller/User.pm:107:    if ( $form->submitted && !$form->has_errors ) {
+lib/MojoMojo/Controller/User.pm:108:         $page_user->populate_from_formfu( $form );
+lib/MojoMojo/Controller/User.pm:122:    $c->forward('prefs');
+lib/MojoMojo/Controller/User.pm:123:    return if $c->stash->{message};
+lib/MojoMojo/Controller/User.pm:124:    $c->stash->{template}='user/password.tt';
+lib/MojoMojo/Controller/User.pm:125:    $c->form(
+lib/MojoMojo/Controller/User.pm:128:    unless ( $c->form->has_missing || $c->form->has_invalid ) {
+lib/MojoMojo/Controller/User.pm:129:      if ($c->form->valid('again') ne $c->form->valid('pass')) {
+lib/MojoMojo/Controller/User.pm:130:        $c->stash->{message}='Passwords did not match.';
+lib/MojoMojo/Controller/User.pm:133:      unless ($c->stash->{user}->valid_pass($c->form->valid('current'))) {
+lib/MojoMojo/Controller/User.pm:134:        $c->stash->{message}='Invalid password.';
+lib/MojoMojo/Controller/User.pm:137:      $c->stash->{user}->pass($c->form->valid('pass'));
+lib/MojoMojo/Controller/User.pm:138:      $c->stash->{user}->update();
+lib/MojoMojo/Controller/User.pm:139:      $c->stash->{message}='Your password has been updated';
+lib/MojoMojo/Controller/User.pm:141:    $c->stash->{message} ||= 'please fill out all fields';
+lib/MojoMojo/Controller/User.pm:146:    return unless( $c->req->method eq 'POST' );
+lib/MojoMojo/Controller/User.pm:147:    my $id=$c->req->param('recover');
+lib/MojoMojo/Controller/User.pm:148:    my $user:Stashed=$c->model('DBIC::Person')
+lib/MojoMojo/Controller/User.pm:149:			->search([ email=>$id,login=>$id])->first;
+lib/MojoMojo/Controller/User.pm:151:	$c->flash->{message}='Could not recover password.';
+lib/MojoMojo/Controller/User.pm:152:	return $c->res->redirect($c->uri_for('login'));
+lib/MojoMojo/Controller/User.pm:156:    if ($c->email(
+lib/MojoMojo/Controller/User.pm:158:            From    => $c->config->{system_mail},
+lib/MojoMojo/Controller/User.pm:159:            To      => $user->login.' <'.$user->email.'>',
+lib/MojoMojo/Controller/User.pm:160:            Subject => 'Your new password on '.$c->config->{name},
+lib/MojoMojo/Controller/User.pm:162:        body => $c->view('TT')->render($c,'mail/reset_password.tt'),
+lib/MojoMojo/Controller/User.pm:164:        $user->pass($password);
+lib/MojoMojo/Controller/User.pm:165:        $user->update();
+lib/MojoMojo/Controller/User.pm:170:    $c->forward('login');
+lib/MojoMojo/Controller/User.pm:185:	if(!$c->pref('open_registration')) {
+lib/MojoMojo/Controller/User.pm:186:    	$c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/User.pm:187:    	return $c->stash->{message}='Registration is closed!';
+lib/MojoMojo/Controller/User.pm:190:    $c->stash->{template} = 'user/register.tt';
+lib/MojoMojo/Controller/User.pm:191:    $c->stash->{message}='Please fill in the following information to '.
+lib/MojoMojo/Controller/User.pm:194:    my $user : Stashed = $c->model('DBIC::Person')->new_result({});
+lib/MojoMojo/Controller/User.pm:197:    $user->fill_formfu_values($form);
+lib/MojoMojo/Controller/User.pm:198:    if ( $form->submitted && !$form->has_errors ) {
+lib/MojoMojo/Controller/User.pm:199:         $user->active(0);
+lib/MojoMojo/Controller/User.pm:200:         $user->populate_from_formfu( $form );
+lib/MojoMojo/Controller/User.pm:201:         $user->insert();
+lib/MojoMojo/Controller/User.pm:202:         $c->forward('do_register',[$user]);
+lib/MojoMojo/Controller/User.pm:217:    $c->forward('/user/login');
+lib/MojoMojo/Controller/User.pm:218:    $c->pref('entropy') || $c->pref('entropy',rand);
+lib/MojoMojo/Controller/User.pm:219:    $c->stash->{secret}=md5_hex($c->form->valid('email').$c->pref('entropy'));
+lib/MojoMojo/Controller/User.pm:220:    if ( $c->email( header => [
+lib/MojoMojo/Controller/User.pm:221:            From    => $c->config->{system_mail},
+lib/MojoMojo/Controller/User.pm:222:            To      => $user->email,
+lib/MojoMojo/Controller/User.pm:225:        body =>  $c->view('TT')->render($c, 'mail/validate.tt'),
+lib/MojoMojo/Controller/User.pm:228:        $c->stash->{error}='An error occourred. Sorry.';
+lib/MojoMojo/Controller/User.pm:230:    $c->stash->{user}=$user;
+lib/MojoMojo/Controller/User.pm:231:    $c->stash->{template}='user/validate.tt';
+lib/MojoMojo/Controller/User.pm:237:earlier. Non-validated users will only be able to log out.
+lib/MojoMojo/Controller/User.pm:243:    $user=$c->model("DBIC::Person")->find({ login => $user });
+lib/MojoMojo/Controller/User.pm:244:    if( $user and $check = md5_hex($user->email.$c->pref('entropy'))) {
+lib/MojoMojo/Controller/User.pm:245:        $user->active(1);
+lib/MojoMojo/Controller/User.pm:246:        $user->update();
+lib/MojoMojo/Controller/User.pm:247:        if ($c->stash->{user}) {
+lib/MojoMojo/Controller/User.pm:248:            $c->res->redirect($c->uri_for('/',$c->stash->{user}->link,'.edit'));
+lib/MojoMojo/Controller/User.pm:250:            $c->stash->{message}='Welcome, '.$user->name.' your email is validated. Please log in.';
+lib/MojoMojo/Controller/User.pm:251:            $c->stash->{template}='user/login.tt';
+lib/MojoMojo/Controller/User.pm:255:    $c->stash->{template}='user/validate.tt';
+lib/MojoMojo/Controller/User.pm:266:    my $page=$c->stash->{page};
+lib/MojoMojo/Controller/User.pm:267:    my $login=($c->stash->{proto_pages}[-1] 
+lib/MojoMojo/Controller/User.pm:268:        ? $c->stash->{proto_pages}[-1]->{name}
+lib/MojoMojo/Controller/User.pm:269:	    : $page->name);
+lib/MojoMojo/Controller/User.pm:270:    my $user=$c->model('DBIC::Person')->get_user( $login);
+lib/MojoMojo/Controller/User.pm:272:          $c->stash->{person}=$user;
+lib/MojoMojo/Controller/User.pm:273:          $c->stash->{template}='user/profile.tt';
+lib/MojoMojo/Controller/User.pm:275:        $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/User.pm:276:        $c->stash->{message}='User '.$login.' not found!';
+lib/MojoMojo/Controller/User.pm:282:    my $page=$c->stash->{page};
+lib/MojoMojo/Controller/User.pm:283:    my $user=$c->model('DBIC::Person')->get_user( $c->stash->{proto_pages}[-1] 
+lib/MojoMojo/Controller/User.pm:284:	? $c->stash->{proto_pages}[-1]->{name_orig}
+lib/MojoMojo/Controller/User.pm:285:	: $page->name);
+lib/MojoMojo/Controller/User.pm:286:    if ( $user && $c->stash->{user} && ($c->stash->{user}->is_admin || 
+lib/MojoMojo/Controller/User.pm:287:		   $user->id eq $c->stash->{user}->id ) ) {
+lib/MojoMojo/Controller/User.pm:288:          $c->stash->{person}=$user;
+lib/MojoMojo/Controller/User.pm:290:      my $now = DateTime->now();
+lib/MojoMojo/Controller/User.pm:291:      my $curryear = $now->year();     
+lib/MojoMojo/Controller/User.pm:292:	  $c->stash->{years} = [ ($curryear - 90) .. $curryear ];
+lib/MojoMojo/Controller/User.pm:293:	  $c->stash->{months} = [ 1 .. 12 ];
+lib/MojoMojo/Controller/User.pm:294:	  $c->stash->{days} = [ 1 .. 31 ];
+lib/MojoMojo/Controller/User.pm:295:          $c->stash->{template}='user/editprofile.tt';
+lib/MojoMojo/Controller/User.pm:297:        $c->stash->{template}='message.tt';
+lib/MojoMojo/Controller/User.pm:298:        $c->stash->{message}='User not found!';
+lib/MojoMojo/Controller/User.pm:305:    $c->form(required => [qw(name email)],
+lib/MojoMojo/Controller/User.pm:306:	     optional => [$c->model("DBIC::Person")->result_source->columns],
+lib/MojoMojo/Controller/User.pm:314:    if ($c->form->has_missing) {
+lib/MojoMojo/Controller/User.pm:315:        $c->stash->{message}='You have to fill in all required fields.'. 
+lib/MojoMojo/Controller/User.pm:317:        join(', ',$c->form->missing()).'</b>';
+lib/MojoMojo/Controller/User.pm:318:    } elsif ($c->form->has_invalid) {
+lib/MojoMojo/Controller/User.pm:319:        $c->stash->{message}='Some fields are invalid. Please '.
+lib/MojoMojo/Controller/User.pm:322:	    my $page=$c->stash->{page};
+lib/MojoMojo/Controller/User.pm:323:	    my $user=$c->model('DBIC::Person')->get_user( $c->stash->{proto_pages}[-1] 
+lib/MojoMojo/Controller/User.pm:324:		? $c->stash->{proto_pages}[-1]->{name_orig}
+lib/MojoMojo/Controller/User.pm:325:		: $page->name);
+lib/MojoMojo/Controller/User.pm:326:	$user->set_columns($c->form->{valid});
+lib/MojoMojo/Controller/User.pm:327:	$user->update();
+lib/MojoMojo/Controller/User.pm:328:	return $c->forward('profile');
+lib/MojoMojo/Controller/User.pm:330:    $c->forward('editprofile');
+lib/MojoMojo/Formatter/Comment.pm:7:MojoMojo::Formatter::Comment - Include comments on your page.
+lib/MojoMojo/Formatter/Comment.pm:21:Format order can be 1-99. The Comment formatter runs on 91
+lib/MojoMojo/Formatter/Comment.pm:38:                  {show_comments($c,$c->stash->{page})}me;
+lib/MojoMojo/Formatter/Comment.pm:50:    $c->forward('/comment/default');
+lib/MojoMojo/Formatter/Comment.pm:52:        $c->view('TT')->render($c,'comment.tt').'</div>';
+lib/MojoMojo/Formatter/Include.pm:10:MojoMojo::Formatter::Comment - Include comments on your page.
+lib/MojoMojo/Formatter/Include.pm:22:Format order can be 1-99. The Comment formatter runs on 91
+lib/MojoMojo/Formatter/Include.pm:43:            $$content.=$class->include($c,$1);
+lib/MojoMojo/Formatter/Include.pm:53:$c->cache
+lib/MojoMojo/Formatter/Include.pm:59:    $url=URI->new($url);
+lib/MojoMojo/Formatter/Include.pm:61:    my $rel=$url->rel($c->req->base);
+lib/MojoMojo/Formatter/Include.pm:62:    return "$url is part of own site, cannot include." unless $rel->scheme;
+lib/MojoMojo/Formatter/Include.pm:63:    my $res=URI::Fetch->fetch($url,Cache=>$c->cache);
+lib/MojoMojo/Formatter/Include.pm:64:    return $res->content if defined $res;
+lib/MojoMojo/Formatter/IRCLog.pm:8:MojoMojo::Formatter::IRCLog - format part of content as an IRC log
+lib/MojoMojo/Formatter/IRCLog.pm:21:Format order can be 1-99. The IRC log formatter runs on 14, so
+lib/MojoMojo/Formatter/Markdown.pm:9:    $markdown = Text::MultiMarkdown->new(
+lib/MojoMojo/Formatter/Markdown.pm:21:MojoMojo::Formatter::MarkDown - Texile formatting for your content
+lib/MojoMojo/Formatter/Markdown.pm:26:syntax for writing human-friendly formatted text.
+lib/MojoMojo/Formatter/Markdown.pm:34:Format order can be 1-99. The Markdown formatter runs on 15
+lib/MojoMojo/Formatter/Markdown.pm:51:    return unless $c->pref('main_formatter') eq 'MojoMojo::Formatter::Markdown';
+lib/MojoMojo/Formatter/Markdown.pm:53:    $$content= $markdown->markdown( $$content );
+lib/MojoMojo/Formatter/Pod.pm:7:MojoMojo::Formatter::Pod - format part of content as POD
+lib/MojoMojo/Formatter/Pod.pm:20:Format order can be 1-99. The Pod formatter runs on 10
+lib/MojoMojo/Formatter/Pod.pm:43:         		$$content.=MojoMojo::Formatter::Pod->to_pod($pod,$c->req->base);
+lib/MojoMojo/Formatter/Pod.pm:64:    my $parser = MojoMojo::Formatter::Pod::Simple::HTML->new($base);
+lib/MojoMojo/Formatter/Pod.pm:65:    $parser->output_string(\$result); 
+lib/MojoMojo/Formatter/Pod.pm:67:        $parser->parse_string_document($pod);
+lib/MojoMojo/Formatter/Pod.pm:88:	my $self= $class->SUPER::new;
+lib/MojoMojo/Formatter/Pod.pm:89:	$self->{_base}=$base;
+lib/MojoMojo/Formatter/Pod.pm:101:    my $link = $token->attr('to');
+lib/MojoMojo/Formatter/Pod.pm:103:    return $self->SUPER::do_link($token) unless $link =~ /^$WORD+$/;
+lib/MojoMojo/Formatter/Pod.pm:104:    my $section = $token->attr('section');
+lib/MojoMojo/Formatter/Pod.pm:107:    $self->{base} . "$link$section";
+lib/MojoMojo/Formatter/Scrub.pm:10:MojoMojo::Formatter::Scrub - Scrub user HTML
+lib/MojoMojo/Formatter/Scrub.pm:24:Format order can be 1-99. The Comment formatter runs on 1
+lib/MojoMojo/Formatter/Scrub.pm:47:            'cite'        => '(?i-xsm:^(?!(?:java)?script))',
+lib/MojoMojo/Formatter/Scrub.pm:75:my $scrubber = HTML::Scrubber->new();
+lib/MojoMojo/Formatter/Scrub.pm:76:$scrubber->allow( @allow );
+lib/MojoMojo/Formatter/Scrub.pm:77:$scrubber->rules( @rules ); # key/value pairs
+lib/MojoMojo/Formatter/Scrub.pm:78:$scrubber->default( @default );
+lib/MojoMojo/Formatter/Scrub.pm:79:$scrubber->comment(1); # 1 allow, 0 deny
+lib/MojoMojo/Formatter/Scrub.pm:92:    $$content=$scrubber->scrub($$content); 
+lib/MojoMojo/Formatter/Textile.pm:7:my $textile = Text::Textile2->new(flavor=>"xhtml1",charset=>'utf-8');
+lib/MojoMojo/Formatter/Textile.pm:14:MojoMojo::Formatter::Textile - Texile formatting for your content
+lib/MojoMojo/Formatter/Textile.pm:19:syntax for writing human-friendly formatted text.
+lib/MojoMojo/Formatter/Textile.pm:27:Format order can be 1-99. The Textile formatter runs on 15
+lib/MojoMojo/Formatter/Textile.pm:44:    return unless $c->pref('main_formatter') eq 'MojoMojo::Formatter::Textile' || ! $c->pref('main_formatter');
+lib/MojoMojo/Formatter/Textile.pm:45:    $$content= $textile->process( $$content );
+lib/MojoMojo/Formatter/Textile.pm:46:    $$content= Text::SmartyPants->process( $$content );
+lib/MojoMojo/Formatter/Wiki.pm:9:MojoMojo::Formatter::Wiki - Handle interpage linking.
+lib/MojoMojo/Formatter/Wiki.pm:25:Format order can be 1-99. The Wiki formatter runs on 30
+lib/MojoMojo/Formatter/Wiki.pm:33:## list of start-end delimiter pairs
+lib/MojoMojo/Formatter/Wiki.pm:48:    return qr{(?: $delims )}x; # non-capturing match
+lib/MojoMojo/Formatter/Wiki.pm:52:    return qr{(?: $delims )}x; # non-capturing match
+lib/MojoMojo/Formatter/Wiki.pm:55:    # non-greedily match characters that don't match the start-end and text delimiters
+lib/MojoMojo/Formatter/Wiki.pm:60:    # non-greedily match characters that don't match the start-end delimiters
+lib/MojoMojo/Formatter/Wiki.pm:72:my $wikiword        = qr{\b[A-Z][a-z]+[A-Z]\w*};
+lib/MojoMojo/Formatter/Wiki.pm:99:        $res .= $part . '<!--pre_placeholder-->';
+lib/MojoMojo/Formatter/Wiki.pm:110:        $$content =~ s{<!--pre_placeholder-->}{<pre>$part</pre>}sx;
+lib/MojoMojo/Formatter/Wiki.pm:128:    if ($c->pref('enable_implict_wikiwords')) {
+lib/MojoMojo/Formatter/Wiki.pm:132:        }{ $class->format_link($c, $1, $c->req->base,) }gex;
+lib/MojoMojo/Formatter/Wiki.pm:149:    }{ $class->format_link($c, $1, $c->req->base, $2) }gex;
+lib/MojoMojo/Formatter/Wiki.pm:182:    $base ||= $c->req->base;
+lib/MojoMojo/Formatter/Wiki.pm:183:    $word=$c->stash->{page}->path.'/'.$word unless $word =~ m|^[/\.]|;
+lib/MojoMojo/Formatter/Wiki.pm:184:    $c = MojoMojo->context unless ref $c;
+lib/MojoMojo/Formatter/Wiki.pm:195:    my $formatted = $link_text || $class->expand_wikiword($orig_word);
+lib/MojoMojo/Formatter/Wiki.pm:200:    if($c->stash->{page} &&
+lib/MojoMojo/Formatter/Wiki.pm:202:        ref $c->stash->{page} eq 'MojoMojo::Model::DBIC::Page' &&
+lib/MojoMojo/Formatter/Wiki.pm:204:        $word = URI->new_abs( $word, $c->stash->{page}->path."/" );
+lib/MojoMojo/Formatter/Wiki.pm:205:    } elsif ( $c->stash->{page_path} && $word !~ m|^/|) {
+lib/MojoMojo/Formatter/Wiki.pm:206:        $word = URI->new_abs( $word, $c->stash->{page_path}."/" );
+lib/MojoMojo/Formatter/Wiki.pm:216:	$c->model('DBIC::Page')->path_pages( $word );
+lib/MojoMojo/Formatter/Wiki.pm:219:    $url .= $proto_page->{path};
+lib/MojoMojo/Formatter/Wiki.pm:222:    $url .= $page->path;
+lib/MojoMojo/Formatter/Wiki.pm:236:    $word =~ s/([a-z])([A-Z])/$1 $2/g;
+lib/MojoMojo/Formatter/Wiki.pm:265:	       $link = URI->new_abs( $link, ($page->path||'')."/" );
+lib/MojoMojo/Formatter/Wiki.pm:269:	       $page->result_source->resultset->path_pages( $link );
+lib/MojoMojo/Formatter.pm:7:MojoMojo::Formatter - Base class for all formatters
+lib/MojoMojo/Installation.pod:17:SQLite, mysql or Pg - sqlite by default). The setting you change is connect_info
+lib/MojoMojo/Installation.pod:21:        - dbi:mysql:database=mojo_database;host=localhost, mojo_user, password
+lib/MojoMojo/Installation.pod:23:        - dbi:SQLite:__HOME__/db/sqlite/mojomojo.db
+lib/MojoMojo/Installation.pod:37:    ./script/mojomojo_server -p 3000
+lib/MojoMojo/Model/DBIC.pm:6:__PACKAGE__->config( schema_class => 'MojoMojo::Schema' );
+lib/MojoMojo/Model/DBIC.pm:12:mojomojo::Model::DBIC - Catalyst DBIC Schema Model
+lib/MojoMojo/Model/Search/Plucene.pm:10:__PACKAGE__->config(
+lib/MojoMojo/Model/Search/Plucene.pm:11:    index    => MojoMojo->config->{home} . '/plucene',
+lib/MojoMojo/Model/Search/Plucene.pm:24:   my $index = $self->config->{index};
+lib/MojoMojo/Model/Search/Plucene.pm:27:   return if ( $self->is_indexed( '/' ) );
+lib/MojoMojo/Model/Search/Plucene.pm:29:   MojoMojo->log->info( "Initializing Plucene search index..." ) 
+lib/MojoMojo/Model/Search/Plucene.pm:30:       if MojoMojo->debug;
+lib/MojoMojo/Model/Search/Plucene.pm:32:   # loop through all latest-version pages
+lib/MojoMojo/Model/Search/Plucene.pm:34:   my $it = MojoMojo::M::Core::Page->retrieve_all;
+lib/MojoMojo/Model/Search/Plucene.pm:35:   while ( my $page = $it->next ) {
+lib/MojoMojo/Model/Search/Plucene.pm:36:       $page->set_paths( $page );
+lib/MojoMojo/Model/Search/Plucene.pm:37:       $self->index_page( $page );
+lib/MojoMojo/Model/Search/Plucene.pm:41:   $self->optimize;
+lib/MojoMojo/Model/Search/Plucene.pm:43:   MojoMojo->log->info( "Indexed $count pages" ) if MojoMojo->debug;
+lib/MojoMojo/Model/Search/Plucene.pm:55:   return unless ( $page && $page->content );
+lib/MojoMojo/Model/Search/Plucene.pm:57:   my $content = $page->content;
+lib/MojoMojo/Model/Search/Plucene.pm:58:   my $key = $page->path;
+lib/MojoMojo/Model/Search/Plucene.pm:60:   my $text = $content->body;
+lib/MojoMojo/Model/Search/Plucene.pm:61:   $text .= " " . $content->abstract if ( $content->abstract );
+lib/MojoMojo/Model/Search/Plucene.pm:62:   $text .= " " . $content->comments if ( $content->comments );
+lib/MojoMojo/Model/Search/Plucene.pm:70:       _author => $content->creator->login,
+lib/MojoMojo/Model/Search/Plucene.pm:72:       date => ($content->created) ? $content->created->ymd : '',
+lib/MojoMojo/Model/Search/Plucene.pm:73:       tags => join (' ', map { $_->tag } $page->tags ),
+lib/MojoMojo/Model/Search/Plucene.pm:77:   $self->update( { $key => $data } );
+lib/MojoMojo/Schema/Attachment.pm:17:__PACKAGE__->load_components(qw/ResultSetManager DateTime::Epoch PK::Auto Core/);
+lib/MojoMojo/Schema/Attachment.pm:18:__PACKAGE__->table("attachment");
+lib/MojoMojo/Schema/Attachment.pm:19:__PACKAGE__->add_columns("id", 
+lib/MojoMojo/Schema/Attachment.pm:33:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Attachment.pm:34:__PACKAGE__->belongs_to("page", "Page", { id => "page" });
+lib/MojoMojo/Schema/Attachment.pm:35:__PACKAGE__->might_have("photo", "MojoMojo::Schema::Photo" );
+lib/MojoMojo/Schema/Attachment.pm:40:a page to attach to, and a storage callback. The storage-callback will
+lib/MojoMojo/Schema/Attachment.pm:47:    my $mm=File::MMagic->new();
+lib/MojoMojo/Schema/Attachment.pm:48:    if ( $mm->checktype_filename($filename) eq 'application/zip' ) {
+lib/MojoMojo/Schema/Attachment.pm:50:        $zip=Archive::Zip->new($file);
+lib/MojoMojo/Schema/Attachment.pm:53:        foreach my $member ($zip->members) {
+lib/MojoMojo/Schema/Attachment.pm:54:            next if $member->isDirectory;
+lib/MojoMojo/Schema/Attachment.pm:56:            $member->extractToFileNamed($tmpfile);
+lib/MojoMojo/Schema/Attachment.pm:57:            push @atts, $class->create_from_file( $page, $member->fileName,$tmpfile);
+lib/MojoMojo/Schema/Attachment.pm:62:    my $self=$class->create({ 
+lib/MojoMojo/Schema/Attachment.pm:64:        page => $page->id });
+lib/MojoMojo/Schema/Attachment.pm:66:    File::Copy::copy($file,$self->filename);
+lib/MojoMojo/Schema/Attachment.pm:68:    my $fh=FileHandle->new($self->filename.'');
+lib/MojoMojo/Schema/Attachment.pm:69:    $self->contenttype( $mm->checktype_filehandle($fh) );
+lib/MojoMojo/Schema/Attachment.pm:70:    $self->size( -s $self->filename );
+lib/MojoMojo/Schema/Attachment.pm:71:    $self->update();
+lib/MojoMojo/Schema/Attachment.pm:72:    $self-> make_photo if ($self->contenttype =~ m|^image/|);
+lib/MojoMojo/Schema/Attachment.pm:78:    unlink($self->filename) if -f $self->filename;
+lib/MojoMojo/Schema/Attachment.pm:79:    unlink($self->inline_filename) if -f $self->inline_filename;
+lib/MojoMojo/Schema/Attachment.pm:80:    unlink($self->thumb_filename) if -f $self->thumb_filename;
+lib/MojoMojo/Schema/Attachment.pm:81:    $self->next::method();
+lib/MojoMojo/Schema/Attachment.pm:92:    my $attachment_dir = $self->result_source->schema->attachment_dir;
+lib/MojoMojo/Schema/Attachment.pm:93:    die("MojoMojo::Schema->attachment must be set to a writeable directory (Current:$attachment_dir)\n") 
+lib/MojoMojo/Schema/Attachment.pm:94:        unless -d $attachment_dir && -w $attachment_dir;
+lib/MojoMojo/Schema/Attachment.pm:95:    return ( $attachment_dir . '/' . $self->id );
+lib/MojoMojo/Schema/Attachment.pm:98:sub inline_filename { shift->filename . '.inline'; }
+lib/MojoMojo/Schema/Attachment.pm:100:sub thumb_filename  { shift->filename . '.thumb'; }
+lib/MojoMojo/Schema/Attachment.pm:104:  my $photo=$self->result_source->related_source('photo')->resultset->new({
+lib/MojoMojo/Schema/Attachment.pm:105:    id          => $self->id,
+lib/MojoMojo/Schema/Attachment.pm:106:    title       => $self->name,
+lib/MojoMojo/Schema/Attachment.pm:108:  $photo->description('Set your description');
+lib/MojoMojo/Schema/Attachment.pm:109:  $photo->extract_exif($self) if $self->contenttype eq 'image/jpeg';
+lib/MojoMojo/Schema/Attachment.pm:110:  $photo->insert();
+lib/MojoMojo/Schema/Comment.pm:9:my $textile=Text::Textile2->new(
+lib/MojoMojo/Schema/Comment.pm:16:__PACKAGE__->load_components(qw/DateTime::Epoch PK::Auto UTF8Columns Core/);
+lib/MojoMojo/Schema/Comment.pm:17:__PACKAGE__->table("comment");
+lib/MojoMojo/Schema/Comment.pm:18:__PACKAGE__->add_columns("id", 
+lib/MojoMojo/Schema/Comment.pm:32:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Comment.pm:33:__PACKAGE__->belongs_to("poster", "Person", { id => "poster" });
+lib/MojoMojo/Schema/Comment.pm:34:__PACKAGE__->belongs_to("page", "Page", { id => "page" });
+lib/MojoMojo/Schema/Comment.pm:35:__PACKAGE__->belongs_to("picture", "Photo", { id => "picture" });
+lib/MojoMojo/Schema/Comment.pm:36:__PACKAGE__->utf8_columns(qw/body/);
+lib/MojoMojo/Schema/Comment.pm:46:  return $textile->process($self->body);
+lib/MojoMojo/Schema/Content.pm:14:__PACKAGE__->load_components(qw/ResultSetManager DateTime::Epoch UTF8Columns PK::Auto Core/);
+lib/MojoMojo/Schema/Content.pm:15:__PACKAGE__->table("content");
+lib/MojoMojo/Schema/Content.pm:16:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Content.pm:44:__PACKAGE__->utf8_columns(qw/body precompiled/);
+lib/MojoMojo/Schema/Content.pm:45:__PACKAGE__->set_primary_key("version", "page");
+lib/MojoMojo/Schema/Content.pm:46:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Content.pm:54:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Content.pm:62:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Content.pm:70:__PACKAGE__->belongs_to("creator", "Person", { id => "creator" });
+lib/MojoMojo/Schema/Content.pm:71:    __PACKAGE__->belongs_to("page", "Page", { id => "page" });
+lib/MojoMojo/Schema/Content.pm:75:	my $this_content = $self->formatted($c);
+lib/MojoMojo/Schema/Content.pm:78:	    defined $self->previous
+lib/MojoMojo/Schema/Content.pm:79:	    ? $self->previous->formatted($c)
+lib/MojoMojo/Schema/Content.pm:94:	    } elsif ( $$line[0] eq "-" ) { }
+lib/MojoMojo/Schema/Content.pm:110:    my $this = [ $sparse ? split /\n/, ( $self->encoded_body ) : split /\n\n/, ( $self->formatted($c) ) ];
+lib/MojoMojo/Schema/Content.pm:111:    my $prev = [ $sparse ? split /\n/, ( $to->encoded_body ) : split /\n\n/, ( $to->formatted($c) ) ];
+lib/MojoMojo/Schema/Content.pm:118:	elsif ( $$line[0] eq "-" ) {
+lib/MojoMojo/Schema/Content.pm:145:    # FIXME: This thing should use accept-context and stop fucking around with $c everywhere
+lib/MojoMojo/Schema/Content.pm:147:    $c       ||= MojoMojo->instance();
+lib/MojoMojo/Schema/Content.pm:148:    MojoMojo->call_plugins( "format_content", \$content, $c, $page) 
+lib/MojoMojo/Schema/Content.pm:156:    my $result=$self->result_source->resultset->format_content($c,$self->body,$self);
+lib/MojoMojo/Schema/Content.pm:172:    my @columns = __PACKAGE__->columns;
+lib/MojoMojo/Schema/Content.pm:173:    eval { $page->isa('MojoMojo::Schema::Page'); $page->content->isa('MojoMojo::Schema::Content') };
+lib/MojoMojo/Schema/Content.pm:182:	my $content = $page->content;
+lib/MojoMojo/Schema/Content.pm:183:	%proto_content = map { $_ => $content->$_ } @columns;
+lib/MojoMojo/Schema/Content.pm:198:    my $max=$self->result_source->resultset->search({page=>$self->page->id},{
+lib/MojoMojo/Schema/Content.pm:202:    return 0 unless $max->count;
+lib/MojoMojo/Schema/Content.pm:203:    return $max->next->get_column('max_ver');
+lib/MojoMojo/Schema/Content.pm:214:    return $self->result_source->resultset->search({
+lib/MojoMojo/Schema/Content.pm:215:	    page    => $self->page->id,
+lib/MojoMojo/Schema/Content.pm:216:	    version => $self->version-1
+lib/MojoMojo/Schema/Content.pm:217:	    })->next;
+lib/MojoMojo/Schema/Content.pm:228:    return DateTime::Format::Mail->format_datetime($self->created);
+lib/MojoMojo/Schema/Content.pm:240:    return unless ($self->status eq 'released');
+lib/MojoMojo/Schema/Content.pm:241:    my $content = $self->body;
+lib/MojoMojo/Schema/Content.pm:242:    my $page = $self->page;
+lib/MojoMojo/Schema/Content.pm:243:    $page->result_source->resultset->set_paths($page);
+lib/MojoMojo/Schema/Content.pm:244:    $page->links_from->delete();
+lib/MojoMojo/Schema/Content.pm:245:    $page->wantedpages->delete();
+lib/MojoMojo/Schema/Content.pm:247:    my ($linked_pages, $wanted_pages) = MojoMojo::Formatter::Wiki->find_links( \$content, $page );
+lib/MojoMojo/Schema/Content.pm:250:	    my $link = $self->result_source->schema->resultset('Link')->
+lib/MojoMojo/Schema/Content.pm:252:		        { from_page => $self->page->id, to_page => $_->id });
+lib/MojoMojo/Schema/Content.pm:255:	my $wanted_page = $self->result_source->schema()->
+lib/MojoMojo/Schema/Content.pm:256:	    resultset('WantedPage')->find_or_create(
+lib/MojoMojo/Schema/Content.pm:257:		    { from_page => $page->id, to_path => $_->{path} });
+lib/MojoMojo/Schema/Content.pm:261:sub encoded_body { return encode_entities(shift->body); }
+lib/MojoMojo/Schema/Entry.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/Entry.pm:9:__PACKAGE__->table("entry");
+lib/MojoMojo/Schema/Entry.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Entry.pm:26:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Entry.pm:27:__PACKAGE__->belongs_to("journal", "Journal", { pageid => "journal" });
+lib/MojoMojo/Schema/Entry.pm:28:__PACKAGE__->belongs_to("author", "Person", { id => "author" });
+lib/MojoMojo/Schema/Journal.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/Journal.pm:9:__PACKAGE__->table("journal");
+lib/MojoMojo/Schema/Journal.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Journal.pm:20:__PACKAGE__->set_primary_key("pageid");
+lib/MojoMojo/Schema/Journal.pm:21:__PACKAGE__->has_many("entries", "Entry", { "foreign.journal" => "self.pageid" });
+lib/MojoMojo/Schema/Journal.pm:22:__PACKAGE__->belongs_to("pageid", "Page", { id => "pageid" });
+lib/MojoMojo/Schema/Link.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/Link.pm:9:__PACKAGE__->table("link");
+lib/MojoMojo/Schema/Link.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Link.pm:18:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Link.pm:19:__PACKAGE__->belongs_to("from_page", "Page", { id => "from_page" });
+lib/MojoMojo/Schema/Link.pm:20:__PACKAGE__->belongs_to("to_page", "Page", { id => "to_page" });
+lib/MojoMojo/Schema/Page.pm:9:__PACKAGE__->load_components("ResultSetManager","PK::Auto", "Core");
+lib/MojoMojo/Schema/Page.pm:10:__PACKAGE__->table("page");
+lib/MojoMojo/Schema/Page.pm:11:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Page.pm:31:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Page.pm:32:__PACKAGE__->add_unique_constraint("page_unique_child_index", ["parent", "name"]);
+lib/MojoMojo/Schema/Page.pm:33:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Page.pm:38:__PACKAGE__->belongs_to("parent", "Page", { id => "parent" });
+lib/MojoMojo/Schema/Page.pm:39:__PACKAGE__->has_many("children", "Page", { "foreign.parent" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:40:__PACKAGE__->belongs_to(
+lib/MojoMojo/Schema/Page.pm:45:__PACKAGE__->has_many("versions", "Content", { "foreign.page" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:46:__PACKAGE__->belongs_to(
+lib/MojoMojo/Schema/Page.pm:51:__PACKAGE__->has_many("tags", "Tag", { "foreign.page" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:52:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Page.pm:57:__PACKAGE__->has_many("links_to", "Link", { "foreign.to_page" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:58:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Page.pm:63:__PACKAGE__->has_many("attachments", "Attachment", { "foreign.page" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:64:__PACKAGE__->has_many("comments", "Comment", { "foreign.page" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:65:__PACKAGE__->has_many("journals", "Journal", { "foreign.pageid" => "self.id" });
+lib/MojoMojo/Schema/Page.pm:86:	@path_pages = $self->search({ lft => 1 })->all;
+lib/MojoMojo/Schema/Page.pm:90:	@path_pages = $self->path_pages_by_id( $id );
+lib/MojoMojo/Schema/Page.pm:94:    my @proto_pages = $self->parse_path($path);
+lib/MojoMojo/Schema/Page.pm:96:    my $depth      = @proto_pages - 1;          # depth starts at 0
+lib/MojoMojo/Schema/Page.pm:101:	push @depths, -and => [ depth => $proto->{depth},
+lib/MojoMojo/Schema/Page.pm:102:                                name  => $proto->{name},
+lib/MojoMojo/Schema/Page.pm:107:    my @pages = $self->search({ -or => [ @depths ] },{} ); 
+lib/MojoMojo/Schema/Page.pm:111:	$query_pages[ $_->depth ] ||= [];
+lib/MojoMojo/Schema/Page.pm:112:	push @{ $query_pages[ $_->depth ] }, $_;
+lib/MojoMojo/Schema/Page.pm:115:    my $resolved = $self->
+lib/MojoMojo/Schema/Page.pm:127:	my $proto_path = $path_pages[ @path_pages - 1 ]->{path};
+lib/MojoMojo/Schema/Page.pm:130:	    $proto_path .= $_->{name_orig};
+lib/MojoMojo/Schema/Page.pm:131:	    $_->{path} = $proto_path;
+lib/MojoMojo/Schema/Page.pm:139:@path_pages = __PACKAGE__->path_pages_by_id( $id );
+lib/MojoMojo/Schema/Page.pm:147:return $self->search({
+lib/MojoMojo/Schema/Page.pm:181:    ( $_->{name_orig}, $_->{name} ) =
+lib/MojoMojo/Schema/Page.pm:182:      $self->normalize_name( $_->{name_orig} );
+lib/MojoMojo/Schema/Page.pm:183:    $page_path .= '/' . $_->{name};
+lib/MojoMojo/Schema/Page.pm:184:    $_->{path}  = $page_path;
+lib/MojoMojo/Schema/Page.pm:185:    $_->{depth} = $depth;
+lib/MojoMojo/Schema/Page.pm:245:while ( my $page = shift @{ $query_pages->[$current_depth] } ) {
+lib/MojoMojo/Schema/Page.pm:247:	my $parent = $path_pages->[ $current_depth - 1 ];
+lib/MojoMojo/Schema/Page.pm:248:	next unless $page->parent && $page->parent->id == $parent->id;
+lib/MojoMojo/Schema/Page.pm:251:    $page->path( $proto_page->{path} );
+lib/MojoMojo/Schema/Page.pm:258:	# must pre-icrement for this to work when current_depth == 0
+lib/MojoMojo/Schema/Page.pm:259:	( ++$args{current_depth} && $class->resolve_path(%args) )
+lib/MojoMojo/Schema/Page.pm:268:    my (@pages)=$self->result_source->resultset->search({
+lib/MojoMojo/Schema/Page.pm:269:	    'ancestor.id'=>$self->id,
+lib/MojoMojo/Schema/Page.pm:271:	    -or => [
+lib/MojoMojo/Schema/Page.pm:273:		-and => [
+lib/MojoMojo/Schema/Page.pm:286:    return $self->result_source->resultset->set_paths(@pages);
+lib/MojoMojo/Schema/Page.pm:291:    my(@pages)=$self->result_source->resultset->search({
+lib/MojoMojo/Schema/Page.pm:292:	    'ancestor.id'=>$self->id,
+lib/MojoMojo/Schema/Page.pm:294:	    -or => [
+lib/MojoMojo/Schema/Page.pm:296:		-and => [
+lib/MojoMojo/Schema/Page.pm:309:	    })->all;
+lib/MojoMojo/Schema/Page.pm:310:    return $self->result_source->resultset->set_paths(@pages);
+lib/MojoMojo/Schema/Page.pm:327:    my $content_version = ( $self->content ? 
+lib/MojoMojo/Schema/Page.pm:328:	    $self->content->max_version() : 
+lib/MojoMojo/Schema/Page.pm:331:	$self->result_source->related_source('content')->columns;
+lib/MojoMojo/Schema/Page.pm:332:    my $now = DateTime->now;
+lib/MojoMojo/Schema/Page.pm:334:	($self->id,
+lib/MojoMojo/Schema/Page.pm:339:    my $content = $self->result_source->related_source('content')
+lib/MojoMojo/Schema/Page.pm:340:	->resultset->create( \%content_data );
+lib/MojoMojo/Schema/Page.pm:341:    $self->content_version( $content->version );
+lib/MojoMojo/Schema/Page.pm:342:    $self->update;
+lib/MojoMojo/Schema/Page.pm:343:    $self->page_version->content_version_first( $content_version )
+lib/MojoMojo/Schema/Page.pm:344:	unless defined $self->page_version->content_version_first;
+lib/MojoMojo/Schema/Page.pm:345:    $self->page_version->content_version_last($content_version);
+lib/MojoMojo/Schema/Page.pm:346:    $self->page_version->update;
+lib/MojoMojo/Schema/Page.pm:348:    if (my $previous_content = $content->previous) {
+lib/MojoMojo/Schema/Page.pm:349:	$previous_content->remove_date( $now );
+lib/MojoMojo/Schema/Page.pm:350:	$previous_content->status( 'removed' );
+lib/MojoMojo/Schema/Page.pm:351:	$previous_content->comments( "Replaced by version $content_version." );
+lib/MojoMojo/Schema/Page.pm:352:	$previous_content->update;
+lib/MojoMojo/Schema/Page.pm:354:	$self->result_source->resultset->set_paths($self);
+lib/MojoMojo/Schema/Page.pm:361:__PACKAGE__->set_paths( @pages );
+lib/MojoMojo/Schema/Page.pm:363:Sets the path TEMP columns for multiple pages, either a subtree or a group of non-adjacent pages.
+lib/MojoMojo/Schema/Page.pm:371:	$pages[0]->depth == 0 ;
+lib/MojoMojo/Schema/Page.pm:373:    my %pages = map { $_->id => $_ } @pages;
+lib/MojoMojo/Schema/Page.pm:378:    my @lft_sorted_pages = sort { $a->lft <=> $b->lft } @pages;
+lib/MojoMojo/Schema/Page.pm:382:    unless ($lft_sorted_pages[0]->name eq '/') {
+lib/MojoMojo/Schema/Page.pm:383:	my $parent = $lft_sorted_pages[0]->parent;
+lib/MojoMojo/Schema/Page.pm:384:	$pages{ $parent->id } = $parent;
+lib/MojoMojo/Schema/Page.pm:391:	if ($_->name eq '/') {
+lib/MojoMojo/Schema/Page.pm:392:	    $_->path('/');
+lib/MojoMojo/Schema/Page.pm:395:	if ($_->depth == 1) {
+lib/MojoMojo/Schema/Page.pm:396:	    $_->path( '/' . $_->name );
+lib/MojoMojo/Schema/Page.pm:399:	my $parent = $pages{ $_->parent->id };
+lib/MojoMojo/Schema/Page.pm:401:	    $_->path( $parent->path . '/' . $_->name );
+lib/MojoMojo/Schema/Page.pm:406:	    my @path_pages = $class->path_pages_by_id( $_->id );
+lib/MojoMojo/Schema/Page.pm:409:		$pages{ $path_page->id } = $path_page;
+lib/MojoMojo/Schema/Page.pm:413:#$_->path( $current_page->path );
+lib/MojoMojo/Schema/Page.pm:421:  @descendants = $page->descendants_by_date;
+lib/MojoMojo/Schema/Page.pm:431:    my @pages=$self->result_source->resultset->search({
+lib/MojoMojo/Schema/Page.pm:432:	'ancestor.id' => $self->id,
+lib/MojoMojo/Schema/Page.pm:435:	-or => [
+lib/MojoMojo/Schema/Page.pm:436:	  -and => [
+lib/MojoMojo/Schema/Page.pm:445:        return $self->result_source->resultset->set_paths( @pages );
+lib/MojoMojo/Schema/Page.pm:450:    my (@pages)=$self->result_source->resultset->search({
+lib/MojoMojo/Schema/Page.pm:451:	'ancestor.id'=>$self->id,
+lib/MojoMojo/Schema/Page.pm:452:	-or => [
+lib/MojoMojo/Schema/Page.pm:454:	    -and => [
+lib/MojoMojo/Schema/Page.pm:463:    return $self->result_source->resultset->set_paths( @pages );
+lib/MojoMojo/Schema/Page.pm:475:    my (@tags) = $self->result_source->related_source('tags')->resultset
+lib/MojoMojo/Schema/Page.pm:476:	->search({ 
+lib/MojoMojo/Schema/Page.pm:477:	    page=>$self->id, 
+lib/MojoMojo/Schema/Page.pm:490:    my (@tags) = $self->result_source->related_source('tags')->resultset
+lib/MojoMojo/Schema/Page.pm:491:	->search({ 
+lib/MojoMojo/Schema/Page.pm:492:	    page=>$self->id, 
+lib/MojoMojo/Schema/Page.pm:504:    my (@tags) = $self->result_source->related_source('tags')->resultset
+lib/MojoMojo/Schema/Page.pm:505:	->search({ 
+lib/MojoMojo/Schema/Page.pm:506:	    page=>$self->id, 
+lib/MojoMojo/Schema/Page.pm:528:    my $parent = $path_pages->[ @$path_pages - 1 ];
+lib/MojoMojo/Schema/Page.pm:529:    my %original_ancestor = ( id => $parent->id, rgt => $parent->rgt );
+lib/MojoMojo/Schema/Page.pm:532:    $parent = $self->open_gap( $parent, scalar @$proto_pages );
+lib/MojoMojo/Schema/Page.pm:534:    my @version_columns = $self->related_resultset('page_version')->result_source->columns;
+lib/MojoMojo/Schema/Page.pm:541:        my $page = $self->create( { parent => $parent->id } );
+lib/MojoMojo/Schema/Page.pm:542:        my %version_data = map { $_ => $proto_page->{$_} } @version_columns;
+lib/MojoMojo/Schema/Page.pm:545:            $page->id,
+lib/MojoMojo/Schema/Page.pm:547:            $page->parent->id,
+lib/MojoMojo/Schema/Page.pm:549:            ( $page->parent ? $page->parent->version : undef ),
+lib/MojoMojo/Schema/Page.pm:552:            DateTime->now,
+lib/MojoMojo/Schema/Page.pm:556:	    $self->related_resultset('page_version')->create( \%version_data );
+lib/MojoMojo/Schema/Page.pm:557:        for ( $page->columns ) {
+lib/MojoMojo/Schema/Page.pm:560:            next unless $page_version->can( $_ );
+lib/MojoMojo/Schema/Page.pm:561:            $page->$_( $page_version->$_ );
+lib/MojoMojo/Schema/Page.pm:567:        $page->lft(
+lib/MojoMojo/Schema/Page.pm:568:            $parent->id == $original_ancestor{id}
+lib/MojoMojo/Schema/Page.pm:570:            : $parent->lft + 1
+lib/MojoMojo/Schema/Page.pm:572:        $page->rgt( $parent->rgt - 1 );
+lib/MojoMojo/Schema/Page.pm:573:        $page->update;
+lib/MojoMojo/Schema/Page.pm:587:right, we determine what nodes to re-number according to the
+lib/MojoMojo/Schema/Page.pm:588:C<rgt> column of the parent of the top-most new node.
+lib/MojoMojo/Schema/Page.pm:598:        = ($new_page_count * 2, $parent->rgt, $parent->id);
+lib/MojoMojo/Schema/Page.pm:599:    $self->result_source->schema->storage->dbh->do(qq{ UPDATE page 
+lib/MojoMojo/Schema/Page.pm:608:    $parent = $self->find( $parent_id );
+lib/MojoMojo/Schema/Page.pm:617:	$self->{path}=$path;
+lib/MojoMojo/Schema/Page.pm:619:    unless( defined $self->{path} ) {
+lib/MojoMojo/Schema/Page.pm:620:	return '/' if( $self->depth == 0 );
+lib/MojoMojo/Schema/Page.pm:621:    $self->result_source->resultset->set_paths($self);
+lib/MojoMojo/Schema/Page.pm:622:#	croak 'path is not set on the page object:'.$self->name;
+lib/MojoMojo/Schema/Page.pm:624:    return $self->{path};
+lib/MojoMojo/Schema/Page.pm:635:  return $self->result_source->schema->resultset('Photo')->search({'attachment.page'=>$self->id},{join=>[qw/attachment/]})->count;
+lib/MojoMojo/Schema/PageVersion.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/PageVersion.pm:9:__PACKAGE__->table("page_version");
+lib/MojoMojo/Schema/PageVersion.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/PageVersion.pm:42:__PACKAGE__->set_primary_key("version", "page");
+lib/MojoMojo/Schema/PageVersion.pm:43:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/PageVersion.pm:48:__PACKAGE__->belongs_to("creator", "Person", { id => "creator" });
+lib/MojoMojo/Schema/PageVersion.pm:49:__PACKAGE__->belongs_to(
+lib/MojoMojo/Schema/PageVersion.pm:54:__PACKAGE__->belongs_to(
+lib/MojoMojo/Schema/PageVersion.pm:59:__PACKAGE__->belongs_to(
+lib/MojoMojo/Schema/PageVersion.pm:64:__PACKAGE__->belongs_to(
+lib/MojoMojo/Schema/PageVersion.pm:69:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/PathPermissions.pm:9:__PACKAGE__->load_components("ResultSetManager", "PK::Auto", "Core");
+lib/MojoMojo/Schema/PathPermissions.pm:10:__PACKAGE__->table("path_permissions");
+lib/MojoMojo/Schema/PathPermissions.pm:11:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/PathPermissions.pm:29:__PACKAGE__->set_primary_key("path", "role", "apply_to_subpages");
+lib/MojoMojo/Schema/PathPermissions.pm:30:__PACKAGE__->belongs_to("role", "Role", { id => "role" });
+lib/MojoMojo/Schema/Person.pm:8:__PACKAGE__->load_components(qw/DateTime::Epoch EncodedColumn ResultSetManager PK::Auto Core HTML::FormFu/);
+lib/MojoMojo/Schema/Person.pm:9:__PACKAGE__->table("person");
+lib/MojoMojo/Schema/Person.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Person.pm:14:    { data_type => "INTEGER", is_nullable => 0, default_value=>-1, size => undef },
+lib/MojoMojo/Schema/Person.pm:31:    encode_args   => {algorithm => 'SHA-1', format => 'hex'},
+lib/MojoMojo/Schema/Person.pm:50:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Person.pm:51:__PACKAGE__->has_many("entries", "Entry", { "foreign.author" => "self.id" });
+lib/MojoMojo/Schema/Person.pm:52:__PACKAGE__->has_many("tags", "Tag", { "foreign.person" => "self.id" });
+lib/MojoMojo/Schema/Person.pm:53:__PACKAGE__->has_many("comments", "Comment", { "foreign.poster" => "self.id" });
+lib/MojoMojo/Schema/Person.pm:54:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Person.pm:59:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Person.pm:64:__PACKAGE__->many_to_many( roles => 'role_members', 'role');
+lib/MojoMojo/Schema/Person.pm:65:__PACKAGE__->has_many("contents", "Content", { "foreign.creator" => "self.id" });
+lib/MojoMojo/Schema/Person.pm:69:    my ($person) = $self->search({login=>$login});
+lib/MojoMojo/Schema/Person.pm:74:    my $admins = MojoMojo->pref('admins');
+lib/MojoMojo/Schema/Person.pm:75:    my $login = $self->login;
+lib/MojoMojo/Schema/Person.pm:82:   return lc "/".($self->login || MojoMojo->pref('anonymous_user'));
+lib/MojoMojo/Schema/Person.pm:93:    return 0 unless $self->active;
+lib/MojoMojo/Schema/Person.pm:95:    return 1 if $self->is_admin;
+lib/MojoMojo/Schema/Person.pm:96:    return 1 unless MojoMojo->pref('restrict_to_home');
+lib/MojoMojo/Schema/Person.pm:97:    my $link=$self->link;
+lib/MojoMojo/Schema/Person.pm:104:    return $self->search({login=>$user})->next();
+lib/MojoMojo/Schema/Person.pm:109:    my @pages=$self->result_source->related_source('page_versions')->
+lib/MojoMojo/Schema/Person.pm:110:	related_source('page')->resultset->search({
+lib/MojoMojo/Schema/Person.pm:111:	    'versions.creator' => $self->id,
+lib/MojoMojo/Schema/Person.pm:118:	})->all;
+lib/MojoMojo/Schema/Person.pm:119:    return $self->result_source->related_source('page_versions')->
+lib/MojoMojo/Schema/Person.pm:120:	related_source('page')->resultset->set_paths(@pages);
+lib/MojoMojo/Schema/Person.pm:135:                    name       => 'only letters, 3-10 chars'},
+lib/MojoMojo/Schema/Person.pm:136:                  { constraint => sub { $self->user_free($schema,@_) } ,
+lib/MojoMojo/Schema/Person.pm:166:    return 1 if $self->pass eq $pass;
+lib/MojoMojo/Schema/Person.pm:173:    my $user= $class->result_source->resultset->get_user( $login );
+lib/MojoMojo/Schema/Photo.pm:10:my $exif=Image::ExifTool->new();
+lib/MojoMojo/Schema/Photo.pm:12:__PACKAGE__->load_components("PK::Auto", 'Ordered',"Core");
+lib/MojoMojo/Schema/Photo.pm:13:__PACKAGE__->position_column('position');
+lib/MojoMojo/Schema/Photo.pm:14:__PACKAGE__->table("photo");
+lib/MojoMojo/Schema/Photo.pm:15:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Photo.pm:41:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Photo.pm:42:__PACKAGE__->has_many("tags", "Tag", { "foreign.photo" => "self.id" });
+lib/MojoMojo/Schema/Photo.pm:43:__PACKAGE__->has_many("comments", "Comment", { "foreign.picture" => "self.id" });
+lib/MojoMojo/Schema/Photo.pm:44:__PACKAGE__->has_one('attachment','MojoMojo::Schema::Attachment'); #,{'foreign.id' => 'self.id' });
+lib/MojoMojo/Schema/Photo.pm:55:    my $info=$exif->ImageInfo($att->filename);
+lib/MojoMojo/Schema/Photo.pm:56:    $self->camera($info->{'Model'});
+lib/MojoMojo/Schema/Photo.pm:57:    $self->lens($info->{'FocalLength'});
+lib/MojoMojo/Schema/Photo.pm:58:    $self->iso($info->{'ISO'});
+lib/MojoMojo/Schema/Photo.pm:59:    $self->aperture($info->{'Aperture'});
+lib/MojoMojo/Schema/Photo.pm:60:    $self->description($info->{'UserComment'});
+lib/MojoMojo/Schema/Photo.pm:61:    $self->taken($self->exif2datetime($info->{'DateTimeOriginal'}));
+lib/MojoMojo/Schema/Photo.pm:76:    return DateTime->new(year=>$y,month =>$M,   day=>$d,
+lib/MojoMojo/Schema/Photo.pm:89:    return $self->retrieve_previous('tags.tag'=>$tag, {order_by=>'taken DESC'})->next;
+lib/MojoMojo/Schema/Photo.pm:101:	return $self->result_source->resultset-_search({id=>{'>',$self->id},'tags.tag'=>$tag}, {order_by=>'taken DESC',join=>[qw/tags/],rows=>1})->next;
+lib/MojoMojo/Schema/Photo.pm:112:	my (@tags) = $self->related_resultset('tags')->search({
+lib/MojoMojo/Schema/Photo.pm:113:	    photo => $self->id, 
+lib/MojoMojo/Schema/Photo.pm:132:    my (@tags) = $self->related_resultset('tags')->search({
+lib/MojoMojo/Schema/Photo.pm:133:	    photo => $self->id, 
+lib/MojoMojo/Schema/Photo.pm:149:    my $img=Imager->new();
+lib/MojoMojo/Schema/Photo.pm:150:    my $att=$self->attachment;
+lib/MojoMojo/Schema/Photo.pm:151:    $img->open(file=>$att->filename) or die $img->errstr;
+lib/MojoMojo/Schema/Photo.pm:152:    my $constrain = Image::Math::Constrain->new(800, 600);
+lib/MojoMojo/Schema/Photo.pm:153:    my$image = $img->scale(constrain => $constrain);
+lib/MojoMojo/Schema/Photo.pm:155:    $image->write(file=>$att->filename.'.inline',type=>'jpeg') or die $img->errstr;
+lib/MojoMojo/Schema/Photo.pm:167:    my $img=Imager->new();
+lib/MojoMojo/Schema/Photo.pm:168:    my $att=$self->attachment;
+lib/MojoMojo/Schema/Photo.pm:169:    $img->open(file=>$att->filename) or die $img->errstr;
+lib/MojoMojo/Schema/Photo.pm:170:    my $h=$img->getheight;
+lib/MojoMojo/Schema/Photo.pm:171:    my $w=$img->getwidth;
+lib/MojoMojo/Schema/Photo.pm:174:        $image=$img->scale(xpixels=>80);
+lib/MojoMojo/Schema/Photo.pm:175:            $h=$image->getheight;
+lib/MojoMojo/Schema/Photo.pm:176:        $result =$image->crop(
+lib/MojoMojo/Schema/Photo.pm:177:                            top=> int(($h-80)/2),
+lib/MojoMojo/Schema/Photo.pm:182:        $image=$img->scale(ypixels=>80);
+lib/MojoMojo/Schema/Photo.pm:183:            $w=$image->getwidth;
+lib/MojoMojo/Schema/Photo.pm:184:        $result  =$image->crop(
+lib/MojoMojo/Schema/Photo.pm:185:                          left=> int(($w-80)/2),
+lib/MojoMojo/Schema/Photo.pm:190:    $result->write(file=>$att->filename.'.thumb',type=>'jpeg') or die $img->errstr;
+lib/MojoMojo/Schema/Preference.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/Preference.pm:9:__PACKAGE__->table("preference");
+lib/MojoMojo/Schema/Preference.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Preference.pm:16:__PACKAGE__->set_primary_key("prefkey");
+lib/MojoMojo/Schema/Role.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/Role.pm:9:__PACKAGE__->table("role");
+lib/MojoMojo/Schema/Role.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Role.pm:18:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Role.pm:19:__PACKAGE__->add_unique_constraint("name_unique", ["name"]);
+lib/MojoMojo/Schema/Role.pm:20:__PACKAGE__->has_many(
+lib/MojoMojo/Schema/Role.pm:25:__PACKAGE__->has_many("role_members", "RoleMember", { "foreign.role" => "self.id" });
+lib/MojoMojo/Schema/RoleMember.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/RoleMember.pm:9:__PACKAGE__->table("role_member");
+lib/MojoMojo/Schema/RoleMember.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/RoleMember.pm:18:__PACKAGE__->set_primary_key("role", "person");
+lib/MojoMojo/Schema/RoleMember.pm:19:__PACKAGE__->belongs_to("role", "Role", { id => "role" });
+lib/MojoMojo/Schema/RoleMember.pm:20:__PACKAGE__->belongs_to("person", "Person", { id => "person" });
+lib/MojoMojo/Schema/RolePrivilege.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/RolePrivilege.pm:9:__PACKAGE__->table("role_privilege");
+lib/MojoMojo/Schema/RolePrivilege.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/RolePrivilege.pm:18:__PACKAGE__->set_primary_key("page", "role", "privilege");
+lib/MojoMojo/Schema/RolePrivilege.pm:19:__PACKAGE__->belongs_to("page", "Page", { id => "page" });
+lib/MojoMojo/Schema/RolePrivilege.pm:20:__PACKAGE__->belongs_to("role", "Role", { id => "role" });
+lib/MojoMojo/Schema/Tag.pm:9:__PACKAGE__->load_components("ResultSetManager","PK::Auto", "Core");
+lib/MojoMojo/Schema/Tag.pm:10:__PACKAGE__->table("tag");
+lib/MojoMojo/Schema/Tag.pm:11:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/Tag.pm:23:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/Tag.pm:24:__PACKAGE__->belongs_to("person", "Person", { id => "person" });
+lib/MojoMojo/Schema/Tag.pm:25:__PACKAGE__->belongs_to("page", "Page", { id => "page" });
+lib/MojoMojo/Schema/Tag.pm:26:__PACKAGE__->belongs_to("photo", "Photo", { id => "photo" });
+lib/MojoMojo/Schema/Tag.pm:30:    return $self->search({
+lib/MojoMojo/Schema/Tag.pm:42:    return $self->search({
+lib/MojoMojo/Schema/Tag.pm:45:        -or => [
+lib/MojoMojo/Schema/Tag.pm:46:           -and => [
+lib/MojoMojo/Schema/Tag.pm:69:    return $self->search({
+lib/MojoMojo/Schema/Tag.pm:89:    $tag   ||= $self->tag;
+lib/MojoMojo/Schema/Tag.pm:91:    return $self->search({
+lib/MojoMojo/Schema/Tag.pm:107:    return $self->get_column('refcount') if $self->has_column_loaded('refcount');
+lib/MojoMojo/Schema/WantedPage.pm:8:__PACKAGE__->load_components("PK::Auto", "Core");
+lib/MojoMojo/Schema/WantedPage.pm:9:__PACKAGE__->table("wanted_page");
+lib/MojoMojo/Schema/WantedPage.pm:10:__PACKAGE__->add_columns(
+lib/MojoMojo/Schema/WantedPage.pm:18:__PACKAGE__->set_primary_key("id");
+lib/MojoMojo/Schema/WantedPage.pm:19:__PACKAGE__->belongs_to("from_page", "Page", { id => "from_page" });
+lib/MojoMojo/Schema.pm:12:__PACKAGE__->load_classes;
+lib/MojoMojo/Schema.pm:18:    my @people = $schema->populate('Person', [
+lib/MojoMojo/Schema.pm:24:    my @prefs=$schema->populate('Preference', [
+lib/MojoMojo/Schema.pm:30:    my @pages=$schema->populate('Page', [
+lib/MojoMojo/Schema.pm:37:    my @pageversions=$schema->populate('PageVersion', [
+lib/MojoMojo/Schema.pm:41:             				  [ 1,1,undef,undef,'/','/',0,undef,undef, $people[1]->id,'',0,'','','' ],
+lib/MojoMojo/Schema.pm:42:            				  [ 2,1,1,undef,'help','Help',0,undef,undef, $people[1]->id,'',0,'','','' ],
+lib/MojoMojo/Schema.pm:43:            				  [ 3,1,1,undef,'admin','Admin',0,undef,undef, $people[1]->id,'',0,'','','' ],
+lib/MojoMojo/Schema.pm:46:    my @content=$schema->populate('Content', [
+lib/MojoMojo/Schema.pm:49:        			      [ 1,1, $people[1]->id, 0,'h1. Welcome to MojoMojo!
+lib/MojoMojo/Schema.pm:59:        			      [ 2,1,$people[1]->id,0,'h1. Help Index.
+lib/MojoMojo/Schema.pm:65:       			      [ 3,1,$people[1]->id,0,'h1. Admin User.
+lib/MojoMojo/Schema.pm:72:    $schema->resultset('Page')->update({version=>1});
+lib/MojoMojo/Schema.pm:73:    $schema->resultset('Page')->update({content_version=>1});
+lib/MojoMojo/Schema.pm:74:    $schema->resultset('PageVersion')->update({content_version_first=>1});
+lib/MojoMojo/Schema.pm:75:    $schema->resultset('PageVersion')->update({content_version_last=>1});
+lib/MojoMojo/View/TT.pm:8:#__PACKAGE__->config->{DEBUG}       = DEBUG_UNDEF;
+lib/MojoMojo/View/TT.pm:9:__PACKAGE__->config->{PRE_CHOMP}   = 2;
+lib/MojoMojo/View/TT.pm:10:__PACKAGE__->config->{POST_CHOMP}  = 2;
+lib/MojoMojo/View/TT.pm:11:__PACKAGE__->config->{CONTEXT} = undef;
+lib/MojoMojo/View/TT.pm:12:__PACKAGE__->config(TEMPLATE_EXTENSION => '.tt');
+lib/MojoMojo/View/TT.pm:16:=head1 MojoMojo::V::TT - Template Toolkit views for MojoMojo
+lib/MojoMojo/View/TT.pm:21:  $c->forward('MojoMojo::V::TT');
+lib/MojoMojo.pm:30:MojoMojo->config->{authentication}{dbic} = {
+lib/MojoMojo.pm:36:MojoMojo->setup();
+lib/MojoMojo.pm:38:MojoMojo->model('DBIC::Attachment')->result_source->schema->attachment_dir(MojoMojo->path_to('uploads').'');
+lib/MojoMojo.pm:42:MojoMojo - A Catalyst & DBIx::Class powered Wiki.
+lib/MojoMojo.pm:56:    SetHandler perl-script
+lib/MojoMojo.pm:63:wikis and blogs. It allows you to maintain a full tree-structure of pages, 
+lib/MojoMojo.pm:65:always go back to a previous version and see what's changed with a easy ajax-
+lib/MojoMojo.pm:79:    return MojoMojo::Formatter::Wiki->expand_wikiword( @_ );
+lib/MojoMojo.pm:85:    return MojoMojo::Formatter::Wiki->format_link( @_ );
+lib/MojoMojo.pm:93:    $setting = $c->model('DBIC::Preference')->find_or_create(
+lib/MojoMojo.pm:96:        $setting->prefvalue($value);
+lib/MojoMojo.pm:97:        $setting->update();
+lib/MojoMojo.pm:100:    return ( defined $setting->prefvalue() ? 
+lib/MojoMojo.pm:101:             $setting->prefvalue : 
+lib/MojoMojo.pm:118:# always start with '/', we strip the trailing slash from $c->req->base.
+lib/MojoMojo.pm:121:# path and save it in $c->stash->{path} and reset $c->req->path to $action.
+lib/MojoMojo.pm:122:# We save the original uri in $c->stash->{pre_hacked_uri}.
+lib/MojoMojo.pm:126:    $c->NEXT::prepare_path;
+lib/MojoMojo.pm:127:    $c->stash->{pre_hacked_uri} = $c->req->uri;
+lib/MojoMojo.pm:128:    my $base=$c->req->base;
+lib/MojoMojo.pm:130:    $c->req->base( URI->new($base) );
+lib/MojoMojo.pm:132:    $path=$c->req->path;
+lib/MojoMojo.pm:134:    if ($index==-1) {
+lib/MojoMojo.pm:136:      $c->stash->{path}=$path || '/';
+lib/MojoMojo.pm:137:      $c->req->path('view');
+lib/MojoMojo.pm:140:      $c->stash->{path}='/'.substr($path,0,$index);
+lib/MojoMojo.pm:141:      $c->req->path(substr($path,$index+1));
+lib/MojoMojo.pm:149:  return URI->new($c->req->base);
+lib/MojoMojo.pm:161:# Override $c->uri_for to append path, if relative path is used
+lib/MojoMojo.pm:167:         my $prefix = $c->stash->{path} eq '/' ? '': '/';
+lib/MojoMojo.pm:168:    	 unshift(@_,$prefix . $c->stash->{path} . '.' . $val);
+lib/MojoMojo.pm:170:    $c->NEXT::uri_for(@_);
+lib/MojoMojo.pm:175:    return ($self->config->{static_path} || '/.static/') . $asset;
+lib/MojoMojo.pm:183:#          $c->config->{permissions}{view_allowed} = 1; # or 0 
+lib/MojoMojo.pm:189:#      record with a role-id of 0.
+lib/MojoMojo.pm:196:#      least-specific path to most specific. This means that when checking
+lib/MojoMojo.pm:203:#      affecting previously determined permissions for the other actions. Finally -
+lib/MojoMojo.pm:207:#      page - meaning apply_to_subpages = no.
+lib/MojoMojo.pm:213:    ## make some changes to the path - We have to do this
+lib/MojoMojo.pm:218:    ## lowercase the path - and ensure it has a leading /
+lib/MojoMojo.pm:221:    # clear out any double-slashes 
+lib/MojoMojo.pm:240:    ## always use role_id 0 - which is default role and includes everyone.
+lib/MojoMojo.pm:243:        push @role_ids, map { $_->role->id } $user->role_members->all;
+lib/MojoMojo.pm:247:    ## ok - now that we have our path elements to check - we have to figure out how we are accessing them.
+lib/MojoMojo.pm:272:    if ($c->config->{'permissions'}{'cache_permission_data'}) {
+lib/MojoMojo.pm:273:        $permdata = $c->cache->get('page_permission_data');        
+lib/MojoMojo.pm:277:    # we have two options here - if we are caching, we will load everything and cache it.
+lib/MojoMojo.pm:278:    # if we are not - then we load just the bits we need.
+lib/MojoMojo.pm:282:        my $rs = $c->model('DBIC::PathPermissions')->search(undef, { order_by => 'length(path),role,apply_to_subpages' });
+lib/MojoMojo.pm:285:        if (!$c->config->{'permissions'}{'cache_permission_data'}) {
+lib/MojoMojo.pm:286:            ## this seems odd to me - but that's what the dbix::class says to do.
+lib/MojoMojo.pm:287:            $rs = $rs->search({ role => \@role_ids });
+lib/MojoMojo.pm:288:            $rs = $rs->search({ '-or' => [
+lib/MojoMojo.pm:300:        $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+lib/MojoMojo.pm:303:        while (my $record = $rs->next) {
+lib/MojoMojo.pm:304:            if ($record->{'apply_to_subpages'} eq 'yes') {
+lib/MojoMojo.pm:309:            %{$permdata->{$record->{'path'}}{$record->{'role'}}{$recordtype}} = map { $_ => $record->{$_ . "_allowed"} } qw/create edit view delete attachment/;             
+lib/MojoMojo.pm:313:    ## now we re-cache it - if we need to.  # !$c->cache('memory')->exists('page_permission_data')
+lib/MojoMojo.pm:314:    if ($c->config->{'permissions'}{'cache_permission_data'}) {
+lib/MojoMojo.pm:315:        $c->cache->set('page_permission_data', $permdata);
+lib/MojoMojo.pm:322:                        'allowed' => ($c->config->{'permissions'}{'create_allowed'} || 1),
+lib/MojoMojo.pm:327:                        'allowed' => ($c->config->{'permissions'}{'delete_allowed'} || 1),
+lib/MojoMojo.pm:332:                        'allowed' => ($c->config->{'permissions'}{'edit_allowed'} || 1),
+lib/MojoMojo.pm:337:                        'allowed' => ($c->config->{'permissions'}{'view_allowed'} || 1),
+lib/MojoMojo.pm:342:                        'allowed' => ($c->config->{'permissions'}{'attachment_allowed'} || 1),
+lib/MojoMojo.pm:354:    ## over the deny.  Note that more-specific denies will still
+lib/MojoMojo.pm:363:            if (exists($permdata->{$path}) && exists($permdata->{$path}{$role}) && 
+lib/MojoMojo.pm:364:                exists($permdata->{$path}{$role}{$permtype})) {
+lib/MojoMojo.pm:369:                foreach my $perm (keys %{$permdata->{$path}{$role}{$permtype}} ) {
+lib/MojoMojo.pm:372:                    if (defined($permdata->{$path}{$role}{$permtype}{$perm})) {
+lib/MojoMojo.pm:374:                            if ($permdata->{$path}{$role}{$permtype}{$perm} eq 'yes') {
+lib/MojoMojo.pm:380:                            if ($permdata->{$path}{$role}{$permtype}{$perm} eq 'yes') {
+lib/Text/SmartyPants.pm:9:                    #  1 =>  "--" for em-dashes; no en-dash support
+lib/Text/SmartyPants.pm:10:                    #  2 =>  "---" for em-dashes; "--" for en-dashes
+lib/Text/SmartyPants.pm:11:                    #  3 =>  "--" for em-dashes; "---" for en-dashes
+lib/Text/SmartyPants.pm:36:    # 2 : set all, using old school en- and em- dash shortcuts
+lib/Text/SmartyPants.pm:37:    # 3 : set all, using inverted old school en and em- dash shortcuts
+lib/Text/SmartyPants.pm:73:    elsif ($attr eq "-1") {
+lib/Text/SmartyPants.pm:99:                                    # for one-character tokens that consist of 
+lib/Text/SmartyPants.pm:102:                                    # token, to use as context to curl single-
+lib/Text/SmartyPants.pm:106:        if ($cur_token->[0] eq "tag") {
+lib/Text/SmartyPants.pm:108:            $result .= $cur_token->[1];
+lib/Text/SmartyPants.pm:109:            if ($cur_token->[1] =~ m/$tags_to_skip/) {
+lib/Text/SmartyPants.pm:113:            my $t = $cur_token->[1];
+lib/Text/SmartyPants.pm:114:            my $last_char = substr($t, -1); # Remember last char of this token before processing.
+lib/Text/SmartyPants.pm:138:                        # Special case: single-character ' token
+lib/Text/SmartyPants.pm:147:                        # Special case: single-character " token
+lib/Text/SmartyPants.pm:177:    my $do_backticks;   # should we educate ``backticks'' -style quotes?
+lib/Text/SmartyPants.pm:184:        # smarten ``backticks'' -style quotes
+lib/Text/SmartyPants.pm:205:                                    # for one-character tokens that consist of 
+lib/Text/SmartyPants.pm:208:                                    # token, to use as context to curl single-
+lib/Text/SmartyPants.pm:212:        if ($cur_token->[0] eq "tag") {
+lib/Text/SmartyPants.pm:214:            $result .= $cur_token->[1];
+lib/Text/SmartyPants.pm:215:            if ($cur_token->[1] =~ m/$tags_to_skip/) {
+lib/Text/SmartyPants.pm:219:            my $t = $cur_token->[1];
+lib/Text/SmartyPants.pm:220:            my $last_char = substr($t, -1); # Remember last char of this token before processing.
+lib/Text/SmartyPants.pm:228:                    # Special case: single-character ' token
+lib/Text/SmartyPants.pm:237:                    # Special case: single-character " token
+lib/Text/SmartyPants.pm:276:        # use old smart dash shortcuts, "--" for en, "---" for em
+lib/Text/SmartyPants.pm:280:        # inverse of 2, "--" for em, "---" for en
+lib/Text/SmartyPants.pm:290:        if ($cur_token->[0] eq "tag") {
+lib/Text/SmartyPants.pm:292:            $result .= $cur_token->[1];
+lib/Text/SmartyPants.pm:293:            if ($cur_token->[1] =~ m/$tags_to_skip/) {
+lib/Text/SmartyPants.pm:297:            my $t = $cur_token->[1];
+lib/Text/SmartyPants.pm:300:                $t = $dash_sub_ref->($t);
+lib/Text/SmartyPants.pm:325:        if ($cur_token->[0] eq "tag") {
+lib/Text/SmartyPants.pm:327:            $result .= $cur_token->[1];
+lib/Text/SmartyPants.pm:328:            if ($cur_token->[1] =~ m/$tags_to_skip/) {
+lib/Text/SmartyPants.pm:332:            my $t = $cur_token->[1];
+lib/Text/SmartyPants.pm:362:    # Make our own "punctuation" character class, because the POSIX-style
+lib/Text/SmartyPants.pm:364:    my $punct_class = qr/[!"#\$\%'()*+,-.\/:;<=>?\@\[\\\]\^_`{|}~]/;
+lib/Text/SmartyPants.pm:367:    # followed by punctuation at a non-word-break. Close the quotes by brute force:
+lib/Text/SmartyPants.pm:412:#   Returns:    The string, with ``backticks'' -style double quotes
+lib/Text/SmartyPants.pm:429:#   Returns:    The string, with `backticks' -style single quotes
+lib/Text/SmartyPants.pm:447:#   Returns:    The string, with each instance of "--" translated to
+lib/Text/SmartyPants.pm:448:#               an em-dash HTML entity.
+lib/Text/SmartyPants.pm:452:    s/--/&#8212;/g;
+lib/Text/SmartyPants.pm:461:#   Returns:    The string, with each instance of "--" translated to
+lib/Text/SmartyPants.pm:462:#               an en-dash HTML entity, and each "---" translated to
+lib/Text/SmartyPants.pm:463:#               an em-dash HTML entity.
+lib/Text/SmartyPants.pm:467:    s/---/&#8212;/g;    # em
+lib/Text/SmartyPants.pm:468:    s/--/&#8211;/g;     # en
+lib/Text/SmartyPants.pm:477:#   Returns:    The string, with each instance of "--" translated to
+lib/Text/SmartyPants.pm:478:#               an em-dash HTML entity, and each "---" translated to
+lib/Text/SmartyPants.pm:479:#               an en-dash HTML entity. Two reasons why: First, unlike the
+lib/Text/SmartyPants.pm:480:#               en- and em-dash syntax supported by
+lib/Text/SmartyPants.pm:482:#               entries written before SmartyPants 1.1, back when "--" was
+lib/Text/SmartyPants.pm:483:#               only used for em-dashes.  Second, em-dashes are more
+lib/Text/SmartyPants.pm:484:#               common than en-dashes, and so it sort of makes sense that
+lib/Text/SmartyPants.pm:490:    s/---/&#8211;/g;    # en
+lib/Text/SmartyPants.pm:491:    s/--/&#8212;/g;     # em
+lib/Text/SmartyPants.pm:519:#   Example output: "Hello -- world."
+lib/Text/SmartyPants.pm:524:    s/&#8211;/-/g;      # en-dash
+lib/Text/SmartyPants.pm:525:    s/&#8212;/--/g;     # em-dash
+lib/Text/SmartyPants.pm:552:#               ------  -----
+lib/Text/SmartyPants.pm:557:#               \-      &#45;
+lib/Text/SmartyPants.pm:566:    s! \\-  !&#45;!gx;
+lib/Text/SmartyPants.pm:580:#               two-element array; the first is either 'tag' or 'text';
+lib/Text/SmartyPants.pm:600:        my $tag_start = $sec_start - length $whole_tag;
+lib/Text/SmartyPants.pm:602:            push @tokens, ['text', substr($str, $pos, $tag_start - $pos)];
+lib/Text/SmartyPants.pm:607:    push @tokens, ['text', substr($str, $pos, $len - $pos)] if $pos < $len;
+lib/Text/SmartyPants.pm:624:SmartyPants is a free web publishing plug-in for Movable Type, Blosxom,
+lib/Text/SmartyPants.pm:641:Backticks-style quotes (``like this'') into "curly" quote HTML entities
+lib/Text/SmartyPants.pm:645:Dashes (C<--> and C<--->) into en- and em-dash entities
+lib/Text/SmartyPants.pm:655:posts (and final HTML output) will appear with smart quotes, em-dashes,
+lib/Text/SmartyPants.pm:658:SmartyPants is a combination plug-in -- the same file works with Movable
+lib/Text/SmartyPants.pm:659:Type, Blosxom, and BBEdit. It can also be used from a Unix-style
+lib/Text/SmartyPants.pm:660:command-line. Version requirements and installation instructions for
+lib/Text/SmartyPants.pm:661:each of these tools can be found in the corresponding sub-section under
+lib/Text/SmartyPants.pm:675:to force non-smart punctuation. It does so by transforming the escape
+lib/Text/SmartyPants.pm:676:sequence into a decimal-encoded HTML entity:
+lib/Text/SmartyPants.pm:679:              ------  -----  ---------
+lib/Text/SmartyPants.pm:684:                \-    &#45;    -
+lib/Text/SmartyPants.pm:691:=head2 MT-Textile Integration
+lib/Text/SmartyPants.pm:694:conjunction with Brad Choate's MT-Textile plug-in:
+lib/Text/SmartyPants.pm:698:MT-Textile is a port of Dean Allen's original Textile project to Perl
+lib/Text/SmartyPants.pm:699:and Movable Type. MT-Textile by itself only translates Textile markup
+lib/Text/SmartyPants.pm:700:to HTML. However, if SmartyPants is also installed, MT-Textile will
+lib/Text/SmartyPants.pm:702:automatically. Using SmartyPants in conjunction with MT-Textile
+lib/Text/SmartyPants.pm:705:Textile is Dean Allen's "humane web text generator", an easy-to-write
+lib/Text/SmartyPants.pm:706:and easy-to-read shorthand for writing text for the web. An online
+lib/Text/SmartyPants.pm:731:If you're using SmartyPants with Brad Choate's MT-Textile, you're done.
+lib/Text/SmartyPants.pm:759:Rename the "SmartyPants.pl" plug-in to "SmartyPants" (case is
+lib/Text/SmartyPants.pm:760:important). Movable Type requires plug-ins to have a ".pl" extension;
+lib/Text/SmartyPants.pm:765:Copy the "SmartyPants" plug-in file to your Blosxom plug-ins folder. If
+lib/Text/SmartyPants.pm:766:you're not sure where your Blosxom plug-ins folder is, see the Blosxom
+lib/Text/SmartyPants.pm:777:plug-in, and edit the value of the C<$smartypants_attr> configuration
+lib/Text/SmartyPants.pm:811:then choose SmartyPants from the Filters sub-menu or the Filters
+lib/Text/SmartyPants.pm:812:floating palette. On Mac OS 9, the Filters sub-menu is in the "Camel"
+lib/Text/SmartyPants.pm:845:``backticks'' -style), em-dashes, and ellipses. "--" (dash dash) is used
+lib/Text/SmartyPants.pm:846:to signify an em-dash; there is no support for en-dashes.
+lib/Text/SmartyPants.pm:850:Same as smarty_pants="1", except that it uses the old-school typewriter
+lib/Text/SmartyPants.pm:851:shorthand for dashes:  "--" (dash dash) for en-dashes, "---" (dash dash dash)
+lib/Text/SmartyPants.pm:852:for em-dashes.
+lib/Text/SmartyPants.pm:856:Same as smarty_pants="2", but inverts the shorthand for dashes:  "--"
+lib/Text/SmartyPants.pm:857:(dash dash) for em-dashes, and "---" (dash dash dash) for en-dashes.
+lib/Text/SmartyPants.pm:859:=item B<"-1"> 
+lib/Text/SmartyPants.pm:863:"&#8220;" is turned into a simple double-quote ("), "&#8212;" is turned
+lib/Text/SmartyPants.pm:865:Brad Choate's MT-Textile text filter, but wish to suppress smart
+lib/Text/SmartyPants.pm:868:smarty_pants="-1" to reverse the transformations in specific templates.
+lib/Text/SmartyPants.pm:873:The following single-character attribute values can be combined to toggle
+lib/Text/SmartyPants.pm:875:example, to educate normal quotes and em-dashes, but not ellipses or
+lib/Text/SmartyPants.pm:876:``backticks'' -style quotes:
+lib/Text/SmartyPants.pm:888:Educates ``backticks'' -style double quotes.
+lib/Text/SmartyPants.pm:892:Educates ``backticks'' -style double quotes and `single' quotes.
+lib/Text/SmartyPants.pm:896:Educates em-dashes.
+lib/Text/SmartyPants.pm:900:Educates em-dashes and en-dashes, using old-school typewriter shorthand:
+lib/Text/SmartyPants.pm:901:(dash dash) for en-dashes, (dash dash dash) for em-dashes.
+lib/Text/SmartyPants.pm:905:Educates em-dashes and en-dashes, using inverted old-school typewriter
+lib/Text/SmartyPants.pm:906:shorthand: (dash dash) for em-dashes, (dash dash dash) for en-dashes.
+lib/Text/SmartyPants.pm:914:Translates any instance of C<&quot;> into a normal double-quote character.
+lib/Text/SmartyPants.pm:917:inexplicably uses this entity to represent a literal double-quote
+lib/Text/SmartyPants.pm:922:Thus, if you wish to apply all SmartyPants transformations (quotes, en-
+lib/Text/SmartyPants.pm:923:and em-dashes, and ellipses) and also translate C<&quot;> entities into
+lib/Text/SmartyPants.pm:962:Educate ``backticks'' -style double quotes (in addition to educating
+lib/Text/SmartyPants.pm:964:characters (C<``>) into an opening double-quote, and each instance of two
+lib/Text/SmartyPants.pm:965:consecutive apostrophes (C<''>) into a closing double-quote.
+lib/Text/SmartyPants.pm:982:Default behavior. Transforms each instance of "--" (dash dash) into an
+lib/Text/SmartyPants.pm:983:HTML entity-encoded em-dash.
+lib/Text/SmartyPants.pm:987:Educates both en- and em-dashes, using the old-school typewriter
+lib/Text/SmartyPants.pm:988:shorthand for dashes. Each instance of "--" (dash dash) is turned into
+lib/Text/SmartyPants.pm:989:an HTML entity-encoded en-dash; each instance of "---" (dash dash dash)
+lib/Text/SmartyPants.pm:990:is turned into an em-dash.
+lib/Text/SmartyPants.pm:994:Same as smart_dashes="2", but inverts the shorthand, using "--" (dash
+lib/Text/SmartyPants.pm:995:dash) for em-dashes, and "---" (dash dash dash) for en-dashes. Although
+lib/Text/SmartyPants.pm:998:original syntax, which used (dash dash) for em-dashes.
+lib/Text/SmartyPants.pm:1017:an HTML entity-encoded ellipsis. If there are four consecutive dots,
+lib/Text/SmartyPants.pm:1045:continue not caring. Using straight quotes -- and sticking to the 7-bit
+lib/Text/SmartyPants.pm:1046:ASCII character set in general -- is certainly a simpler way to live.
+lib/Text/SmartyPants.pm:1051:weblog a bit harder for others to quote from using copy-and-paste. What
+lib/Text/SmartyPants.pm:1053:contains the 8-bit curly quote characters (as well as the 8-bit characters
+lib/Text/SmartyPants.pm:1054:for em-dashes and ellipses, if you use these options). These characters
+lib/Text/SmartyPants.pm:1059:using curly quotes, and they'll go ahead and paste the unencoded 8-bit
+lib/Text/SmartyPants.pm:1065:makes it easy to stupefy smart quote characters into their 7-bit
+lib/Text/SmartyPants.pm:1079:single-quotes, when in fact they should be closing ones. I don't think
+lib/Text/SmartyPants.pm:1080:this problem can be solved in the general case -- every word processor
+lib/Text/SmartyPants.pm:1082:proper HTML entity for closing single-quotes (C<&#8217;>) by hand.
+lib/Text/SmartyPants.pm:1105:This plug-in effectively obsoletes the technique documented here:
+lib/Text/SmartyPants.pm:1123:        use "--" for *en* dashes, and "---" for *em* dashes.
+lib/Text/SmartyPants.pm:1125:    +   The default smart_dashes behavior now simply translates "--"
+lib/Text/SmartyPants.pm:1126:        (dash dash) into an em-dash. Previously, it would look for
+lib/Text/SmartyPants.pm:1127:        " -- " (space dash dash space), which was dumb, since many
+lib/Text/SmartyPants.pm:1132:        it will use the new shortcuts for en- and em-dashes.
+lib/Text/SmartyPants.pm:1146:    +   SmartyPants is now a combination plug-in, supporting both
+lib/Text/SmartyPants.pm:1149:        command-line Perl program. Thanks to Rael Dornfest for the
+lib/Text/SmartyPants.pm:1150:        initial Blosxom port (and for the excellent Blosxom plug-in
+lib/Text/SmartyPants.pm:1154:        to force non-smart punctuation. It does so by transforming
+lib/Text/SmartyPants.pm:1155:        the escape sequence into a decimal-encoded HTML entity: 
+lib/Text/SmartyPants.pm:1158:              ------  -----  ---------
+lib/Text/SmartyPants.pm:1163:                \-    &#45;    -
+lib/Text/SmartyPants.pm:1171:    +   Added a new option to support inverted en- and em-dash notation:
+lib/Text/SmartyPants.pm:1172:        "--" for em-dashes, "---" for en-dashes. This is compatible with
+lib/Text/SmartyPants.pm:1173:        SmartyPants' original "--" syntax for em-dashes, but also allows
+lib/Text/SmartyPants.pm:1174:        you to specify en-dashes. It can be invoked by using
+lib/Text/SmartyPants.pm:1179:        regular double-quotes before sending text to EducateQuotes() for
+lib/Text/SmartyPants.pm:1208:            smarty_pants="-1"
+lib/Text/SmartyPants.pm:1212:        into a simple double-quote ("), "&#8212;" is turned into two
+lib/Text/SmartyPants.pm:1214:        Choate's MT-Textile text filter, but wish to suppress smart
+lib/Text/SmartyPants.pm:1217:        use smarty_pants="-1" to reverse the transformations in specific
+lib/Text/SmartyPants.pm:1220:    +   Replaced the POSIX-style regex character class [:punct:] with an
+lib/Text/SmartyPants.pm:1221:        ugly hard-coded normal character class of all punctuation; POSIX
+lib/Text/SmartyPants.pm:1239:        Previous versions were hopelessly confused by single-character
+lib/Text/SmartyPants.pm:1247:        single-character quote tokens as a special case, *before* calling
+lib/Text/SmartyPants.pm:1250:    +   New single-quotes backtick mode for smarty_pants attribute.
+lib/Text/SmartyPants.pm:1269:        really want a period-then-ellipsis sequence, escape the first
+lib/Text/SmartyPants.pm:1272:    +   Removed "&" from our home-grown punctuation class, since it
+lib/Text/SmartyPants.pm:1274:        character. This fixes a bug where SmartyPants would mis-curl
+lib/Text/SmartyPants.pm:1284:        This special case is now case-insensitive.
+lib/Text/SmartyPants.pm:1295:Portions of this plug-in are based on Brad Choate's nifty MTRegex plug-in.
+lib/Text/SmartyPants.pm:1296:Brad Choate also contributed a few bits of source code to this plug-in.
+lib/Text/Textile2.pm:17:    $options{charset} ||= 'iso-8859-1';
+lib/Text/Textile2.pm:27:        $self->css($options{css});
+lib/Text/Textile2.pm:29:    $options{macros} ||= $self->default_macros();
+lib/Text/Textile2.pm:31:        $self->flavor($options{flavor});
+lib/Text/Textile2.pm:33:        $self->flavor('xhtml1/css');
+lib/Text/Textile2.pm:44:        $self->set($_, $opt->{$_}) foreach %$opt;
+lib/Text/Textile2.pm:50:            $self->charset($value);
+lib/Text/Textile2.pm:52:            $self->css($value);
+lib/Text/Textile2.pm:54:            $self->flavor($value);
+lib/Text/Textile2.pm:56:            $self->{$opt} = $value;
+lib/Text/Textile2.pm:63:    return $self->{shift} if @_;
+lib/Text/Textile2.pm:70:        $self->{disable_html} = shift;
+lib/Text/Textile2.pm:72:    $self->{disable_html} || 0;
+lib/Text/Textile2.pm:78:        $self->{head_offset} = shift;
+lib/Text/Textile2.pm:80:    $self->{head_offset} || 0;
+lib/Text/Textile2.pm:87:        $self->{flavor} = $flavor;
+lib/Text/Textile2.pm:90:                $self->{_line_open} = '<l>';
+lib/Text/Textile2.pm:91:                $self->{_line_close} = '</l>';
+lib/Text/Textile2.pm:92:                $self->{_blockcode_open} = '<blockcode>';
+lib/Text/Textile2.pm:93:                $self->{_blockcode_close} = '</blockcode>';
+lib/Text/Textile2.pm:94:                $self->{css_mode} = 1;
+lib/Text/Textile2.pm:97:                $self->{_line_open} = '';
+lib/Text/Textile2.pm:98:                $self->{_line_close} = '<br />';
+lib/Text/Textile2.pm:99:                $self->{_blockcode_open} = '<pre><code>';
+lib/Text/Textile2.pm:100:                $self->{_blockcode_close} = '</code></pre>';
+lib/Text/Textile2.pm:101:                $self->{css_mode} = 1;
+lib/Text/Textile2.pm:104:            $self->{_line_open} = '';
+lib/Text/Textile2.pm:105:            $self->{_line_close} = '<br>';
+lib/Text/Textile2.pm:106:            $self->{_blockcode_open} = '<pre><code>';
+lib/Text/Textile2.pm:107:            $self->{_blockcode_close} = '</code></pre>';
+lib/Text/Textile2.pm:108:            $self->{css_mode} = $flavor =~ m/\/css/;
+lib/Text/Textile2.pm:110:        $self->_css_defaults() if $self->{css_mode} && !exists $self->{css};
+lib/Text/Textile2.pm:112:    $self->{flavor};
+lib/Text/Textile2.pm:120:            $self->{css} = $css;
+lib/Text/Textile2.pm:121:            $self->{css_mode} = 1;
+lib/Text/Textile2.pm:123:            $self->{css_mode} = $css;
+lib/Text/Textile2.pm:124:            $self->_css_defaults() if $self->{css_mode} && !exists $self->{css};
+lib/Text/Textile2.pm:127:    $self->{css_mode} ? $self->{css} : 0;
+lib/Text/Textile2.pm:133:        $self->{charset} = shift;
+lib/Text/Textile2.pm:134:        if ($self->{charset} =~ m/^utf-?8$/i) {
+lib/Text/Textile2.pm:135:            $self->char_encoding(0);
+lib/Text/Textile2.pm:137:            $self->char_encoding(1);
+lib/Text/Textile2.pm:140:    $self->{charset};
+lib/Text/Textile2.pm:145:    $self->{docroot} = shift if @_;
+lib/Text/Textile2.pm:146:    $self->{docroot};
+lib/Text/Textile2.pm:151:    $self->{trim_spaces} = shift if @_;
+lib/Text/Textile2.pm:152:    $self->{trim_spaces};
+lib/Text/Textile2.pm:157:    $self->{filter_param} = shift if @_;
+lib/Text/Textile2.pm:158:    $self->{filter_param};
+lib/Text/Textile2.pm:163:    $self->{preserve_spaces} = shift if @_;
+lib/Text/Textile2.pm:164:    $self->{preserve_spaces};
+lib/Text/Textile2.pm:169:    $self->{filters} = shift if @_;
+lib/Text/Textile2.pm:170:    $self->{filters};
+lib/Text/Textile2.pm:175:    $self->{char_encoding} = shift if @_;
+lib/Text/Textile2.pm:176:    $self->{char_encoding};
+lib/Text/Textile2.pm:181:    $self->{do_quotes} = shift if @_;
+lib/Text/Textile2.pm:182:    $self->{do_quotes};
+lib/Text/Textile2.pm:194:    (?=[a-zA-Z0-9./#])
+lib/Text/Textile2.pm:198:        (?:ftp|https?|telnet|nntp|irc)://(?:\w+(?::\w+)?@)?[-\w]+(?:\.\w[-\w]*)+
+lib/Text/Textile2.pm:200:        (?:mailto:)?[-\+\w]+\@[-\w]+(?:\.\w[-\w]*)+
+lib/Text/Textile2.pm:202:        # or, try to find a hostname with our more specific sub-expression
+lib/Text/Textile2.pm:203:        (?i: [a-z0-9] (?:[-a-z0-9]*[a-z0-9])? \. )+ # sub domains
+lib/Text/Textile2.pm:205:        (?-i: com\b
+lib/Text/Textile2.pm:218:            | [a-z][a-z]\b # two-letter country codes
+lib/Text/Textile2.pm:229:     [^.!,?;:"'<>()\[\]{}\s\x7F-\xFF]*
+lib/Text/Textile2.pm:231:        [.!,?;:]+  [^.!,?;:"'<>()\[\]{}\s\x7F-\xFF]+ #'"
+lib/Text/Textile2.pm:236:$punct = qr{[\!"#\$%&'()\*\+,\-\./:;<=>\?@\[\\\]\^_`{\|}\~]};
+lib/Text/Textile2.pm:237:$valignre = qr/[\-^~]/;
+lib/Text/Textile2.pm:244:  (?:\([A-Za-z0-9_\- \#]+\))
+lib/Text/Textile2.pm:250:  (?:\(+? (?![A-Za-z0-9_\-\#]) )
+lib/Text/Textile2.pm:254:  (?: \[ [a-zA-Z\-]+? \] )
+lib/Text/Textile2.pm:258:  (?:\([A-Za-z0-9_\- \#]+\))
+lib/Text/Textile2.pm:261:      [A-Za-z0-9_\-](?: \( [^)]+ \) | [^}] )+
+lib/Text/Textile2.pm:264:  (?: \[ [a-zA-Z\-]+? \] )
+lib/Text/Textile2.pm:268:  (?:\([A-Za-z0-9_\- \#]+\))
+lib/Text/Textile2.pm:271:      [A-Za-z0-9_\-](?: \( [^)]+ \) | [^}] )+
+lib/Text/Textile2.pm:276:  (?:\(+?(?![A-Za-z0-9_\-\#]))
+lib/Text/Textile2.pm:280:  (?: \[ [a-zA-Z]+? \] )
+lib/Text/Textile2.pm:287:      (?:\[([A-Za-z0-9]+)\])?     # $1: language id
+lib/Text/Textile2.pm:296:      (?:\[([A-Za-z0-9]+)\])?     # $3: language id
+lib/Text/Textile2.pm:305:    (( /? ( h[1-6]
+lib/Text/Textile2.pm:322:    | !--
+lib/Text/Textile2.pm:328:    $self->textile(@_);
+lib/Text/Textile2.pm:340:        # oops -- procedural technique used, so make
+lib/Text/Textile2.pm:360:    $str =~ s/ +$//gm if $self->{trim_spaces};
+lib/Text/Textile2.pm:364:             {$1."\n\n"._repl(\@repl, $self->format_block(text => $2))."\n\n".$3}ges;
+lib/Text/Textile2.pm:366:    unless ($self->{disable_html}) {
+lib/Text/Textile2.pm:371:        $str =~ s|(<!--.+?-->)|_repl(\@repl, $1)|ges;
+lib/Text/Textile2.pm:376:                 {"\n\n"._repl(\@repl, $1.$self->encode_html($2, 1).$3)."\n\n"}ges;
+lib/Text/Textile2.pm:384:                 {_repl(\@repl, $1.$self->encode_html($2, 1).$3)}ges;
+lib/Text/Textile2.pm:389:                 {"\n\n"._repl(\@repl, $1.$self->encode_html($2, 1).$3)."\n\n"}ges;
+lib/Text/Textile2.pm:402:    local $self->{links} = \%links;
+lib/Text/Textile2.pm:435:        if ($para =~ m/^(h[1-6]|p|bq|bc|fn\d+)
+lib/Text/Textile2.pm:443:                    $out .= $self->{_blockcode_close}."\n\n";
+lib/Text/Textile2.pm:448:                    my $table_out = $self->format_table(text => $stickybuff);
+lib/Text/Textile2.pm:453:                    my $dl_out = $self->format_deflist(text => $stickybuff);
+lib/Text/Textile2.pm:460:            # block macros: h[1-6](class)., bq(class)., bc(class)., p(class).
+lib/Text/Textile2.pm:475:            if ($block =~ m/^h([1-6])$/) {
+lib/Text/Textile2.pm:476:                if ($self->{head_offset}) {
+lib/Text/Textile2.pm:477:                    $block = 'h' . ($1 + $self->{head_offset});
+lib/Text/Textile2.pm:494:                if ($params =~ m/\(([A-Za-z0-9_\-\ ]+?)(?:\#(.+?))?\)/ ||
+lib/Text/Textile2.pm:495:                    $params =~ m/\(([A-Za-z0-9_\-\ ]+?)?(?:\#(.+?))\)/) {
+lib/Text/Textile2.pm:500:                            $params =~ s/\([A-Za-z0-9_\-\ ]+?(#.*?)?\)//g;
+lib/Text/Textile2.pm:526:            $buffer = $repl[$1-1];
+lib/Text/Textile2.pm:545:            $buffer = $self->format_list(text => $para);
+lib/Text/Textile2.pm:549:            # handle wiki-style tables
+lib/Text/Textile2.pm:556:                $buffer = $self->format_table(text => $para);
+lib/Text/Textile2.pm:566:                $buffer = $self->format_deflist(text => $para);
+lib/Text/Textile2.pm:584:                $pre .= $self->{_blockcode_open};
+lib/Text/Textile2.pm:589:                    if ($self->{css_mode}) {
+lib/Text/Textile2.pm:594:                            $style .= ';text-align:'.$alignment;
+lib/Text/Textile2.pm:596:                        $class .= ' '.$self->{css}{"class_align_$alignment"} || $alignment;
+lib/Text/Textile2.pm:601:                $style .= qq{;padding-left:${padleft}em} if $padleft;
+lib/Text/Textile2.pm:602:                $style .= qq{;padding-right:${padright}em} if $padright;
+lib/Text/Textile2.pm:618:                      {_repl(\@repl, $self->format_block(text => $2, inline => 1, pre => $1, post => $3))}gesx;
+lib/Text/Textile2.pm:619:            $buffer .= $self->encode_html_basic($para, 1);
+lib/Text/Textile2.pm:622:                $post .= $self->{_blockcode_close};
+lib/Text/Textile2.pm:631:                    if ($self->{css_mode}) {
+lib/Text/Textile2.pm:636:                            $style .= ';text-align:'.$alignment;
+lib/Text/Textile2.pm:638:                        $class .= ' '.$self->{css}{"class_align_$alignment"} || $alignment;
+lib/Text/Textile2.pm:643:                $style .= qq{;padding-left:${padleft}em} if $padleft;
+lib/Text/Textile2.pm:644:                $style .= qq{;padding-right:${padright}em} if $padright;
+lib/Text/Textile2.pm:652:                $pre .= qq{ cite="} . $self->format_url(url => $cite) . '"' if defined $cite; #'
+lib/Text/Textile2.pm:660:            $class .= ' '.$self->{css}{class_footnote} if $self->{css}{class_footnote};
+lib/Text/Textile2.pm:663:                if ($self->{css_mode}) {
+lib/Text/Textile2.pm:668:                        $style .= ';text-align:'.$alignment;
+lib/Text/Textile2.pm:670:                    $class .= $self->{css}{"class_align_$alignment"} || $alignment;
+lib/Text/Textile2.pm:675:            $style .= qq{;padding-left:${padleft}em} if $padleft;
+lib/Text/Textile2.pm:676:            $style .= qq{;padding-right:${padright}em} if $padright;
+lib/Text/Textile2.pm:680:            $pre .= qq{ id="}.($self->{css}{id_footnote_prefix}||'fn').$fnum.'"';
+lib/Text/Textile2.pm:693:                if ($self->{css_mode}) {
+lib/Text/Textile2.pm:698:                        $style .= ';text-align:'.$alignment;
+lib/Text/Textile2.pm:700:                    $class .= ' '.$self->{css}{"class_align_$alignment"} || $alignment;
+lib/Text/Textile2.pm:705:            $style .= qq{;padding-left:${padleft}em} if $padleft;
+lib/Text/Textile2.pm:706:            $style .= qq{;padding-right:${padright}em} if $padright;
+lib/Text/Textile2.pm:714:            $pre .= qq{ cite="} . $self->format_url(url => $cite) . '"' if defined $cite && $block eq 'bq'; #'
+lib/Text/Textile2.pm:719:        $buffer = $self->format_paragraph(text => $para);
+lib/Text/Textile2.pm:734:            $buffer = $self->format_block(text => "|$filter|".$buffer, inline => 1) if defined $filter;
+lib/Text/Textile2.pm:742:            $out .= $self->{_blockcode_close}; # . "\n\n";
+lib/Text/Textile2.pm:746:            my $table_out = $self->format_table(text => $stickybuff);
+lib/Text/Textile2.pm:749:            my $dl_out = $self->format_deflist(text => $stickybuff);
+lib/Text/Textile2.pm:754:    # cleanup-- restore preserved blocks
+lib/Text/Textile2.pm:756:    $out =~ s!(?:<|&lt;)textile#$i(?:>|&gt;)!$_!, $i-- while $_ = pop @repl;
+lib/Text/Textile2.pm:759:    # only for xhtml! just the common ones -- don't fret over input
+lib/Text/Textile2.pm:761:    if ($self->{flavor} =~ m/^xhtml/i) {
+lib/Text/Textile2.pm:777:                {_repl(\@repl, $self->format_block(text => $2, inline => 1, pre => $1, post => $3))}gesx;
+lib/Text/Textile2.pm:780:    if ($buffer =~ m/</ && (!$self->{disable_html})) {  # optimization -- no point in tokenizing if we
+lib/Text/Textile2.pm:788:        my $text = $token->[1];
+lib/Text/Textile2.pm:789:        if ($token->[0] eq 'tag') {
+lib/Text/Textile2.pm:793:            $text = $self->format_inline(text => $text);
+lib/Text/Textile2.pm:806:            if ($self->{_line_open}) {
+lib/Text/Textile2.pm:808:                $result .= $self->{_line_open} . $line . $self->{_line_close};
+lib/Text/Textile2.pm:811:                    $result .= $self->{_line_close} ."\n";
+lib/Text/Textile2.pm:820:                $result .= $self->{_line_close} ."\n";
+lib/Text/Textile2.pm:835:    $result =~ s|<textile#$i>|$_|, $i-- while $_ = pop @repl;
+lib/Text/Textile2.pm:838:    if ($self->{do_quotes}) {
+lib/Text/Textile2.pm:839:        $result = $self->process_quotes($result);
+lib/Text/Textile2.pm:851:             ['-',  'del',    '(?<!\-)\-(?!\-)', '-'],
+lib/Text/Textile2.pm:854:             ['--', 'small',  '(?<!\-)\-\-(?!\-)', '\-\-'],
+lib/Text/Textile2.pm:865:    $text =~ s!$codere!_repl(\@repl, $self->format_code(text => $2.$4, lang => $1.$3))!gem;
+lib/Text/Textile2.pm:870:    # !blah (alt)! -> image
+lib/Text/Textile2.pm:882:              !_repl(\@repl, $self->format_image(pre => $1, src => $5, align => $2||$4, extra => $6, url => $7, clsty => $3, post => $8))!gemx;
+lib/Text/Textile2.pm:894:              !_repl(\@repl, $self->format_span(pre => $1,text => $5,align => $2||$4, cite => $6, clsty => $3, post => $7))!gemx;
+lib/Text/Textile2.pm:896:    $text = $self->encode_html($text);
+lib/Text/Textile2.pm:899:    $text =~ s!&amp;(([a-z]+|#\d+);)!&$1!g;
+lib/Text/Textile2.pm:903:    # "text":url -> hyperlink
+lib/Text/Textile2.pm:926:              !_repl(\@repl, $self->format_link(text => $1,linktext => $3.$6, title => $self->encode_html_basic($4.$7), url => $8, clsty => $2.$5))!gemx;
+lib/Text/Textile2.pm:945:              !_repl(\@repl, $self->format_link(text => $1, linktext => $3.$6, title => $self->encode_html_basic($4.$7), url => $8, clsty => $2.$5))!gemx;
+lib/Text/Textile2.pm:947:    if ($self->{flavor} =~ m/^xhtml2/) {
+lib/Text/Textile2.pm:955:                  !_repl(\@repl, $self->format_cite(pre => $1,text => $2,cite => $3,post => $4))!gemx;
+lib/Text/Textile2.pm:961:        $fntag .= ' class="'.$self->{css}{class_footnote}.'"' if $self->{css}{class_footnote};
+lib/Text/Textile2.pm:962:        $fntag .= '><a href="#'.($self->{css}{id_footnote_prefix}||'fn');
+lib/Text/Textile2.pm:968:              {$self->format_macro(pre => $1, post => $3, macro => $2)}gex;
+lib/Text/Textile2.pm:972:    # (tm) -> &trade;
+lib/Text/Textile2.pm:974:    # (c) -> &copy;
+lib/Text/Textile2.pm:976:    # (r) -> &reg;
+lib/Text/Textile2.pm:979:    if ($self->{preserve_spaces}) {
+lib/Text/Textile2.pm:984:    my $redo = $text =~ m/[\*_\?\-\+\^\~]/;
+lib/Text/Textile2.pm:991:            if ($text =~ s/(?:^|(?<=[\s>'"])|([{[])) # "' $1 - pre
+lib/Text/Textile2.pm:993:                           (?:($clstyre*))?          # $2 - attributes
+lib/Text/Textile2.pm:994:                           ([^$cls\s].*?)            # $3 - content
+lib/Text/Textile2.pm:996:                           (?:$|([\]}])|(?=$punct{1,2}|\s)) # $4 - post
+lib/Text/Textile2.pm:997:                          /$self->format_tag(tag => $r, marker => $f, pre => $1, text => $3, clsty => $2, post => $4)/gemx) {
+lib/Text/Textile2.pm:1007:    # ABC(Aye Bee Cee) -> acronym
+lib/Text/Textile2.pm:1008:    $text =~ s{\b([A-Z][A-Za-z0-9]*?[A-Z0-9]+?)\b(?:[(]([^)]*)[)])}
+lib/Text/Textile2.pm:1009:              {_repl(\@repl,qq{<acronym title="}.$self->encode_html_basic($2).qq{">$1</acronym>})}ge;
+lib/Text/Textile2.pm:1011:    # ABC -> 'capped' span
+lib/Text/Textile2.pm:1012:    if (my $caps = $self->{css}{class_caps}) {
+lib/Text/Textile2.pm:1014:                   ((?:[A-Z](?:[A-Z0-9\.,']|\&amp;){2,}\ *)+?) # '
+lib/Text/Textile2.pm:1015:                   (?=[^A-Z\.0-9]|$)
+lib/Text/Textile2.pm:1019:    # nxn -> n&times;n
+lib/Text/Textile2.pm:1020:    $text =~ s!((?:[0-9\.]0|[1-9]|\d['"])\ ?)x(\ ?\d)!$1&#215;$2!g;
+lib/Text/Textile2.pm:1033:    $text =~ s|<textile#$i>|$_|, $i-- while $_ = pop @repl;
+lib/Text/Textile2.pm:1038:    #if ($self->{charset} =~ m/^utf-?8$/i) {
+lib/Text/Textile2.pm:1039:    #    # translate any unicode entities to native UTF-8
+lib/Text/Textile2.pm:1060:        if (defined $self->{macros}->{$macro}) {
+lib/Text/Textile2.pm:1061:            return $self->{macros}->{$macro};
+lib/Text/Textile2.pm:1085:    if (($self->{flavor} =~ m/^xhtml2/) && defined $cite && $cite) {
+lib/Text/Textile2.pm:1086:      $cite = $self->format_url(url => $cite);
+lib/Text/Textile2.pm:1092:    $tag . $self->format_inline(text => $text) . '</cite>'.$post;
+lib/Text/Textile2.pm:1100:    $code = $self->encode_html($code, 1);
+lib/Text/Textile2.pm:1120:    if ($clsty && ($clsty =~ m/\(([A-Za-z0-9_\- ]+?)(?:#(.+?))?\)/ ||
+lib/Text/Textile2.pm:1121:                   $clsty =~ m/\(([A-Za-z0-9_\- ]+?)?(?:#(.+?))\)/)) {
+lib/Text/Textile2.pm:1130:                $clsty =~ s/\([A-Za-z0-9_\- ]+?(#.*?)?\)//g;
+lib/Text/Textile2.pm:1150:    $style .= qq{;padding-left:${padleft}em} if $padleft;
+lib/Text/Textile2.pm:1151:    $style .= qq{;padding-right:${padright}em} if $padright;
+lib/Text/Textile2.pm:1173:    my $attr = $self->format_classstyle($clsty);
+lib/Text/Textile2.pm:1196:            $dtattr = $self->format_classstyle($param);
+lib/Text/Textile2.pm:1197:            if ($param =~ m/\[([A-Za-z]+?)\]/) {
+lib/Text/Textile2.pm:1207:            if ($dtlang && ($param =~ m/\[([A-Za-z]+?)\]/)) {
+lib/Text/Textile2.pm:1210:            $ddattr = $self->format_classstyle(($dtlang ? "[$dtlang]" : '') . $param);
+lib/Text/Textile2.pm:1215:        $out .= '>' . $self->format_inline(text => $dt) . '</dt>' . "\n";
+lib/Text/Textile2.pm:1217:            $dd = $self->textile($dd) if $dd =~ m/\n\n/;
+lib/Text/Textile2.pm:1219:            $dd = $self->format_paragraph(text => $dd);
+lib/Text/Textile2.pm:1240:    my $attr = $self->format_classstyle($clsty) if $clsty;
+lib/Text/Textile2.pm:1267:                    if ($self->{_line_open}) {
+lib/Text/Textile2.pm:1268:                        $item =~ s/(<li[^>]*>|^)/$1$self->{_line_open}/gm;
+lib/Text/Textile2.pm:1269:                        $item =~ s/(\n|$)/$self->{_line_close}$1/gs;
+lib/Text/Textile2.pm:1271:                        $item =~ s/(\n)/$self->{_line_close}$1/gs;
+lib/Text/Textile2.pm:1296:            $itemattr = $self->format_classstyle($itemclsty) if $itemclsty;
+lib/Text/Textile2.pm:1302:                        $blockattr = $self->format_classstyle($blockclsty);
+lib/Text/Textile2.pm:1328:        $item .= $self->format_paragraph(text => $line);
+lib/Text/Textile2.pm:1332:        if ($self->{_line_open}) {
+lib/Text/Textile2.pm:1333:            $item =~ s/(<li[^>]*>|^)/$1$self->{_line_open}/gm;
+lib/Text/Textile2.pm:1334:            $item =~ s/(\n|$)/$self->{_line_close}$1/gs;
+lib/Text/Textile2.pm:1336:            $item =~ s/(\n)/$self->{_line_close}$1/gs;
+lib/Text/Textile2.pm:1359:    my ($filters) = $str =~ m/^(\|(?:(?:[a-z0-9_\-]+)\|)+)/;
+lib/Text/Textile2.pm:1366:        $str = $self->apply_filters(text => $str, filters => \@filters);
+lib/Text/Textile2.pm:1394:    if (exists $self->{links} && exists $self->{links}{$url}) {
+lib/Text/Textile2.pm:1395:        $title ||= $self->{links}{$url}{title};
+lib/Text/Textile2.pm:1396:        $url = $self->{links}{$url}{url};
+lib/Text/Textile2.pm:1399:    $linktext = $self->format_paragraph(text => $linktext);
+lib/Text/Textile2.pm:1400:    $url = $self->format_url(linktext => $linktext, url => $url);
+lib/Text/Textile2.pm:1402:    my $attr = $self->format_classstyle($clsty);
+lib/Text/Textile2.pm:1416:    if ($url =~ m/^(mailto:)?([-\+\w]+\@[-\w]+(\.\w[-\w]*)+)$/) {
+lib/Text/Textile2.pm:1417:        $url = 'mailto:'.$self->mail_encode($2);
+lib/Text/Textile2.pm:1424:    $url =~ s/^((?:.+?)\?)(.+)$/$1.$self->encode_url($2)/ge;
+lib/Text/Textile2.pm:1442:        if ($self->{css_mode}) {
+lib/Text/Textile2.pm:1445:            $class .= ' '.$self->{css}{"class_align_$alignment"} if $alignment;
+lib/Text/Textile2.pm:1451:    my $attr = $self->format_classstyle($clsty, $class, $style);
+lib/Text/Textile2.pm:1455:        $cite = $self->format_url(url => $cite);
+lib/Text/Textile2.pm:1458:    $pre.$tag.'>'.$self->format_paragraph(text => $text).'</span>'.$post;
+lib/Text/Textile2.pm:1474:    if ($self->{flavor} =~ m/^xhtml2/) {
+lib/Text/Textile2.pm:1493:        if ($self->{css_mode}) {
+lib/Text/Textile2.pm:1499:                my $imgvalign = ($alignment =~ m/(top|bottom)/ ? 'text-' . $alignment : $alignment);
+lib/Text/Textile2.pm:1500:                $style .= qq{;vertical-align:$imgvalign} if $imgvalign;
+lib/Text/Textile2.pm:1501:                $class .= ' '.$self->{css}{"class_align_$alignment"} if $alignment;
+lib/Text/Textile2.pm:1531:    if ($self->{flavor} !~ m/^xhtml2/) {
+lib/Text/Textile2.pm:1532:        $tag .= ' alt="' . $self->encode_html_basic($alt) . '"';
+lib/Text/Textile2.pm:1535:        if ($self->{flavor} !~ m/^xhtml2/) {
+lib/Text/Textile2.pm:1541:        my ($image_w, $image_h) = $self->image_size($src);
+lib/Text/Textile2.pm:1559:            if ($self->{flavor} !~ m/^xhtml2/) {
+lib/Text/Textile2.pm:1566:    my $attr = $self->format_classstyle($clsty, $class, $style);
+lib/Text/Textile2.pm:1568:    if ($self->{flavor} =~ m/^xhtml2/) {
+lib/Text/Textile2.pm:1569:        $tag .= '><p>' . $self->encode_html_basic($alt) . '</p></object>';
+lib/Text/Textile2.pm:1570:    } elsif ($self->{flavor} =~ m/^xhtml/) {
+lib/Text/Textile2.pm:1577:        $link = $self->format_url(url => $link);
+lib/Text/Textile2.pm:1627:                if ($clsty =~ m/\(([A-Za-z0-9_\- ]+?)(?:#(.+?))?\)/ ||
+lib/Text/Textile2.pm:1628:                    $clsty =~ m/\(([A-Za-z0-9_\- ]+?)?(?:#(.+?))\)/) {
+lib/Text/Textile2.pm:1670:        for (my $c = $colcount - 1; $c > 0; $c--) {
+lib/Text/Textile2.pm:1672:                $rowspans[$c]--;
+lib/Text/Textile2.pm:1702:                        if ($clsty =~ m/\(([A-Za-z0-9_\- ]+?)(?:#(.+?))?\)/ ||
+lib/Text/Textile2.pm:1703:                            $clsty =~ m/\(([A-Za-z0-9_\- ]+?)?(?:#(.+?))\)/) {
+lib/Text/Textile2.pm:1708:                                    $clsty =~ s/\([A-Za-z0-9_\- ]+?(#.*?)?\)//g;
+lib/Text/Textile2.pm:1758:                } elsif ($attrs =~ m/-/) {
+lib/Text/Textile2.pm:1759:                    $colalign .= '-';
+lib/Text/Textile2.pm:1777:                $colstyle .= qq{;padding-left:${colpadl}em} if $colpadl;
+lib/Text/Textile2.pm:1778:                $colstyle .= qq{;padding-right:${colpadr}em} if $colpadr;
+lib/Text/Textile2.pm:1788:                # our paragraph block signature, process it as a full-blown
+lib/Text/Textile2.pm:1794:                    $col_out .= $self->textile($col);
+lib/Text/Textile2.pm:1796:                    $col_out .= $self->format_paragraph(text => $col);
+lib/Text/Textile2.pm:1808:            $colspan--;
+lib/Text/Textile2.pm:1830:        if ($self->{css_mode}) {
+lib/Text/Textile2.pm:1834:                $tstyle .= ';margin-left:auto;margin-right:auto';
+lib/Text/Textile2.pm:1844:    $tstyle .= qq{;padding-left:${tpadl}em} if $tpadl;
+lib/Text/Textile2.pm:1845:    $tstyle .= qq{;padding-right:${tpadr}em} if $tpadr;
+lib/Text/Textile2.pm:1856:        # exception -- something isn't right so return fail case
+lib/Text/Textile2.pm:1869:    my $filters = $self->{filters};
+lib/Text/Textile2.pm:1872:    my $param = $self->filter_param;
+lib/Text/Textile2.pm:1874:        next unless exists $filters->{$filter};
+lib/Text/Textile2.pm:1875:        if ((ref $filters->{$filter}) eq 'CODE') {
+lib/Text/Textile2.pm:1876:            $text = $filters->{$filter}->($text, $param);
+lib/Text/Textile2.pm:1891:        if ($Have_Entities && $self->{char_encoding}) {
+lib/Text/Textile2.pm:1894:            $html = $self->encode_html_basic($html, $can_double_encode);
+lib/Text/Textile2.pm:1919:            $html =~ s/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w{1,8});)/&amp;/g;
+lib/Text/Textile2.pm:1936:            if (-f $file) {
+lib/Text/Textile2.pm:1939:                if (my $docroot = $self->docroot) {
+lib/Text/Textile2.pm:1941:                    my $fullpath = File::Spec->catfile($docroot, $file);
+lib/Text/Textile2.pm:1942:                    if (-f $fullpath) {
+lib/Text/Textile2.pm:1955:    $str =~ s!([^A-Za-z0-9_\.\-\+\&=\%;])!
+lib/Text/Textile2.pm:1990:      'L-' => '&#163;', # POUND SIGN
+lib/Text/Textile2.pm:1991:      '-L' => '&#163;', # POUND SIGN
+lib/Text/Textile2.pm:1995:      '&lt;&lt;' => '&#171;', # LEFT-POINTING DOUBLE ANGLE QUOTATION
+lib/Text/Textile2.pm:1997:      '+_' => '&#177;', # PLUS-MINUS SIGN
+lib/Text/Textile2.pm:1998:      '_+' => '&#177;', # PLUS-MINUS SIGN
+lib/Text/Textile2.pm:1999:      '&gt;&gt;' => '&#187;', # RIGHT-POINTING DOUBLE ANGLE QUOTATION
+lib/Text/Textile2.pm:2034:      'D-' => '&#208;', # LATIN CAPITAL LETTER ETH
+lib/Text/Textile2.pm:2035:      '-D' => '&#208;', # LATIN CAPITAL LETTER ETH
+lib/Text/Textile2.pm:2103:      ':-' => '&#247;', # DIVISION SIGN
+lib/Text/Textile2.pm:2104:      '-:' => '&#247;', # DIVISION SIGN
+lib/Text/Textile2.pm:2129:      '&lt;-' => '&#8592;', # LEFTWARDS ARROW
+lib/Text/Textile2.pm:2130:      '-&gt;' => '&#8594;', # RIGHTWARDS ARROW
+lib/Text/Textile2.pm:2135:      '&lt;_' => '&#8804;', # LESS-THAN OR EQUAL TO
+lib/Text/Textile2.pm:2136:      '_&lt;' => '&#8804;', # LESS-THAN OR EQUAL TO
+lib/Text/Textile2.pm:2137:      '&gt;_' => '&#8805;', # GREATER-THAN OR EQUAL TO
+lib/Text/Textile2.pm:2138:      '_&gt;' => '&#8805;', # GREATER-THAN OR EQUAL TO
+lib/Text/Textile2.pm:2164:    $self->css(\%css_defaults);
+lib/Text/Textile2.pm:2189:    } elsif ($align =~ m/-/) {
+lib/Text/Textile2.pm:2211:            $close = substr($$post, -1, 1) if $close !~ m/[}\]]/;
+lib/Text/Textile2.pm:2215:                $$post = substr($$post, 0, length($$post) - 1);
+lib/Text/Textile2.pm:2233:    my $nested_tags = join('|', ('(?:</?[A-Za-z0-9:]+ \s? (?:[^<>]') x $depth)
+lib/Text/Textile2.pm:2235:    my $match = qr/(?s: <! ( -- .*? -- \s* )+ > )|  # comment
+lib/Text/Textile2.pm:2237:                   (?s: <\% .*? \%> )|              # ASP-like
+lib/Text/Textile2.pm:2244:        my $tag_start = $sec_start - length $whole_tag;
+lib/Text/Textile2.pm:2246:            push @tokens, ['text', substr($str, $pos, $tag_start - $pos)];
+lib/Text/Textile2.pm:2259:    push @tokens, ['text', substr($str, $pos, $len - $pos)] if $pos < $len;
+lib/Text/Textile2.pm:2268:Text::Textile2 - A humane web text generator.
+lib/Text/Textile2.pm:2291:    $html = $textile->process($text);
+lib/Text/Textile2.pm:2296:Text::Textile2 is a Perl-based implementation of Dean Allen's Textile
+lib/Text/Textile2.pm:2392:if the 'utf-8' character set is assigned.
+lib/Text/Textile2.pm:2394:Specifically, if utf-8 is requested, any special characters
+lib/Text/Textile2.pm:2395:created by Textile will be output as native utf-8 characters
+lib/Text/Textile2.pm:2696:Takes a Wiki-ish string of data and transforms it into a full
+lib/Text/Textile2.pm:2800:=item C<->
+lib/Text/Textile2.pm:2822:=item C<->
+lib/Text/Textile2.pm:2887:A pre-formatted block of text. Textile will not add any
+lib/Text/Textile2.pm:2964:Modifier characters for alignment. Right-justification, left-justification,
+lib/Text/Textile2.pm:2965:centered, and full-justification.
+lib/Text/Textile2.pm:2970:When combined with the align-left or align-right modifier,
+lib/Text/Textile2.pm:2976:When combined with the align-left or align-right modifier,
+lib/Text/Textile2.pm:3020:    Escaped portion -- will not be formatted
+lib/Text/Textile2.pm:3059:=item C<--smaller-->
+lib/Text/Textile2.pm:3063:=item C<-deleted text->
+lib/Text/Textile2.pm:3164:    "E-mail me please":mailto:someone@example.com
+lib/Text/Textile2.pm:3166:You can also use single quotes instead of double-quotes if
+lib/Text/Textile2.pm:3240:=item C<-> (dash)
+lib/Text/Textile2.pm:3283:    {L-} or {-L} pound sign
+lib/Text/Textile2.pm:3307:Multi-level lists:
+lib/Text/Textile2.pm:3453:"center" for centered text, "justify" for full-justified
+lib/Text/Textile2.pm:3484:XHTML with Textile is to not use any HTML markup at all--

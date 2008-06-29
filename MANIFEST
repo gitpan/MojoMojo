@@ -9,6 +9,7 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 INSTALL
@@ -37,6 +38,7 @@ lib/MojoMojo/Formatter/Wiki.pm
 lib/MojoMojo/Installation.pod
 lib/MojoMojo/Model/DBIC.pm
 lib/MojoMojo/Model/Search/Plucene.pm
+lib/MojoMojo/Prefs.pod
 lib/MojoMojo/Schema.pm
 lib/MojoMojo/Schema/Attachment.pm
 lib/MojoMojo/Schema/Comment.pm
@@ -62,6 +64,8 @@ Makefile.PL
 MANIFEST			This list of files
 META.yml
 mojomojo.conf
+mojomojo.db
+pref
 root/base/admin/update_user.tt
 root/base/admin/user.tt
 root/base/attachments/complete.tt
@@ -256,6 +260,7 @@ root/static/pod.css
 root/static/reset.css
 root/static/shrinkenhead.jpg
 root/static/spinner.gif
+root/static/themes/thefeed/theme.css
 root/static/toolbar/bold.png
 root/static/toolbar/center.png
 root/static/toolbar/drawing.png
@@ -270,6 +275,7 @@ root/static/toolbar/preformatted.png
 root/static/toolbar/right.png
 root/static/toolbar/strikethrough.png
 root/static/toolbar/wikilink.png
+script/hash_passwords.pl
 script/mojomojo_cgi.pl
 script/mojomojo_create.pl
 script/mojomojo_fastcgi.pl
@@ -301,5 +307,5 @@ t/schema_DBIC_Content.t
 t/schema_DBIC_Page.t
 t/schema_DBIC_Person.t
 t/schema_DBIC_Tag.t
+t/selenium.t
 t/var/bugs.jpg
-TODOS
