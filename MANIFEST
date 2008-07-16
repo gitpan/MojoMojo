@@ -32,6 +32,7 @@ lib/MojoMojo/Formatter/Include.pm
 lib/MojoMojo/Formatter/IRCLog.pm
 lib/MojoMojo/Formatter/Markdown.pm
 lib/MojoMojo/Formatter/Pod.pm
+lib/MojoMojo/Formatter/Redirect.pm
 lib/MojoMojo/Formatter/Scrub.pm
 lib/MojoMojo/Formatter/Textile.pm
 lib/MojoMojo/Formatter/Wiki.pm
@@ -299,6 +300,7 @@ t/c/user.t
 t/formatter_comment.t
 t/formatter_include.t
 t/formatter_irclog.t
+t/formatter_redirect.t
 t/formatter_wiki.t
 t/lib/MojoMojoTestSchema.pm
 t/schema_DBIC.t

@@ -1,3 +1,15 @@
+0.999018 2008-07-16 19:45:00
+        - Fix selenium tests
+        - Add redirect formatter
+        - Update dependencies
+        - Fix change password after switching to hashed passwords. (plu)
+        - Fix warning in navbar.tt
+        - Fix: If you're logged in, page doesnt exist yet and you dont
+          have the permission to create it there was an exception
+          thrown (plu)
+        - Add table CSS (plu)
+        - Restrict search results depending on permissions (plu)
+
 0.999017 2008-07-09 11:59:00
         - Unbreak search.
         - Add a default from address for mail
