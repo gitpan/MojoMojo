@@ -25,7 +25,7 @@ use Module::Pluggable::Ordered
     except	=> qr/^MojoMojo::Plugin::/, 
     require	=> 1;
 
-our $VERSION='0.999019';
+our $VERSION='0.999020';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class => 'DBIC::Person',
@@ -35,7 +35,7 @@ MojoMojo->config->{authentication}{dbic} = {
 
 MojoMojo->setup();
 
-MojoMojo->model('DBIC::Attachment')->result_source->schema->attachment_dir(MojoMojo->path_to('uploads').'');
+MojoMojo->model('DBIC::Attachment')->result_source->schema->attachment_dir(MojoMojo->config->{attachment_dir} || MojoMojo->path_to('uploads').'');
 
 =head1 NAME
 

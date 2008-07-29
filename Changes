@@ -1,3 +1,12 @@
+0.999020  2008-07-28 15:45:00
+        - Make attachment_dir configurable
+        - Major CSS/XHTML overhaul (tkremer)
+        - Update default expires for session to 1 week
+        - default to searchtype=all (mateu)
+        - Fix highlight causing layout being broken (plu)
+        - Replace Crypt::PassGen with Text::Password::Pronounceable
+        - Make mech tests optional
+        
 0.999019 2008-07-19 19:45:00
         - Eval plucene to let mojomojo work if it fails.
         - Support for re-requesting validation mails.

@@ -79,20 +79,25 @@ __PACKAGE__->belongs_to("creator", "Person", { id => "creator" });
 	    ? $self->previous->formatted($c)
 	    : $this_content );
 
-	my $this = [ split /\n\n/,                  $this_content ];
-	my $prev = [ split /\n\n/,                  $previous_content ];
+	my $this = [ split /\n/,                  $this_content ];
+	my $prev = [ split /\n/,                  $previous_content ];
 	my @diff = Algorithm::Diff::sdiff( $prev, $this );
 	my $diff;
 	my $hi = 0;
+	my $pre_tag_open = 0;
 	for my $line (@diff) {
+	    $pre_tag_open = 1 if $$line[2] =~ qr{<pre>} and $$line[2] !~ qr{</pre>};
+	    my $tag = $pre_tag_open ? 'span' : 'div';
 	    $hi++;
 	    if ( $$line[0] eq "+" ) {
-		$diff .= qq(<div id="hi$hi" class="fade">) . $$line[2] . "</div>";
+		$diff .= qq(<$tag id="hi$hi" class="fade">) . $$line[2] . "</$tag>";
 	    }
 	    elsif ( $$line[0] eq "c" ) {
-		$diff .= qq(<div id="hi$hi"class="fade">) . $$line[2] . "</div>";
+		$diff .= qq(<$tag id="hi$hi" class="fade">) . $$line[2] . "</$tag>";
 	    } elsif ( $$line[0] eq "-" ) { }
 	    else { $diff .= $$line[1] }
+	    $diff .= "\n";
+	    $pre_tag_open = 0 if $$line[2] =~ qr{</pre>} and $$line[2] !~ qr{<pre>};
 	}
 	return $diff;
     }

@@ -63,9 +63,6 @@ lib/Text/Textile2.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
-MojoMojo-0.999019/lib/MojoMojo/Controller/User.pm
-MojoMojo-0.999019/root/formfu/label
-MojoMojo-0.999019/root/static/emote/58_58.gif
 mojomojo.conf
 mojomojo.db
 pref
@@ -239,6 +236,7 @@ root/static/gfx/backbottom.jpg
 root/static/gfx/background.jpg
 root/static/gfx/dropshadow.png
 root/static/gfx/header.jpg
+root/static/gfx/header.png
 root/static/js/builder.js
 root/static/js/controls.js
 root/static/js/dragdrop.js

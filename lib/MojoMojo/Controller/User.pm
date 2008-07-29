@@ -5,7 +5,7 @@ use base qw/Catalyst::Controller::HTML::FormFu Catalyst::Controller::BindLex/;
 
 use Digest::MD5 qw/md5_hex/;
 use Data::FormValidator::Constraints::DateTime qw(:all);
-use Crypt::PassGen;
+use Text::Password::Pronounceable;
 
 my $auth_class = MojoMojo->config->{auth_class};
 
@@ -32,7 +32,7 @@ Log in through the authentication system.
 sub login : Global {
     my ($self,$c) = @_;
     my $message:Stashed;
-    $message ||= 'please enter username &amp; password';
+    $message ||= 'Please enter username &amp; password';
     if ( $c->req->params->{login} ) {
          if ( $c->authenticate( { login => $c->req->params->{'login'}, 
                                   pass => $c->req->params->{'pass'} } ) ) {
@@ -43,7 +43,7 @@ sub login : Global {
             return;
         }
         else {
-            $c->stash->{message} = 'could not authenticate that login.';
+            $c->stash->{message} = 'Could not authenticate that login.';
         }
     }
     $c->stash->{template} ||= "user/login.tt";
@@ -138,7 +138,7 @@ sub password : Path('/prefs/password') {
       $c->stash->{user}->update();
       $c->stash->{message}='Your password has been updated';
     }
-    $c->stash->{message} ||= 'please fill out all fields';
+    $c->stash->{message} ||= 'Please fill out all fields!';
 }
 
 sub recover_pass : Global {
@@ -152,7 +152,7 @@ sub recover_pass : Global {
 	return $c->res->redirect($c->uri_for('login'));
     }
     my $password : Stashed = '';
-    ($password)=Crypt::PassGen::passgen(NLETT=>6,NWORDS=>1);
+    ($password)=Text::Password::Pronounceable->generate(6, 10);
     my $message:Stashed='';
     if ($c->email(
         header => [
