@@ -11,6 +11,8 @@ inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
+index/_3.cfs
+index/segments
 INSTALL
 lib/MojoMojo.pm
 lib/MojoMojo/Controller/Admin.pm
@@ -37,7 +39,7 @@ lib/MojoMojo/Formatter/Textile.pm
 lib/MojoMojo/Formatter/Wiki.pm
 lib/MojoMojo/Installation.pod
 lib/MojoMojo/Model/DBIC.pm
-lib/MojoMojo/Model/Search/Plucene.pm
+lib/MojoMojo/Model/Search.pm
 lib/MojoMojo/Prefs.pod
 lib/MojoMojo/Schema.pm
 lib/MojoMojo/Schema/Attachment.pm
@@ -65,7 +67,6 @@ MANIFEST			This list of files
 META.yml
 mojomojo.conf
 mojomojo.db
-pref
 root/base/admin/update_user.tt
 root/base/admin/user.tt
 root/base/attachments/complete.tt
@@ -261,7 +262,6 @@ root/static/pod.css
 root/static/reset.css
 root/static/shrinkenhead.jpg
 root/static/spinner.gif
-root/static/themes/thefeed/theme.css
 root/static/toolbar/bold.png
 root/static/toolbar/center.png
 root/static/toolbar/drawing.png
