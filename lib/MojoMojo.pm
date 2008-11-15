@@ -12,7 +12,7 @@ use Catalyst qw/    ConfigLoader
     Session		        Session::Store::File
     Singleton           Session::State::Cookie
     Static::Simple	    SubRequest
-    UploadProgress	    Unicode
+    Unicode
     /;
 
 use Storable;
@@ -25,7 +25,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999021';
+our $VERSION = '0.999022';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -35,8 +35,7 @@ MojoMojo->config->{authentication}{dbic} = {
 
 MojoMojo->setup();
 
-MojoMojo->model('DBIC::Attachment')
-    ->result_source->schema->attachment_dir( MojoMojo->config->{attachment_dir}
+MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}
         || MojoMojo->path_to('uploads') . '' );
 
 =head1 NAME
@@ -175,7 +174,7 @@ sub uri_for {
     my $c = shift;
     unless ( $_[0] =~ m/^\// ) {
         my $val = shift @_;
-        my $prefix = $c->stash->{path} eq '/' ? '' : '/';
+        my $prefix = $c->stash->{path} =~ m|^/| ? '' : '/';
         unshift( @_, $prefix . $c->stash->{path} . '.' . $val );
     }
     $c->NEXT::uri_for(@_);
@@ -431,15 +430,19 @@ sub check_permissions {
     my %perms = map { $_ => $rulescomparison{$_}{'allowed'} } keys %rulescomparison;
     return \%perms;
 }
+
+MojoMojo->config->{index_dir}||=MojoMojo->path_to('index');
+MojoMojo->config->{attachment_dir}||=MojoMojo->path_to('uploads');
 unless (-e MojoMojo->config->{index_dir}) {
-    mkdir(MojoMojo->config->{index_dir}) || die "Could not make index directory:".MojoMojo->config->{index_dir};
+    mkdir(MojoMojo->config->{index_dir}) || die 'Could not make index directory <'.MojoMojo->config->{index_dir}.'>';
 }
-die "Require write access to index:".MojoMojo->config->{index_dir} unless (-w MojoMojo->config->{index_dir});
+die 'Require write access to index <'.MojoMojo->config->{index_dir}.'>' unless (-w MojoMojo->config->{index_dir});
+
 MojoMojo->model('Search')->prepare_search_index() unless (-f MojoMojo->config->{index_dir}.'/segments'); 
 unless (-e MojoMojo->config->{attachment_dir}) {
-    mkdir(MojoMojo->config->{attachment_dir}) || die "Could not make attachment directory:".MojoMojo->config->{attachment_dir};
+    mkdir(MojoMojo->config->{attachment_dir}) || die 'Could not make attachment directory <'.MojoMojo->config->{attachment_dir}.'>';
 }
-die "Require write access to attachment_dir:".MojoMojo->config->{attachment_dir} unless (-w MojoMojo->config->{attachment_dir});
+die 'Require write access to attachment_dir: <'.MojoMojo->config->{attachment_dir}.'>' unless (-w MojoMojo->config->{attachment_dir});
 
 1;
 

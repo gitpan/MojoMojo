@@ -42,7 +42,7 @@ __PACKAGE__->has_many( "tags",       "Tag",  { "foreign.page"      => "self.id" 
 __PACKAGE__->has_many( "links_from", "Link", { "foreign.from_page" => "self.id" }, );
 __PACKAGE__->has_many( "links_to",   "Link", { "foreign.to_page"   => "self.id" } );
 __PACKAGE__->has_many( "roleprivileges", "RolePrivilege", { "foreign.page"   => "self.id" }, );
-__PACKAGE__->has_many( "attachments",    "Attachment",    { "foreign.page"   => "self.id" } );
+__PACKAGE__->has_many( "attachments",    "Attachment",    { "foreign.page"   => "self.id" },{order_by=>'id desc' } );
 __PACKAGE__->has_many( "comments",       "Comment",       { "foreign.page"   => "self.id" } );
 __PACKAGE__->has_many( "journals",       "Journal",       { "foreign.pageid" => "self.id" } );
 
@@ -476,7 +476,7 @@ sub user_tags {
             select   => [ 'me.id', 'me.tag', 'count(me.tag) as refcount' ],
             as       => [ 'id',    'tag',    'refcount' ],
             order_by => ['refcount'],
-            group_by => ['tag'],
+            group_by => [ 'me.id','me.tag'],
         }
     );
     return @tags;
@@ -493,7 +493,7 @@ sub others_tags {
             select   => [ 'me.id', 'me.tag', 'count(me.tag) as refcount' ],
             as       => [ 'id',    'tag',    'refcount' ],
             order_by => ['refcount'],
-            group_by => ['tag'],
+            group_by => ['me.tag','me.id'],
         }
     );
     return @tags;
@@ -507,7 +507,7 @@ sub tags_with_counts {
             select   => [ 'me.id', 'me.tag', 'count(me.tag) as refcount' ],
             as       => [ 'id',    'tag',    'refcount' ],
             order_by => ['refcount'],
-            group_by => ['tag'],
+            group_by => [ 'me.id', 'me.tag'],
         }
     );
     return @tags;

@@ -1,3 +1,13 @@
+0.999022  2008-11-14 17:28:00
+        - Fix validation check (sachinjsk)
+        - Fix javascript toolbar
+        - Fix various Pg specific issues
+        - Change to use flash uploader.
+        - Update search not to cache objects
+        - Fix unicode issue with preview
+        - rewrite javascript to use jquery, remove inline js.
+        - Fix indexer to use correct content version
+
 0.999021  2008-11-01 01:47:00
         - Move search to KinoSearch
         - Make startup checks for permissions.
