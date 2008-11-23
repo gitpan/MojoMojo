@@ -26,8 +26,6 @@ requires:
   Catalyst::Plugin::Cache::Store::Memory: 0
   Catalyst::Plugin::ConfigLoader: 0.13
   Catalyst::Plugin::Email: 0
-  Catalyst::Plugin::FillInForm: 0.04
-  Catalyst::Plugin::FormValidator: 0.02
   Catalyst::Plugin::Session::State::Cookie: 0
   Catalyst::Plugin::Session::Store::File: 0
   Catalyst::Plugin::Singleton: 0.02
@@ -46,6 +44,8 @@ requires:
   DateTime: 0.28
   DateTime::Format::Mail: 0
   File::MMagic: 1.27
+  HTML::FormFu::Model::DBIC: 0
+  HTML::GenToc: 0
   HTML::Scrubber: 0
   HTML::Strip: 1.04
   HTML::TagCloud: 0
@@ -68,4 +68,4 @@ requires:
   YAML: 0.36
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.999022
+version: 0.999023

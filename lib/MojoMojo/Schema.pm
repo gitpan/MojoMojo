@@ -28,7 +28,33 @@ sub create_initial_data {
             [ 1, 0, 0, 'admin', 'Enoch Root', '', 'admin', '', 0, '', '', '', '', '', '' ],
         ]
     );
+    
+    my @roles = $schema->populate(
+        'Role',
+        [
+            [ qw/ name active / ],
+            [ 'Admins', 1 ],
+            [ 'Users',  1 ]
+        ]
+    );
 
+    my @role_members = $schema->populate(
+        'RoleMember',
+        [
+            [ qw/role person admin/ ],
+            [ $roles[0]->id, $people[1]->id, 1 ]
+        ]
+    );
+
+    my @path_permissions = $schema->populate(
+        'PathPermissions',
+        [
+            [ qw/path role apply_to_subpages create_allowed delete_allowed edit_allowed view_allowed attachment_allowed / ],
+            [ '/', $roles[0]->id, qw/ no yes yes yes yes yes yes/ ],
+            [ '/', $roles[0]->id, qw/yes yes yes yes yes yes yes/ ]
+        ]
+    );
+    
     my @prefs =
         $schema->populate( 'Preference',
         [ [qw/ prefkey prefvalue /], [ 'name', 'MojoMojo' ], [ 'admins', 'admin' ], ] );
@@ -78,7 +104,7 @@ sub create_initial_data {
 This is your front page. To start administrating your wiki, please log in with
 username admin/password admin. At that point you will be able to set up your
 configuration. If you want to play around a little with the wiki, just create
-a NewPage or edit this one through the edit link at the bottom.
+a [[New Page]] or edit this one through the edit link at the bottom.
 
 h2. Need some assistance?
 

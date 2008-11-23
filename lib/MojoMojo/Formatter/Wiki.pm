@@ -13,8 +13,8 @@ MojoMojo::Formatter::Wiki - Handle interpage linking.
 This formatter handles Wiki links using the [[explicit]] and
 ImplicitLink syntax. It will also indicate missing links with 
 a question mark and a link to the edit page. In explicit mode, 
-you can prefix the wikiword with an namespace, just like in a
-normal url. For example: [[../marcus]] or [[/oslo/vacation]].
+you can prefix the wikiword with a path, just like in a
+normal URL. For example: [[../marcus]] or [[/oslo/vacation]].
 
 =head1 METHODS
 
@@ -271,28 +271,25 @@ sub find_links {
     my @parts;
     ( $$content, @parts ) = strip_pre($content);
 
-    my $wikiword_regex = qr/$non_wikiword_check($wikiword)/x;
     my $explicit_regex =
-        qr/$non_wikiword_check$explicit_start \s* ($explicit_path) \s* (?: $explicit_separator \s* $explicit_text \s* )? $explicit_end/x;
+    qr/$non_wikiword_check$explicit_start \s* ($explicit_path) \s* (?: $explicit_separator \s* $explicit_text \s* )? $explicit_end/x;
 
-    for ( $wikiword_regex, $explicit_regex ) {
-        while ( $$content =~ /$_/g ) {
-            my $link = $1;
+    while ( $$content =~ /$explicit_regex/g ) {
+        my $link = $1;
 
-            # convert relative paths to absolute paths
-            if ( $link !~ m|^/| ) {
-                $link = URI->new_abs( $link, ( $page->path || '' ) . "/" );
-            }
+        # convert relative paths to absolute paths
+        if ( $link !~ m|^/| ) {
+            $link = URI->new_abs( $link, ( $page->path || '' ) . "/" );
+        }
 
-            # use the normalized path string returned by path_pages:
-            my ( $path_pages, $proto_pages ) =
-                $page->result_source->resultset->path_pages($link);
-            if ( defined $proto_pages && @$proto_pages ) {
-                push @wanted_pages, pop @$proto_pages;
-            }
-            else {
-                push @linked_pages, pop @$path_pages;
-            }
+        # use the normalized path string returned by path_pages:
+        my ( $path_pages, $proto_pages ) =
+        $page->result_source->resultset->path_pages($link);
+        if ( defined $proto_pages && @$proto_pages ) {
+            push @wanted_pages, pop @$proto_pages;
+        }
+        else {
+            push @linked_pages, pop @$path_pages;
         }
     }
     $$content = reinsert_pre( $content, @parts );
