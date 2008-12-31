@@ -1,12 +1,13 @@
-package MojoMojo::Schema::Photo;
+package MojoMojo::Schema::Result::Photo;
 
 use strict;
 use warnings;
 
-use base 'DBIx::Class';
+use base qw/MojoMojo::Schema::Base::Result/;
 
 use DateTime;
 use Image::ExifTool;
+use Image::Math::Constrain;
 my $exif = Image::ExifTool->new();
 
 __PACKAGE__->load_components( "PK::Auto", 'Ordered', "Core" );
@@ -41,7 +42,7 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("id");
 __PACKAGE__->has_many( "tags",     "Tag",     { "foreign.photo"   => "self.id" } );
 __PACKAGE__->has_many( "comments", "Comment", { "foreign.picture" => "self.id" } );
-__PACKAGE__->has_one( 'attachment', 'MojoMojo::Schema::Attachment' )
+__PACKAGE__->has_one( 'attachment', 'MojoMojo::Schema::Result::Attachment' )
     ;    #,{'foreign.id' => 'self.id' });
 
 =item extract_exif
@@ -74,14 +75,18 @@ sub exif2datetime {
     my ( $date, $time ) = split( ' ', $datetime );
     my ( $y, $M, $d ) = split ':', $date;
     my ( $h, $m, $s ) = split ':', $time;
-    return DateTime->new(
-        year   => $y,
-        month  => $M,
-        day    => $d,
-        hour   => $h,
-        minute => $m,
-        second => $s
-    );
+    my $dto;
+    eval {
+        $dto = DateTime->new(
+            year   => $y,
+            month  => $M,
+            day    => $d,
+            hour   => $h,
+            minute => $m,
+            second => $s
+        );
+    };
+    return $dto;
 }
 
 =item prev_by_tag <tag>

@@ -1,6 +1,10 @@
 /* make sure we've got a MojoMojo namespace */
 if (typeof(MojoMojo) === 'undefined') MojoMojo = {};
 
+if (window['loadFirebugConsole']) {
+    window.loadFirebugConsole();
+}
+
 MojoMojo.PermissionsEditor = function(params) {
     var container = $(params.container);
     
@@ -82,15 +86,15 @@ MojoMojo.RoleForm = function(params) {
           }
         },
         setup_autocomplete: function() {
-            var select_item = function (li) {
+            var select_item = function (input, data) {
               member_input.attr('value', '');
 
               // check if it's already added
-              if (role_members.find("li.member input[value='" + li.extra[0] + "']").length == 0) {
+              if (role_members.find("li.member input[value='" + data[1] + "']").length == 0) {
                 role_members.append(
                   '<li class="member">' +
-                    li.selectValue +
-                    '<input type="hidden" name="role_members" value="' + li.extra[0] + '"/> ' +
+                    data[0] +
+                    '<input type="hidden" name="role_members" value="' + data[1] + '"/> ' +
                     '<a class="clickable remove_member">[remove]</a>' +
                   '</li>'
                 );
@@ -113,11 +117,10 @@ MojoMojo.RoleForm = function(params) {
                   matchSubset:   1, 
                   matchContains: 1, 
                   cacheLength:   10, 
-                  onItemSelect:  select_item, 
                   formatItem:    format_item,
                   selectOnly:    1 
                 }
-              );
+              ).result(select_item);
             });
         }
     };
@@ -154,10 +157,16 @@ $( function() {
             $('#taginput').attr('value','')
         }
     })
+    $('#commentlogin').ajaxForm({
+        target: '#commentLogin',
+    });
+    $('#commentForm').ajaxForm({
+        target: '#comments'
+    })
     $('.tagaction').livequery('click', function() {
        $('#tags').load($(this).attr('href') );
        return false;
-    }) 
+    });
     $('.diff_link').click(function() {
         target=$(this).parents('.item').find('.diff');
         if (!target.html()) {
@@ -165,17 +174,19 @@ $( function() {
         } 
         target.toggle();
         return false;
-    })
+    });
    $('.image img').hover(function() {
         var info_url=$(this).parent().attr('href').replace(/.photo\//,'.jsrpc/imginfo/');
         $('#imageinfo').load(info_url)
     },function() {})
-    $('#plain_upload').after('<a href="#" id="do_upload">Choose attachments</a>').hide()
 
 	$('#do_upload').each(function() {
-	    try {
 	    uploader=new SWFUpload({
-    		flash_url : '/.static/flash/swfupload_f9.swf',
+    		button_placeholder_id: "do_upload",
+            button_image_url: $.uri_for("/.static/gfx/uploadbutton.png"),
+            button_width: 61,
+			button_height: 22,
+    		flash_url : $.uri_for('/.static/flash/swfupload.swf'),
     		upload_url: $('#upload_link').attr('href'),	// Relative to the SWF file
     		file_size_limit : "100 MB",
             file_post_name: 'file' ,
@@ -202,13 +213,8 @@ $( function() {
     		queue_complete_handler : function(numfiles) {
       		  $('#progressbar').hide();$('#progress_status').hide();
     		  $('#attachments').load($('#list_link').attr('href'))  
-    		},
-    		debug: false
+    		} 
     	})
-	    } 
-	    catch(ex) {
-	        $('#plain_upload').show()
-	    }
 	}).click(function() { uploader.selectFiles() })
 	$('.delete_attachment').click(function(){
 	    link=$(this)
@@ -236,7 +242,26 @@ $( function() {
         },
         user_search_url: $('#user_search_url').attr('value')
     });
-
+    $("#taginput").autocomplete($('#autocomplete_url').attr('href'), {
+        dataType: 'json',
+        parse: function(data) {
+            var result = [];
+            for (var i = 0; i < data.tags.length; i++) {
+                result[i] = { data: data.tags[i],
+                              value: data.tags[i],
+                              result: data.tags[i]
+                             };
+            }
+            return result;
+        },
+        formatItem: function(row, i, max) {
+            return row;
+        },
+        width: 120,
+        highlight: false,
+        multiple: true,
+        multipleSeparator: " "
+    });
 })
 
 var fetch_preview = function() {

@@ -60,12 +60,13 @@ sub view : Global {
 
     my $user;
 
-    if ( $c->config->{'permissions'}{'check_permission_on_view'} ) {
+    if ( $c->config->{'permissions'}->{'check_permission_on_view'} ) {
         if ( $c->user_exists() ) { $user = $c->user->obj; }
+        $c->log->info('Checking permissions') if $c->debug;
 
         my $perms = $c->check_permissions( $stash->{'path'}, $user );
         if ( !$perms->{'view'} ) {
-            $stash->{'message'}  = 'Permission Denied to view ' . $page->name;
+            $stash->{'message'}  = $c->loc('Permission Denied to view x', $page->name);
             $stash->{'template'} = 'message.tt';
             return;
         }
@@ -83,7 +84,7 @@ sub view : Global {
         );
         $stash->{rev} = ( defined $content ? $content->version : undef );
         unless ( $stash->{rev} ) {
-            $stash->{message}  = 'No such revision for ' . $page->name;
+            $stash->{message}  = $c->loc('No such revision for ', $page->name);
             $stash->{template} = 'message.tt';
         }
     }

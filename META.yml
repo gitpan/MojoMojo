@@ -68,4 +68,4 @@ requires:
   YAML: 0.36
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.999023
+version: 0.999024

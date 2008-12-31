@@ -36,7 +36,7 @@ sub auto : Private {
     return 1 if $user && $user->can_edit( $c->stash->{path} );
     return 1 if $user && !$c->pref('restricted_user');
     $c->stash->{template} = 'message.tt';
-    $c->stash->{message}  = 'Sorry bubba, you aint got no rights to this page';
+    $c->stash->{message}  = $c->loc('No permissions to edit this page');
     return 0;
 }
 
@@ -75,7 +75,7 @@ sub edit : Global FormConfig {
     );
 
     # this should never happen!
-    die "Cannot determine what page to edit for path: $path" unless $page;
+    $c->detach('/default') unless $page;
     @$stash{qw/ path_pages proto_pages /} = ( $path_pages, $proto_pages );
 
 
@@ -84,7 +84,7 @@ sub edit : Global FormConfig {
     my $permtocheck = ( @$proto_pages > 0 ? 'create' : 'edit' );
     if ( !$perms->{$permtocheck} ) {
         my $name = ref($page) eq 'HASH' ? $page->{name} : $page->name;
-        $stash->{'message'}  = 'Permission Denied to ' . $permtocheck . ' ' . $name;
+        $stash->{'message'}  = $c->loc('Permission Denied to x x', [$permtocheck, $name]);
         $stash->{'template'} = 'message.tt';
         return;
     }
@@ -108,12 +108,16 @@ sub edit : Global FormConfig {
             $page = $path_pages->[ @$path_pages - 1 ];
         }
         $c->model("DBIC::Page")->set_paths(@$path_pages);
+        # refetch page to have ->content available, else it will break in DBIC 0.08099_05 and later
+        $page = $c->model("DBIC::Page")->find($page->id);
         $page->update_content( %$valid );
 
         # update the search index with the new content
         $c->model("DBIC::Page")->set_paths($page);
         $c->model('Search')->index_page($page) unless $c->pref('disable_search');
         $page->content->store_links();
+        $c->model('DBIC::WantedPage')->search({to_path=>$c->stash->{path}})
+            ->delete();
 
         $c->res->redirect( $c->uri_for( $c->stash->{path}) );   
     }
@@ -179,8 +183,8 @@ sub permissions : Global {
     # build inherited permissions hash
     for my $path (keys %$data) {
         # might have additional data (if cached)
-        next unless ($parent_path && $parent_path =~ /^$path/);
-
+  #      next unless ($parent_path && $parent_path =~ /^$path/);
+        next if $path eq $current_path;
         my $path_perms = $data->{$path};
         for my $role (keys %$path_perms) {
             next unless exists $roles{$role};

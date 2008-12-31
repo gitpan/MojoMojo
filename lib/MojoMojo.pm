@@ -11,7 +11,8 @@ use Catalyst qw/    ConfigLoader
     Session		        Session::Store::File
     Singleton           Session::State::Cookie
     Static::Simple	    SubRequest
-    Unicode
+    Unicode      	    Unicode 
+    I18N
     /;
 
 use Storable;
@@ -24,15 +25,17 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999023';
+our $VERSION = '0.999024';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
     user_field     => 'login',
     password_field => 'pass'
 };
+MojoMojo->config->{default_view}='TT';
 
 MojoMojo->setup();
+
 
 MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}
         || MojoMojo->path_to('uploads') . '' );
@@ -96,6 +99,15 @@ sub wikiword {
 
 sub pref {
     my ( $c, $setting, $value ) = @_;
+
+    return unless $setting;
+
+    # Unfortunately there are MojoMojo->pref() calls in
+    # MojoMojo::Schema::Result::Person which makes it hard
+    # to get cache working for those calls - so we'll just
+    # not use caching for those calls.
+    return $c->pref_cached( $setting, $value ) if ref($c) eq 'MojoMojo';
+
     $setting = $c->model('DBIC::Preference')->find_or_create( { prefkey => $setting } );
     if ( defined $value ) {
         $setting->prefvalue($value);
@@ -107,6 +119,31 @@ sub pref {
         ? $setting->prefvalue
         : ""
     );
+}
+
+# Get preference key/value from cache if possible.
+
+sub pref_cached {
+    my ( $c, $setting, $value ) = @_;
+
+    # Already in cache and no new value to set?
+    if ( defined $c->cache->get($setting) and not defined $value ) {
+        return $c->cache->get($setting);
+    }
+
+    my $row = $c->model('DBIC::Preference')->find_or_create( { prefkey => $setting } );
+
+    # Update database
+    $row->update( { prefvalue => $value } ) if defined $value;
+
+    # Update cache
+    $c->cache->set(
+          $setting => defined $row->prefvalue
+        ? $row->prefvalue()
+        : ""
+    );
+
+    return $c->cache->get($setting);
 }
 
 # Clean up explicit wiki words.
@@ -355,6 +392,11 @@ sub user_role_ids {
 sub check_permissions {
     my ( $c, $path, $user ) = @_;
     
+    return {
+        attachment  => 1,    create      => 1, delete      => 1,    
+        edit        => 1,    view        => 1,
+    } if ($user && $user->is_admin);
+    
     my @paths_to_check = $c->_expand_path_elements($path);
     my $current_path   = $paths_to_check[-1];
 
@@ -367,8 +409,8 @@ sub check_permissions {
     my %rulescomparison = (
         'create' => {
             'allowed' => (
-                defined $c->config->{'permissions'}{'create_allowed'}
-                ? $c->config->{'permissions'}{'create_allowed'}
+                defined $c->config->{'permissions'}->{'create_allowed'}
+                ? $c->config->{'permissions'}->{'create_allowed'}
                 : 1
             ),
             'role' => '__default',
@@ -376,8 +418,8 @@ sub check_permissions {
         },
         'delete' => {
             'allowed' => (
-                defined $c->config->{'permissions'}{'delete_allowed'}
-                ? $c->config->{'permissions'}{'delete_allowed'}
+                defined $c->config->{'permissions'}->{'delete_allowed'}
+                ? $c->config->{'permissions'}->{'delete_allowed'}
                 : 1
             ),
             'role' => '__default',
@@ -385,8 +427,8 @@ sub check_permissions {
         },
         'edit' => {
             'allowed' => (
-                defined $c->config->{'permissions'}{'edit_allowed'}
-                ? $c->config->{'permissions'}{'edit_allowed'}
+                defined $c->config->{'permissions'}->{'edit_allowed'}
+                ? $c->config->{'permissions'}->{'edit_allowed'}
                 : 1
             ),
             'role' => '__default',
@@ -394,8 +436,8 @@ sub check_permissions {
         },
         'view' => {
             'allowed' => (
-                defined $c->config->{'permissions'}{'view_allowed'}
-                ? $c->config->{'permissions'}{'view_allowed'}
+                defined $c->config->{'permissions'}->{'view_allowed'}
+                ? $c->config->{'permissions'}->{'view_allowed'}
                 : 1
             ),
             'role' => '__default',
@@ -403,8 +445,8 @@ sub check_permissions {
         },
         'attachment' => {
             'allowed' => (
-                defined $c->config->{'permissions'}{'attachment_allowed'}
-                ? $c->config->{'permissions'}{'attachment_allowed'}
+                defined $c->config->{'permissions'}->{'attachment_allowed'}
+                ? $c->config->{'permissions'}->{'attachment_allowed'}
                 : 1
             ),
             'role' => '__default',
