@@ -34,6 +34,7 @@ lib/MojoMojo/Formatter/Markdown.pm
 lib/MojoMojo/Formatter/Pod.pm
 lib/MojoMojo/Formatter/Redirect.pm
 lib/MojoMojo/Formatter/Scrub.pm
+lib/MojoMojo/Formatter/SyntaxHighlight.pm
 lib/MojoMojo/Formatter/Textile.pm
 lib/MojoMojo/Formatter/TOC.pm
 lib/MojoMojo/Formatter/Wiki.pm
@@ -320,6 +321,7 @@ t/formatter_comment.t
 t/formatter_include.t
 t/formatter_irclog.t
 t/formatter_redirect.t
+t/formatter_syntax_highlight.t
 t/formatter_toc.t
 t/formatter_wiki.t
 t/lib/MojoMojoTestSchema.pm

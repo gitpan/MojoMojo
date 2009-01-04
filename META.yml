@@ -59,6 +59,7 @@ requires:
   Moose: 0
   Pod::Simple::HTML: 3.01
   String::Diff: 0
+  Syntax::Highlight::Engine::Kate: 0
   Template::Plugin::JavaScript: 0
   Text::Context: 3.5
   Text::Password::Pronounceable: 0
@@ -68,4 +69,4 @@ requires:
   YAML: 0.36
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.999024
+version: 0.999025

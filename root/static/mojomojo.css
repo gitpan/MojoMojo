@@ -231,6 +231,11 @@ div#pageoptions a {
     font-size: 1em;
 }
 
+#lang {
+    background: #ccc;
+    padding: 0.4em;
+}
+
 .formdiv {
     text-align: left;
     background: #ffffff;
@@ -1140,3 +1145,23 @@ div#bottomnav { clear:both; }
 	background-color: white;
 	color: black;
 }
+
+/* Syntax Highlight Engine Kate */
+.kateAlert { color: #0000ff; }
+.kateBaseN { color: #007f00; }
+.kateBString { color: #c9a7ff; }
+.kateChar { color: #ff00ff; }
+.kateComment { color: #7f7f7f; }
+.kateDataType { color: #0000ff; }
+.kateDecVal { color: #00007f; }
+.kateError { color: #ff0000; }
+.kateFloat { color: #00007f; }
+.kateFunction { color: #007f00; }
+.kateIString { color: #ff0000; }
+.kateOperator { color: #ffa500; }
+.kateOthers { color: #b03060; }
+.kateRegionMarker { color: #96b9ff; }
+.kateReserved { color: #9b30ff; }
+.kateString { color: #ff0000; }
+.kateVariable { color: #0000ff; }
+.kateWarning { color: #0000ff; }
