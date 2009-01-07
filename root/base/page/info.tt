@@ -13,7 +13,7 @@
     <dd>[% page.content_version %]</dd>
 
     <dt>[%loc('Content size')%]:</dt>
-    <dd>[% page.content.body.length %] [% loc('chars') %]</dd>
+    <dd>[% body_length              %] [% loc('chars') %]</dd>
 
     <dt>[%loc('Children')%]:</dt>
     <dd>[% page.children.size || 0 %]</dd>
@@ -38,7 +38,7 @@
 
 <ol>
     [% FOREACH version IN page.versions %]
-        <li>[%version.created.ymd('-')%] [%version.created.hms(':')%] by <a href="[%c.uri_for(version.creator.link)%]">[%version.creator.name%]</a></li>
+        <li>[%version.created.ymd('-')%] [%version.created.hms(':')%] by <a href="[%c.uri_for(version.creator.link)%]">[%version.creator.name%]</a> <a href="[%c.uri_for('view',{rev=>version.version})%]">([%loc('Show revision')%])</a></li>
     [% END %]
 </ol>
 

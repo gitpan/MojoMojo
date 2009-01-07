@@ -1,7 +1,6 @@
 package MojoMojo;
 
 use strict;
-use utf8;
 use Path::Class 'file';
 
 use Catalyst qw/    ConfigLoader
@@ -11,7 +10,7 @@ use Catalyst qw/    ConfigLoader
     Session		        Session::Store::File
     Singleton           Session::State::Cookie
     Static::Simple	    SubRequest
-    Unicode      	    Unicode 
+    Unicode
     I18N
     /;
 
@@ -25,7 +24,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999025';
+our $VERSION = '0.999026';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',

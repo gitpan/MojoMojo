@@ -9,7 +9,6 @@ __PACKAGE__->load_components(qw/DateTime::Epoch PK::Auto Core/);
 __PACKAGE__->table("attachment");
 __PACKAGE__->add_columns(
     "id",
-    "id",
     { data_type => "INTEGER", is_nullable => 0, size => undef, is_auto_increment => 1 },
     "uploaded",
     { data_type => "BIGINT", is_nullable => 0, size => undef, epoch => 'ctime' },
@@ -26,6 +25,16 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->belongs_to( "page", "Page", { id => "page" } );
 __PACKAGE__->might_have( "photo", "MojoMojo::Schema::Result::Photo" );
 
+=head1 NAME
+
+MojoMojo::Schema::Result::Attachment
+
+=head1 METHODS
+
+=over 4
+
+=cut
+
 sub delete {
     my ($self) = @_;
     unlink( $self->filename )        if -f $self->filename;
@@ -34,7 +43,7 @@ sub delete {
     $self->next::method();
 }
 
-=head2 filename
+=item filename
 
 Full path to this attachment.
 

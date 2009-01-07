@@ -17,7 +17,6 @@ __PACKAGE__->load_components(qw/DateTime::Epoch PK::Auto UTF8Columns Core/);
 __PACKAGE__->table("comment");
 __PACKAGE__->add_columns(
     "id",
-    "id",
     { data_type => "INTEGER", is_nullable => 0, size => undef, is_auto_increment => 1 },
     "poster",
     { data_type => "INTEGER", is_nullable => 0, size => undef },
@@ -35,6 +34,14 @@ __PACKAGE__->belongs_to( "poster",  "Person", { id => "poster" } );
 __PACKAGE__->belongs_to( "page",    "Page",   { id => "page" } );
 __PACKAGE__->belongs_to( "picture", "Photo",  { id => "picture" } );
 __PACKAGE__->utf8_columns(qw/body/);
+
+=head1 NAME
+
+MojoMojo::Schema::Result::Comment
+
+=head1 METHODS
+
+=over 4
 
 =item formatted
 

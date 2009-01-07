@@ -299,11 +299,9 @@ script/hash_passwords.pl
 script/mojomojo_cgi.pl
 script/mojomojo_create.pl
 script/mojomojo_fastcgi.pl
-script/mojomojo_fcgi.pl
 script/mojomojo_server.pl
 script/mojomojo_spawn_db.pl
 script/mojomojo_test.pl
-script/search_query.pl
 script/update_po.sh
 t/01app.t
 t/02pod.t
