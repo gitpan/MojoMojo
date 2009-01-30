@@ -6,7 +6,6 @@ use Path::Class 'file';
 use Catalyst qw/    ConfigLoader
     Authentication
     Cache               Email
-    Cache::Store::Memory
     Session		        Session::Store::File
     Singleton           Session::State::Cookie
     Static::Simple	    SubRequest
@@ -24,7 +23,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999026';
+our $VERSION = '0.999027';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -32,9 +31,14 @@ MojoMojo->config->{authentication}{dbic} = {
     password_field => 'pass'
 };
 MojoMojo->config->{default_view}='TT';
+MojoMojo->config->{cache}{backend} = {
+    class => "Cache::FastMmap",
+};
 
 MojoMojo->setup();
 
+
+MojoMojo->config->{theme} ||= 'default';
 
 MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}
         || MojoMojo->path_to('uploads') . '' );

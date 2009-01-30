@@ -15,7 +15,9 @@ no_index:
     - t
 requires:
   Algorithm::Diff: 1.1901
+  Algorithm::Merge: 0
   Archive::Zip: 1.14
+  Cache::FastMmap: 0
   Cache::Memory: 0
   Catalyst: 5.7000
   Catalyst::Action::RenderView: 0.07
@@ -23,7 +25,6 @@ requires:
   Catalyst::Controller::HTML::FormFu: 0.02000
   Catalyst::Model::DBIC::Schema: 0.01
   Catalyst::Plugin::Authentication: 0.10005
-  Catalyst::Plugin::Cache::Store::Memory: 0
   Catalyst::Plugin::ConfigLoader: 0.13
   Catalyst::Plugin::Email: 0
   Catalyst::Plugin::I18N: 0
@@ -36,6 +37,7 @@ requires:
   Catalyst::View::JSON: 0
   Catalyst::View::TT: 0.23
   Config::General: 0
+  Config::JFDI: 0
   DBD::SQLite: 1.08
   DBIx::Class: 0.08
   DBIx::Class::DateTime::Epoch: 0
@@ -52,6 +54,7 @@ requires:
   HTML::Scrubber: 0
   HTML::Strip: 1.04
   HTML::TagCloud: 0
+  IO::File: 1.14
   IO::Scalar: 0
   Image::ExifTool: 0
   Image::Math::Constrain: 0
@@ -72,4 +75,4 @@ requires:
   YAML: 0.36
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.999026
+version: 0.999027
