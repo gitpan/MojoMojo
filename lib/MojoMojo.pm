@@ -3,27 +3,34 @@ package MojoMojo;
 use strict;
 use Path::Class 'file';
 
-use Catalyst qw/    ConfigLoader
+use Catalyst qw/
+    ConfigLoader
     Authentication
-    Cache               Email
-    Session		        Session::Store::File
-    Singleton           Session::State::Cookie
-    Static::Simple	    SubRequest
+    Cache
+    Email
+    Session
+    Session::Store::File
+    Session::State::Cookie
+    Static::Simple
+    SubRequest
     Unicode
     I18N
+    Setenv
     /;
 
 use Storable;
-use Cache::Memory;
 use Data::Dumper;
+use MRO::Compat;
 use DBIx::Class::ResultClass::HashRefInflator;
+use Encode ();
+use URI::Escape ();
 use MojoMojo::Formatter::Wiki;
 use Module::Pluggable::Ordered
     search_path => [qw/MojoMojo/],
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999027';
+our $VERSION = '0.999028';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -38,8 +45,6 @@ MojoMojo->config->{cache}{backend} = {
 MojoMojo->setup();
 
 
-MojoMojo->config->{theme} ||= 'default';
-
 MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}
         || MojoMojo->path_to('uploads') . '' );
 
@@ -48,9 +53,9 @@ MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_d
 MojoMojo - A Catalyst & DBIx::Class powered Wiki.
 
 =head1 SYNOPSIS
-    
+
   # Set up database (be sure to edit mojomojo.conf first)
-  
+
   ./script/mojomojo_spawn_db.pl
 
   # Standalone mode
@@ -66,19 +71,19 @@ MojoMojo - A Catalyst & DBIx::Class powered Wiki.
 =head1 DESCRIPTION
 
 Mojomojo is a sort of content managment system, borrowing many concepts from
-wikis and blogs. It allows you to maintain a full tree-structure of pages, 
+wikis and blogs. It allows you to maintain a full tree-structure of pages,
 and to interlink them in various ways. It has full version support, so you can
 always go back to a previous version and see what's changed with an easy AJAX-
 based diff system. There are also a bunch of other features like bult-in
 fulltext search, live AJAX preview of editing, and RSS feeds for every wiki page.
 
-To find out more about how you can use MojoMojo, please visit 
-http://mojomojo.org or read the installation instructions in 
+To find out more about how you can use MojoMojo, please visit
+http://mojomojo.org or read the installation instructions in
 L<MojoMojo::Installation> to try it out yourself.
 
 =cut
 
-# Proxy method for the L<MojoMojo::Formatter::Wiki> expand_wikiword method.
+# Proxy method for the L<MojoMojo::Formatter::Wiki> expand_wikilink method.
 
 sub ajax {
     my ($c) = @_;
@@ -86,9 +91,9 @@ sub ajax {
         && $c->req->header('x-requested-with') eq 'XMLHttpRequest';
 }
 
-sub expand_wikiword {
+sub expand_wikilink {
     my $c = shift;
-    return MojoMojo::Formatter::Wiki->expand_wikiword(@_);
+    return MojoMojo::Formatter::Wiki->expand_wikilink(@_);
 }
 
 # Format a wikiword as a link or as a wanted page, as appropriate.
@@ -139,12 +144,43 @@ sub pref_cached {
     # Update database
     $row->update( { prefvalue => $value } ) if defined $value;
 
+    my $prefvalue= $row->prefvalue();
+
+    # if no entry in preferences, try get one from config or get default value
+    unless ( defined $prefvalue) {
+
+      if ($setting eq 'main_formatter' ) {
+        $prefvalue = defined $c->config->{'main_formatter'}
+                     ? $c->config->{'main_formatter'}
+                     : 'MojoMojo::Formatter::Textile';
+      } elsif ($setting eq 'default_lang' ) {
+        $prefvalue = defined $c->config->{$setting}
+                     ? $c->config->{$setting}
+                     : 'en';
+      } elsif ($setting eq 'name' ) {
+        $prefvalue = defined $c->config->{$setting}
+                     ? $c->config->{$setting}
+                     : 'MojoMojo';
+      } elsif ($setting eq 'theme' ) {
+        $prefvalue = defined $c->config->{$setting}
+                     ? $c->config->{$setting}
+                     : 'default';
+      } elsif ($setting =~ /^(enforce_login|check_permission_on_view)$/ ) {
+        $prefvalue = defined $c->config->{'permissions'}{$setting}
+                     ? $c->config->{'permissions'}{$setting}
+                     : 0;
+      } elsif ($setting =~ /^(cache_permission_data|create_allowed|delete_allowed|edit_allowed|view_allowed|attachment_allowed)$/ ) {
+        $prefvalue = defined $c->config->{'permissions'}{$setting}
+                     ? $c->config->{'permissions'}{$setting}
+                     : 1;
+      } else {
+        $prefvalue = $c->config->{$setting};
+      }
+
+    }
+
     # Update cache
-    $c->cache->set(
-          $setting => defined $row->prefvalue
-        ? $row->prefvalue()
-        : ""
-    );
+    $c->cache->set( $setting => $prefvalue );
 
     return $c->cache->get($setting);
 }
@@ -169,7 +205,7 @@ sub fixw {
 
 sub prepare_path {
     my $c = shift;
-    $c->NEXT::prepare_path;
+    $c->next::method(@_);
     $c->stash->{pre_hacked_uri} = $c->req->uri;
     my $base = $c->req->base;
     $base =~ s|/+$||;
@@ -216,7 +252,13 @@ sub uri_for {
         my $prefix = $c->stash->{path} =~ m|^/| ? '' : '/';
         unshift( @_, $prefix . $c->stash->{path} . '.' . $val );
     }
-    $c->NEXT::uri_for(@_);
+
+    # do I see unicode here?
+    if (Encode::is_utf8($_[0])) {
+        $_[0] = join('/', map { URI::Escape::uri_escape_utf8($_) } split(/\//, $_[0]) );
+    }
+
+    $c->next::method(@_);
 }
 
 sub uri_for_static {
@@ -294,7 +336,7 @@ sub _expand_path_elements {
 
 sub get_permissions_data {
     my ( $c, $current_path, $paths_to_check, $role_ids ) = @_;
-    
+
     # default to roles for current user
     $role_ids ||= $c->user_role_ids( $c->user );
 
@@ -322,7 +364,7 @@ sub get_permissions_data {
     #                                                  },
     #                                         users => .....
     #                                     }
-    if ( $c->config->{'permissions'}{'cache_permission_data'} ) {
+    if ( $c->pref('cache_permission_data') ){
         $permdata = $c->cache->get('page_permission_data');
     }
 
@@ -337,7 +379,7 @@ sub get_permissions_data {
             ->search( undef, { order_by => 'length(path),role,apply_to_subpages' } );
 
         # if we are not caching, we don't return the whole enchilada.
-        if ( !$c->config->{'permissions'}{'cache_permission_data'} ) {
+        if ( ! $c->pref('cache_permission_data') ) {
             ## this seems odd to me - but that's what the dbix::class says to do.
             $rs = $rs->search( { role => $role_ids } ) if $role_ids;
             $rs = $rs->search(
@@ -372,7 +414,7 @@ sub get_permissions_data {
     }
 
     ## now we re-cache it - if we need to.  # !$c->cache('memory')->exists('page_permission_data')
-    if ( $c->config->{'permissions'}{'cache_permission_data'} ) {
+    if ( $c->pref('cache_permission_data') ) {
         $c->cache->set( 'page_permission_data', $permdata );
     }
 
@@ -381,10 +423,10 @@ sub get_permissions_data {
 
 sub user_role_ids {
     my ( $c, $user ) = @_;
-    
+
     ## always use role_id 0 - which is default role and includes everyone.
     my @role_ids = (0);
-    
+
     if ( ref($user) ) {
         push @role_ids, map { $_->role->id } $user->role_members->all;
     }
@@ -394,12 +436,22 @@ sub user_role_ids {
 
 sub check_permissions {
     my ( $c, $path, $user ) = @_;
-    
+
     return {
-        attachment  => 1,    create      => 1, delete      => 1,    
+        attachment  => 1,    create      => 1, delete      => 1,
         edit        => 1,    view        => 1,
     } if ($user && $user->is_admin);
-    
+
+    # if no user is logged in
+    unless ($user){
+      # if anonymous user is allowed
+      my $anonymous=$c->pref('anonymous_user');
+      if ($anonymous){
+        # get anonymous user for no logged-in users
+        $user= $c->model('DBIC::Person') ->search( {login => $anonymous} )->first;
+      }
+    }
+
     my @paths_to_check = $c->_expand_path_elements($path);
     my $current_path   = $paths_to_check[-1];
 
@@ -411,47 +463,27 @@ sub check_permissions {
     # allow everything by default
     my %rulescomparison = (
         'create' => {
-            'allowed' => (
-                defined $c->config->{'permissions'}->{'create_allowed'}
-                ? $c->config->{'permissions'}->{'create_allowed'}
-                : 1
-            ),
+            'allowed' => $c->pref('create_allowed'),
             'role' => '__default',
             'len'  => 0,
         },
         'delete' => {
-            'allowed' => (
-                defined $c->config->{'permissions'}->{'delete_allowed'}
-                ? $c->config->{'permissions'}->{'delete_allowed'}
-                : 1
-            ),
+            'allowed' => $c->pref('delete_allowed'),
             'role' => '__default',
             'len'  => 0,
         },
         'edit' => {
-            'allowed' => (
-                defined $c->config->{'permissions'}->{'edit_allowed'}
-                ? $c->config->{'permissions'}->{'edit_allowed'}
-                : 1
-            ),
+            'allowed' => $c->pref('edit_allowed'),
             'role' => '__default',
             'len'  => 0,
         },
         'view' => {
-            'allowed' => (
-                defined $c->config->{'permissions'}->{'view_allowed'}
-                ? $c->config->{'permissions'}->{'view_allowed'}
-                : 1
-            ),
+            'allowed' => $c->pref('view_allowed'),
             'role' => '__default',
             'len'  => 0,
         },
         'attachment' => {
-            'allowed' => (
-                defined $c->config->{'permissions'}->{'attachment_allowed'}
-                ? $c->config->{'permissions'}->{'attachment_allowed'}
-                : 1
-            ),
+            'allowed' => $c->pref('attachment_allowed'),
             'role' => '__default',
             'len'  => 0,
         },
@@ -528,8 +560,8 @@ die 'Require write access to attachment_dir: <'.MojoMojo->config->{attachment_di
 
 =head1 SUPPORT
 
-If you want to talk about MojoMojo, there's a irc channel, #mojomojo@irc.perl.org. 
-Commercial support and customization for MojoMojo is also provided by Nordaaker 
+If you want to talk about MojoMojo, there's a irc channel, #mojomojo@irc.perl.org.
+Commercial support and customization for MojoMojo is also provided by Nordaaker
 Ltd. Contact C<arneandmarcus@nordaaker.com> for details.
 
 =head1 AUTHORS
@@ -549,4 +581,3 @@ A number of other contributors over the years.
 You may distribute this code under the same terms as Perl itself.
 
 =cut
-

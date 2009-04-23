@@ -2,6 +2,16 @@ package MojoMojo::Formatter;
 
 sub primary_formatter { 0; }
 
+sub module_loaded { 1; }
+
+sub gen_re {
+    my ($self,$tag,$args)=@_;
+    $args ||= '';
+    return qr{\{\{\s*$tag\s*$args\s*\}\}};
+}
+
+
+
 =head1 NAME
 
 MojoMojo::Formatter - Base class for all formatters
@@ -54,7 +64,7 @@ for the default plugins is currently as follows:
 
 =item 95 - L<MojoMojo::Formatter::TOC> replace =toc with table of contents
 
-=item 99  - L<MojoMojo::Formatter::SyntaxHighlight> - Performs syntax highlighting on code blocks (Textile only)
+=item 99  - L<MojoMojo::Formatter::SyntaxHighlight> - Performs syntax highlighting on code blocks
 
 =back
 

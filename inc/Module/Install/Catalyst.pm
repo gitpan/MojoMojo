@@ -16,7 +16,7 @@ my $SAFETY = 0;
 
 our @IGNORE =
   qw/Build Build.PL Changes MANIFEST META.yml Makefile.PL Makefile README
-  _build blib lib script t inc \.svn \.git _darcs \.bzr \.hg/;
+  _build blib lib script t inc/;
 our @CLASSES   = ();
 our $ENGINE    = 'CGI';
 our $CORE      = 0;

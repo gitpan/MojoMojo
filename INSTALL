@@ -5,7 +5,12 @@ INSTALLING MOJOMOJO
         cpan MojoMojo
 
     or by downloading the tarball from http://search.cpan.org/dist/MojoMojo
-    and running perl Makefile.PL on it manually.
+    and running perl Makefile.PL on it manually. This is the most common
+    method.  If you do this, run
+
+        make installdeps 
+        
+    to get all the required modules installed.
 
   Step 2
     mojomojo.conf is the main configuration file and is in Config::General
@@ -48,6 +53,6 @@ INSTALLING MOJOMOJO
         using_frontend_proxy 1
 
   Step 4
-    There is no step four. Have fun exploring MojoMojo, the default
-    login/pass is admin/admin.
+        Login to your MojoMojo and change the admin password: 
+        login/pass is admin/admin.   
 

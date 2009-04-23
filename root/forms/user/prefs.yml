@@ -1,7 +1,5 @@
 ---
-action: 
-indicator: submit
-auto_fieldset: 1
+load_config_file: __path_to(root/forms/defaults.yml)__
 
 elements:
   - type: Text

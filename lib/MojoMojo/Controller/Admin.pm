@@ -48,14 +48,31 @@ sub settings : Path FormConfig Args(0) {
    
     my $admins = $c->pref('admins');
     $admins =~ s/\b$user\b//g;
-
+    my $select_theme = $form->get_all_element({name => 'theme'});
+    my @themes;
+    foreach my $theme (MojoMojo::Model::Themes->list){
+        push @themes,[$theme,$theme]; 
+    };
+    $select_theme->options(\@themes);
     unless( $form->submitted ) {
         $form->default_values({
-            name              => $c->pref('name'),
-            admins            => $admins,
-            anonymous_user    => $c->pref('anonymous_user'),
-            open_registration => $c->pref('open_registration'),
-            restricted_user   => $c->pref('restricted_user'),
+            name                     => $c->pref('name'),
+            admins                   => $admins,
+            anonymous_user           => $c->pref('anonymous_user'),
+            open_registration        => $c->pref('open_registration'),
+            restricted_user          => $c->pref('restricted_user'),
+            disable_search           => $c->pref('disable_search'),
+            check_permission_on_view => $c->pref('check_permission_on_view'),
+            cache_permission_data    => $c->pref('cache_permission_data'),
+            enforce_login            => $c->pref('enforce_login'),
+            create_allowed           => $c->pref('create_allowed'),
+            delete_allowed           => $c->pref('delete_allowed'),
+            edit_allowed             => $c->pref('edit_allowed'),
+            view_allowed             => $c->pref('view_allowed'),
+            attachment_allowed       => $c->pref('attachment_allowed'),
+            use_captcha              => $c->pref('use_captcha'),
+            theme                    => $c->pref('theme'),
+            main_formatter           => $c->pref('main_formatter')
         });
         $form->process();
         return;
@@ -66,31 +83,25 @@ sub settings : Path FormConfig Args(0) {
             $c->stash->{message} = $c->loc('Cant find admin user: ') . $user;
             return;
         }
-        # FIXME: Needs refactor
-        $c->pref( 'name', $form->params->{name} );
-        $c->pref( 'admins', join( ' ', @users, $c->stash->{user}->login ) );
-        $c->pref( 'open_registration', $form->params->{open_registration} );
-        $c->pref( 'restricted_user', $form->params->{restricted_user} );
-        $c->pref( 'anonymous_user', $form->params->{anonymous_user} || '' );
-        $c->stash->{message} = "Updated successfully.";
     }
+    $c->pref( 'check_permission_on_view', $form->params->{check_permission_on_view} ?1:0 );
+    $c->pref( 'cache_permission_data',    $form->params->{cache_permission_data}    ?1:0 );
+    $c->pref( 'open_registration',        $form->params->{open_registration}        ?1:0 );
+    $c->pref( 'restricted_user',          $form->params->{restricted_user}          ?1:0 );
+    $c->pref( 'use_captcha',              $form->params->{use_captcha}              ?1:0 );
+    $c->pref( 'disable_search',           $form->params->{disable_search}           ?1:0 );
+    $c->pref( 'enforce_login',            $form->params->{enforce_login}            ?1:0 );
+    $c->pref( 'create_allowed',           $form->params->{create_allowed}           ?1:0 );
+    $c->pref( 'delete_allowed',           $form->params->{delete_allowed}           ?1:0 );
+    $c->pref( 'edit_allowed',             $form->params->{edit_allowed}             ?1:0 );
+    $c->pref( 'view_allowed',             $form->params->{view_allowed}             ?1:0 );
+    $c->pref( 'attachment_allowed',       $form->params->{attachment_allowed}       ?1:0 );
 
-    # FIXME: Needs refactor
-    if ( $form->params->{open_registration} ) {
-        $c->pref( 'open_registration', 1 );
-    }
-    else {
-        $c->pref( 'open_registration', 0 );
-    }
-    if ( $form->params->{restricted_user} ) {
-        $c->pref( 'restricted_user', 1 );
-    }
-    else {
-        $c->pref( 'restricted_user', 0 );
-    }
-    $c->pref( 'admins', join( ' ', @users, $c->stash->{user}->login ) );
-    $c->pref( 'name', $form->params->{name} );
+    $c->pref( 'admins',         join( ' ', @users, $c->stash->{user}->login ) );
+    $c->pref( 'name',           $form->params->{name} );
     $c->pref( 'anonymous_user', $form->params->{anonymous_user} || '' );
+    $c->pref( 'theme',          $form->params->{theme} || 'default' );
+    $c->pref( 'main_formatter', $form->params->{main_formatter} );
 
     $c->stash->{message} = $c->loc("Updated successfully.");
 }

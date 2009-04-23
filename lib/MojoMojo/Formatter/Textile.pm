@@ -2,9 +2,17 @@ package MojoMojo::Formatter::Textile;
 
 use base qw/MojoMojo::Formatter/;
 
-use Text::Textile2;
+use Text::Textile;
 use Text::SmartyPants;
-my $textile = Text::Textile2->new( flavor => "xhtml1", charset => 'utf-8' );
+my $textile = Text::Textile->new( flavor => "xhtml1", charset => 'utf-8' );
+
+# We do not want Text::Textile to encode HTML entities at all because it will encode something
+# like &gt; into &amp;gt; which sucks
+{
+    no strict 'refs';
+    no warnings;
+    *{"Text::Textile::encode_html"} = sub { my ($self, $html) = @_; return $html; };
+}
 
 =head1 NAME
 
