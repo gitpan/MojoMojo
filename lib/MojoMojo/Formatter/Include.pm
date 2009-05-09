@@ -3,7 +3,7 @@ package MojoMojo::Formatter::Include;
 use base qw/MojoMojo::Formatter/;
 
 eval "use LWP::Simple;use URI::Fetch;";
-my $eval_res=$@;
+my $eval_res = $@;
 sub module_loaded { $eval_res ? 0 : 1 }
 
 =head1 NAME
@@ -12,7 +12,7 @@ MojoMojo::Formatter::Include - Include files in your content.
 
 =head1 DESCRIPTION
 
-Include files verbatim in your content, by writing =<url>.
+Include files verbatim in your content, by writing {{<url>}}.
 
 =head1 METHODS
 
@@ -53,12 +53,12 @@ sub include {
     return "$url ".$c->loc('is not a valid url') unless $url;
     my $rel = $url->rel( $c->req->base );
     unless ($rel->scheme) {
-        warn "Trying to get ".$rel;
+        #warn "Trying to get ".$rel;
         return $c->subreq( '/inline', { path => '/'.$rel } );
     }
     my $res = URI::Fetch->fetch( $url, Cache => $c->cache );
     return $res->content if defined $res;
-    return $c->loc('Could not  retrieve')." $url.\n";
+    return $c->loc('Could not retrieve')." $url.\n";
 }
 
 =back

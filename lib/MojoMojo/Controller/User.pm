@@ -15,7 +15,8 @@ MojoMojo::Controller::User - Login/User Management Controller
 
 =head1 DESCRIPTION
 
-This controller allows user to Log In and Log out.
+This controller performs user management: registration, login, logout,
+password recovery and profile editing.
 
 
 =head1 ACTIONS
@@ -30,8 +31,8 @@ Log in through the authentication system.
 
 sub login : Global : FormConfig {
     my ( $self, $c ) = @_;
-    $c->stash->{message} ||= $c->loc('Please enter username and password');
-
+    $c->stash->{message} ||= $c->flash->{message};
+    # $c->loc('Please enter username and password');
     my $form = $c->stash->{form};
 
     if ( $form->submitted_and_valid ) {
@@ -99,27 +100,30 @@ Main user preferences screen.
 
 =cut
 
+
 sub page_user : Private {
     my ( $self, $c ) = @_;
     my $user = $c->stash->{user};
-    $c->stash->{template} = 'user/prefs.tt';
-    my @proto = @{ $c->stash->{proto_pages} };
-    my $page_user =
-      $c->model("DBIC::Person")
-      ->get_user( $proto[0]->{name} || $c->stash->{page}->name );
+    my $login = (
+          $c->stash->{proto_pages}[-1]
+        ? $c->stash->{proto_pages}[-1]->{name}  # FIXME: why not ->{name_orig}, like in editprofile() ?
+        : $c->stash->{page}->name
+    );
+    my $page_user = $c->model("DBIC::Person")->get_user($login);
 
-    unless (
+    if (
            $page_user
         && $user
-        && (   $page_user->id eq $user->id
-            || $user->is_admin() )
+        && ( $page_user->id eq $user->id || $user->is_admin() )
       )
     {
-        my $c->stash->{message} = $c->loc('Cannot find that user.');
-        $c->stash->{template} = 'message.tt';
-        $c->detach('/default');
+        $c->stash->{template} = 'user/prefs.tt';
+        $c->stash->{page_user} = $page_user;
     }
-    $c->stash->{page_user} = $page_user;
+    else {
+        $c->stash->{message} = $c->loc('User not found: x', $login);
+        $c->stash->{template} = 'message.tt';
+    }
 }
 
 sub prefs : Global FormConfig {
@@ -157,7 +161,7 @@ sub password : Path('/prefs/password') FormConfig {
 
         # FIXME: Should be moved into a formfu validator
         unless ( $page_user->valid_pass( $form->params->{current} ) ) {
-            $c->stash->{message} = $c->loc('Invalid password.');
+            $c->stash->{message} = $c->loc('Invalid password');
             return;
         }
         $page_user->pass( $form->params->{pass} );
@@ -170,35 +174,37 @@ sub recover_pass : Global {
     my ( $self, $c ) = @_;
     return unless ( $c->req->method eq 'POST' );
     my $id = $c->req->param('recover');
-    $c->stash->{user} =
+    my $user =
       $c->model('DBIC::Person')->search( [ email => $id, login => $id ] )
       ->first;
-    my $user = $c->stash->{user};
-    unless ( $c->stash->{user} ) {
-        $c->flash->{message} = 'Could not recover password.';
+    unless ( $user ) {
+        $c->flash->{message} = $c->loc('Could not recover password');
         return $c->res->redirect( $c->uri_for('login') );
     }
-    $c->stash->{password} = Text::Password::Pronounceable->generate( 6, 10 );
-    if (
-        $c->email(
-            header => [
-                From    => $c->config->{system_mail},
-                To      => $user->login . ' <' . $user->email . '>',
-                Subject => 'Your new password on ' . $c->pref('name'),
-            ],
-            body => $c->view('TT')->render( $c, 'mail/reset_password.tt' ),
-        )
-      )
-    {
-        $user->pass( $c->stash->{password} );
-        $user->update();
-        $c->stash->{message} = $c->loc('Emailed you your new password.');
-    }
-    else {
+
+    $c->stash(
+        user     => $user,
+        password => Text::Password::Pronounceable->generate(6, 10),
+        email    => {
+            from     => $c->config->{system_mail},
+            to       => $user->login . ' <' . $user->email . '>',
+            subject  => $c->loc('Your new password on x', $c->pref('name')),
+            template => 'reset_password.tt',
+        },
+    );
+
+    $c->forward( $c->view('Email') );
+    if ( scalar( @{ $c->error } ) ) {
+        $c->clear_errors;
         $c->stash->{message} =
           $c->loc('Error occurred while emailing you your new password.');
     }
-    $c->forward('login');
+    else {
+        $user->pass( $c->stash->{password} );
+        $user->update();
+        $c->flash->{message} = $c->loc('Emailed you your new password.');
+        return $c->res->redirect( $c->uri_for('login') );
+    }
 }
 
 =item register (/.register)
@@ -243,10 +249,9 @@ sub register : Global FormConfig {
 
     $form->model->default_values( $c->stash->{newuser} );
     if ( $form->submitted_and_valid ) {
-
         # Need to check if login or email already exists.
         if ( $c->forward('is_account_taken') ) {
-            $c->stash->{account_taken} = 'Account Taken. Try another.';
+            $c->stash->{account_taken} = $c->loc('Account Taken. Try another.');
             $c->detach();
         }
         $c->stash->{newuser}->active(-1);
@@ -285,21 +290,19 @@ sub do_register : Private {
     my ( $self, $c, $user ) = @_;
     $c->forward('/user/login');
     $c->pref('entropy') || $c->pref( 'entropy', rand );
-    $c->stash->{secret} = md5_hex( $user->email . $c->pref('entropy') );
-    if (
-        $c->email(
-            header => [
-                From => $c->config->{system_mail},
-                To   => $user->email,
-                Subject =>
-                  $c->loc( '~[x~] New User Validation', $c->pref('name') ),
-            ],
-            body => $c->view('TT')->render( $c, 'mail/validate.tt' ),
-        )
-      )
-    {
-    }
-    else {
+    $c->stash(
+        secret => md5_hex( $user->email . $c->pref('entropy') ),
+        email  => {
+            from     => $c->config->{system_mail},
+            to       => $user->email,
+            subject  => $c->loc( '~[x~] New User Validation', $c->pref('name') ),
+            template => 'validate.tt',
+        },
+    );
+
+    $c->forward( $c->view('Email') );
+    if ( scalar( @{ $c->error } ) ) {
+        $c->clear_errors;
         $c->stash->{error} = $c->loc('An error occourred. Sorry.');
     }
     $c->stash->{user}     = $user;
@@ -324,10 +327,10 @@ sub validate : Global {
                 $c->uri_for( '/', $c->stash->{user}->link, '.edit' ) );
         }
         else {
-            $c->stash->{message} =
+            $c->flash->{message} =
               $c->loc( 'Welcome, x your email is validated. Please log in.',
                 $user->name );
-            $c->stash->{template} = 'user/login.tt';
+            return $c->res->redirect( $c->uri_for('login') );
         }
         return;
     }
@@ -370,7 +373,7 @@ sub profile : Global {
     my $page  = $c->stash->{page};
     my $login = (
           $c->stash->{proto_pages}[-1]
-        ? $c->stash->{proto_pages}[-1]->{name}
+        ? $c->stash->{proto_pages}[-1]->{name}  # FIXME: why not ->{name_orig}, like in editprofile() ?
         : $page->name
     );
     my $user = $c->model('DBIC::Person')->get_user($login);
@@ -380,7 +383,7 @@ sub profile : Global {
     }
     else {
         $c->stash->{template} = 'message.tt';
-        $c->stash->{message} = $c->loc( 'User x not found!', $login );
+        $c->stash->{message} = $c->loc( 'User not found: x', $login );
     }
 }
 
@@ -388,11 +391,12 @@ sub editprofile : Global FormConfig {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{form};
     my $page = $c->stash->{page};
-    my $user = $c->model('DBIC::Person')->get_user(
+    my $login = (
           $c->stash->{proto_pages}[-1]
         ? $c->stash->{proto_pages}[-1]->{name_orig}
         : $page->name
     );
+    my $user = $c->model('DBIC::Person')->get_user($login);
     if (
            $user
         && $c->stash->{user}
@@ -408,7 +412,7 @@ sub editprofile : Global FormConfig {
     }
     else {
         $c->stash->{template} = 'message.tt';
-        $c->stash->{message}  = $c->loc('User not found!');
+        $c->stash->{message}  = $c->loc('User not found: x', $login);
     }
 
 }

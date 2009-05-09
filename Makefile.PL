@@ -8,8 +8,8 @@ requires(
     'Algorithm::Merge'                             => 0,
     'Archive::Zip'                                 => '1.14',
     'MRO::Compat'                                  => '0.10',
-    'Cache::FastMmap'                              => 0,
-    'Catalyst'                                     => '5.7000',
+    'Cache::FastMmap'                              => 1.29,  # fixes Win32 compatibility: http://rt.cpan.org/Public/Bug/Display.html?id=45210
+    'Catalyst'                                     => '5.71001',
     'Catalyst::Action::RenderView'                 => '0.07',
     'Catalyst::Authentication::Store::DBIx::Class' => '0.101',
     'Catalyst::Controller::HTML::FormFu'           => '0.03007',
@@ -17,16 +17,16 @@ requires(
     'Catalyst::Plugin::Authentication'             => '0.10005',
     'Catalyst::Plugin::Cache'                      => 0,
     'Catalyst::Plugin::ConfigLoader'               => '0.13',
-    'Catalyst::Plugin::Email'                      => 0,
     'Catalyst::Plugin::I18N'                       => 0,
+    'Catalyst::Plugin::SubRequest'                 => '0.13',
     'Catalyst::Plugin::Session::State::Cookie'     => 0,
-    'Catalyst::Plugin::Session::Store::File'       => 0,
+    'Catalyst::Plugin::Session::Store::File'       => '0.15',
     'Catalyst::Plugin::Setenv'                     => 0,
     'Catalyst::Plugin::Static::Simple'             => '0.07',
-    'Catalyst::Plugin::SubRequest'                 => '0.09',
     'Catalyst::Plugin::Unicode'                    => '0.8',
     'Catalyst::View::TT'                           => '0.23',
     'Catalyst::View::JSON'                         => 0,
+    'Catalyst::View::Email::Template'              => 0,
     'Config::General'                              => 0,
     'Config::JFDI'                                 => 0,
     'Crypt::CBC'                                   => '2.12',    # FormFu
@@ -45,7 +45,7 @@ requires(
     'HTML::Entities'                               => '3.60',    # Pod::Simple
     'HTML::FormFu'                                 => '0.02000', # min version with string renderer
     'HTML::FormFu::Model::DBIC'                    => 0,
-    'HTML::Scrubber'                               => 0,
+    'HTML::Defang'                                 => 0,
     'HTML::Strip'                                  => '1.04',
     'HTML::TagCloud'                               => 0,
     'Image::ExifTool'                              => 0,
@@ -53,7 +53,7 @@ requires(
     'Image::Math::Constrain'                       => 0,
     'IO::Scalar'                                   => 0,
     'IO::File'                                     => '1.14',
-    'KinoSearch'                                   => 0,
+    'KinoSearch'                                   => '0.165',
     'Module::Pluggable::Ordered'                   => '1.4',
     'Moose'                                        => 0,
     'parent'                                       => 0,
@@ -62,7 +62,7 @@ requires(
     'Template::Plugin::JavaScript'                 => 0,
     'Text::Context'                                => '3.5',
     'Text::Password::Pronounceable'                => 0,
-    'URI'                                          => '1.35',
+    'URI'                                          => '1.37',
     'YAML'                                         => '0.36',
     'Text::Textile'                                => 0,
     'Term::Prompt'                                 => 0,
@@ -78,8 +78,14 @@ feature 'POD formatter', 'Pod::Simple::HTML' => '3.01';
 feature 'Syntax Highlighter', 'Syntax::Highlight::Engine::Kate' => 0;
 feature 'Transclusion support','LWP::Simple' => 0,
         'URI::Fetch'                         => 0;
+feature 'Amazon boxes', 'Net::Amazon' => 0;
+feature 'RSS Formatter', 'XML::Feed';
+feature 'Emoticons', 'Text::Emoticon::MSN' => 0;
 
 
+test_requires 'Email::Send::Test';
+test_requires 'WWW::Mechanize' => '1.54';
+test_requires 'Test::WWW::Mechanize::Catalyst'   =>  '0.51 ',;
 
 tests( join ' ', ( glob('t/*.t'), glob('t/*/*.t') ) );
 
