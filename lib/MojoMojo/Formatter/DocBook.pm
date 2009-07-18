@@ -2,7 +2,7 @@ package MojoMojo::Formatter::DocBook;
 
 use strict;
 use warnings;
-use base qw/MojoMojo::Formatter/;
+use parent qw/MojoMojo::Formatter/;
 
 eval "use XML::LibXSLT;use XML::SAX::ParserFactory (); use XML::LibXML::Reader;";
 my $eval_res = $@;
@@ -48,22 +48,23 @@ context object.
 sub format_content {
     my ( $class, $content, $c ) = @_;
 
-    return unless $class->module_loaded;
     my @lines = split /\n/, $$content;
     my $dbk;
     $$content = "";
+    my $start_re=$class->gen_re(qr/docbook/);
+    my $end_re=$class->gen_re(qr/end/);
     foreach my $line (@lines) {
-
         if ($dbk) {
-            if ( $line =~ m/^=docbook\s*$/ ) {
-                $$content .= $class->to_xhtml( $dbk );
+            if ( $line =~ m/^(.*)$end_re(.*)$/ ) {
+		$$content .= $class->to_xhtml( $dbk );
                 $dbk = "";
             }
             else { $dbk .= $line . "\n"; }
         }
         else {
-            if ( $line =~ m/^=docbook\s*$/ ) {
-                $dbk = " ";    # make it true :)
+            if ( $line =~ m/^(.*)$start_re(.*)$/ ) {
+                $$content .= $1;
+                $dbk = " ".$2;    # make it true :)
             }
             else { $$content .= $line . "\n"; }
         }
@@ -85,7 +86,9 @@ sub to_xhtml {
     # Beurk
     $dbk =~ s/&/_-_amp_-_;/g;
 
-    $dbk =~ s/^\s//;
+    $dbk =~ s/^\s+//;
+    $dbk =~ s/^\n+//;
+
     # 1 - Mark lang
     # <programlisting lang="..."> to <programlisting lang="...">[lang=...] code [/lang]
     my $my_Handler = MojoMojo::Formatter::DocBook::Colorize->new($debug);

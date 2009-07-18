@@ -5,9 +5,11 @@ use warnings;
 
 use Moose;
 
+our $VERSION='1';
+
 has 'attachment_dir' => ( is => 'rw', isa => 'Str' );
 
-use base 'DBIx::Class::Schema';
+use parent 'DBIx::Class::Schema';
 
 __PACKAGE__->load_namespaces( default_resultset_class => '+MojoMojo::Schema::Base::ResultSet' );
 
@@ -64,11 +66,11 @@ sub create_initial_data {
             ],
             [
                 1, 0, 0, loc('anonymouscoward'), loc('Anonymous Coward'), $custom_values->{anonymous_email},
-                '', '', 0, '', '', '', '', '', ''
+                '', '', undef, '', '', '', '', '', ''
             ],
             [
                 1, 0, 0, $custom_values->{admin_username}, $custom_values->{admin_fullname}, $custom_values->{admin_email},
-                $custom_values->{admin_password}, '', 0, '', '', '', '', '', ''
+                $custom_values->{admin_password}, '', undef, '', '', '', '', '', ''
             ],
         ]
     );

@@ -6,20 +6,21 @@ all_from 'lib/MojoMojo.pm';
 requires(
     'Algorithm::Diff'                              => '1.1901',
     'Algorithm::Merge'                             => 0,
+    'Algorithm::IncludeExclude'                    => 0,
     'Archive::Zip'                                 => '1.14',
     'MRO::Compat'                                  => '0.10',
-    'Cache::FastMmap'                              => 1.29,  # fixes Win32 compatibility: http://rt.cpan.org/Public/Bug/Display.html?id=45210
+    'Cache::FastMmap'                              => 1.31,  # deleted /tmp/sharefile-* when MM is killed
     'Catalyst'                                     => '5.71001',
     'Catalyst::Action::RenderView'                 => '0.07',
     'Catalyst::Authentication::Store::DBIx::Class' => '0.101',
     'Catalyst::Controller::HTML::FormFu'           => '0.03007',
     'Catalyst::Model::DBIC::Schema'                => '0.01',
     'Catalyst::Plugin::Authentication'             => '0.10005',
-    'Catalyst::Plugin::Cache'                      => 0,
+    'Catalyst::Plugin::Cache'                      => 0.08,
     'Catalyst::Plugin::ConfigLoader'               => '0.13',
     'Catalyst::Plugin::I18N'                       => 0,
     'Catalyst::Plugin::SubRequest'                 => '0.13',
-    'Catalyst::Plugin::Session::State::Cookie'     => 0,
+    'Catalyst::Plugin::Session::State::Cookie'     => 0.11,
     'Catalyst::Plugin::Session::Store::File'       => '0.15',
     'Catalyst::Plugin::Setenv'                     => 0,
     'Catalyst::Plugin::Static::Simple'             => '0.07',
@@ -36,8 +37,9 @@ requires(
     'DateTime::Format::Mail'                       => 0,
     'DBD::SQLite'                                  => '1.08',
     'DBIx::Class'                                  => '0.08',
-    'DBIx::Class::DateTime::Epoch'                 => 0,
+    'DBIx::Class::DateTime::Epoch'                 => '0.04',
     'DBIx::Class::EncodedColumn'                   => 0,
+    'DBIx::Class::TimeStamp'                       => '0.11',
     'Encode'                                       => '2.31',
     'File::Copy::Recursive'                        => 0,
     'File::MMagic'                                 => '1.27',
@@ -45,7 +47,6 @@ requires(
     'HTML::Entities'                               => '3.60',    # Pod::Simple
     'HTML::FormFu'                                 => '0.02000', # min version with string renderer
     'HTML::FormFu::Model::DBIC'                    => 0,
-    'HTML::Defang'                                 => 0,
     'HTML::Strip'                                  => '1.04',
     'HTML::TagCloud'                               => 0,
     'Image::ExifTool'                              => 0,
@@ -56,6 +57,7 @@ requires(
     'KinoSearch'                                   => '0.165',
     'Module::Pluggable::Ordered'                   => '1.4',
     'Moose'                                        => 0,
+    'Catalyst::Plugin::PageCache'                  => '0.21',
     'parent'                                       => 0,
     'String::Diff'                                 => 0,
     'Template'                                     => '2.20',
@@ -68,7 +70,7 @@ requires(
     'Term::Prompt'                                 => 0,
 );
 
-feature 'Automatic deployment', 'SQL::Translator';
+feature 'Automatic deployment', 'SQL::Translator' => '0.09006';
 feature 'Markdown Formatter', 'Text::MultiMarkdown', '1.0.17';
 # XML::LibXSLT depends on the following libraries: libxslt-dev, libgcrypt11-dev (for `lgcrypt`), libgdbm3-dev (for `lgdbm`) and possibly libxml2-dev
 feature 'DocBook formatter', 'XML::LibXSLT' => '1.66',

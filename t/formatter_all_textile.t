@@ -1,7 +1,10 @@
 #!/usr/bin/perl -w
-use Test::More tests => 23;
+use Test::More tests => 27;
 use HTTP::Request::Common;
 use Test::Differences;
+use FindBin '$Bin';
+use lib "$Bin/../lib";
+use Data::Dumper;
 
 my $original_formatter
   ;    # used to save/restore whatever formatter is set up in mojomojo.db
@@ -23,6 +26,7 @@ END {
 }
 
 ( undef, $c ) = ctx_request('/');
+#warn Dumper $c->config;
 ok( $original_formatter = $c->pref('main_formatter'),
     'save original formatter' );
 
@@ -284,6 +288,9 @@ $test = 'Maintain complete set of html table tags. Use textile escape ==';
 $content = <<'TEXTILE';
 ==<table>
 <caption>Vegetable Price List</caption>
+<colgroup>
+<col /><col align="char" char="." />
+</colgroup>
 <thead>
     <tr>
       <th>Vegetable</th>
@@ -311,6 +318,9 @@ TEXTILE
 $expected = <<'HTML';
 <table>
 <caption>Vegetable Price List</caption>
+<colgroup>
+<col /><col align="char" char="." />
+</colgroup>
 <thead>
     <tr>
       <th>Vegetable</th>
@@ -399,3 +409,39 @@ HTML
     $got = get( POST '/.jsrpc/render', [ content => $content ] );
     is( $got, $expected, $test );
 }
+
+
+$test    = 'img src http not allowed';
+$content = <<'HTML';
+<img src="http://malicious.com/foto.jpg" />
+HTML
+$expected = '<p><img defang_src="http://malicious.com/foto.jpg" /></p>
+'; 
+$got = get( POST '/.jsrpc/render', [ content => $content ] );
+eq_or_diff( $got, $expected, $test );
+
+$test    = 'img src https not allowed';
+$content = <<'HTML';
+<img src="https://malicious.com/foto.jpg" />
+HTML
+$expected = '<p><img defang_src="https://malicious.com/foto.jpg" /></p>
+'; 
+$got = get( POST '/.jsrpc/render', [ content => $content ] );
+eq_or_diff( $got, $expected, $test );
+
+$test    = 'img src with bypass protocol not allowed';
+$content = <<'HTML';
+<img src="//malicious.com/foto.jpg" />
+HTML
+$expected = '<p><img defang_src="//malicious.com/foto.jpg" /></p>
+'; 
+$got = get( POST '/.jsrpc/render', [ content => $content ] );
+eq_or_diff( $got, $expected, $test );
+
+$test    = 'remote img src allowed in .conf';
+$content = <<'HTML';
+<p><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/P_hTFilWY9w&amp;hl=en"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/P_hTFilWY9w&amp;hl=en" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></p>
+HTML
+$expected = $content;
+$got = get( POST '/.jsrpc/render', [ content => $content ] );
+is( $got, $expected, $test );

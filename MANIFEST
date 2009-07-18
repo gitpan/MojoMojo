@@ -13,6 +13,7 @@ inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 INSTALL
+lib/HTML/Declaw.pm
 lib/MojoMojo.pm
 lib/MojoMojo/Controller/Admin.pm
 lib/MojoMojo/Controller/Attachment.pm
@@ -52,14 +53,23 @@ lib/MojoMojo/Formatter/TOC.pm
 lib/MojoMojo/Formatter/Wiki.pm
 lib/MojoMojo/Formatter/YouTube.pm
 lib/MojoMojo/I18N.pm
+lib/MojoMojo/I18N/ca.js.po
 lib/MojoMojo/I18N/ca.po
+lib/MojoMojo/I18N/de.js.po
 lib/MojoMojo/I18N/de.po
+lib/MojoMojo/I18N/en.js.po
 lib/MojoMojo/I18N/en.po
+lib/MojoMojo/I18N/es.js.po
 lib/MojoMojo/I18N/es.po
+lib/MojoMojo/I18N/fr.js.po
 lib/MojoMojo/I18N/fr.po
+lib/MojoMojo/I18N/ja.js.po
 lib/MojoMojo/I18N/ja.po
+lib/MojoMojo/I18N/no.js.po
 lib/MojoMojo/I18N/no.po
+lib/MojoMojo/I18N/pl.js.po
 lib/MojoMojo/I18N/pl.po
+lib/MojoMojo/I18N/ru.js.po
 lib/MojoMojo/I18N/ru.po
 lib/MojoMojo/Installation.pod
 lib/MojoMojo/Model/DBIC.pm
@@ -96,7 +106,6 @@ lib/MojoMojo/View/Email.pm
 lib/MojoMojo/View/JSON.pm
 lib/MojoMojo/View/TT.pm
 lib/Text/SmartyPants.pm
-lib/Text/Textile2.pm
 lib/Text/Wikispaces2Markdown.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -296,6 +305,7 @@ root/static/json/ja.po.json
 root/static/json/no.po.json
 root/static/json/pl.po.json
 root/static/json/ru.po.json
+root/static/mm-logo.png
 root/static/mojomojo.css
 root/static/overrides.css
 root/static/pod.css
@@ -348,6 +358,7 @@ root/static/themes/nordaaker/theme.css
 root/static/themes/pink-lady/images/mmlogo.png
 root/static/themes/pink-lady/theme.css
 root/static/themes/purple-pleasure/images/mmlogo.png
+root/static/themes/purple-pleasure/js/theme.js
 root/static/themes/purple-pleasure/theme.css
 root/static/toolbar/big.png
 root/static/toolbar/bold.png
@@ -356,12 +367,6 @@ root/static/toolbar/code.png
 root/static/toolbar/drawing.png
 root/static/toolbar/drawing_left.png
 root/static/toolbar/drawing_right.png
-root/static/toolbar/formatter_comments.png
-root/static/toolbar/formatter_include.png
-root/static/toolbar/formatter_irc.png
-root/static/toolbar/formatter_pod.png
-root/static/toolbar/formatter_redirect.png
-root/static/toolbar/formatter_syntax.png
 root/static/toolbar/heading.png
 root/static/toolbar/hyperlink.png
 root/static/toolbar/italic.png
@@ -382,14 +387,20 @@ root/themes/catalyst/top.tt
 root/themes/pink-lady/footer.tt
 root/themes/pink-lady/page/tags.tt
 root/themes/purple-pleasure/footer.tt
+root/themes/purple-pleasure/header.tt
+root/themes/purple-pleasure/navbar.tt
 root/themes/purple-pleasure/page/tags.tt
+root/themes/purple-pleasure/page/wrapper.tt
 script/hash_passwords.pl
 script/mojomojo_cgi.pl
 script/mojomojo_create.pl
 script/mojomojo_fastcgi.pl
+script/mojomojo_fastcgi_manage.pl
+script/mojomojo_fastcgi_manage.yml
 script/mojomojo_server.pl
 script/mojomojo_spawn_db.pl
 script/mojomojo_test.pl
+script/mojomojo_update_db.pl
 script/textile2markdown.pl
 script/update_po.sh
 script/util/dbk2xhtml.pl
@@ -399,6 +410,7 @@ script/wikispaces2markdown.pl
 t/01app.t
 t/02pod.t
 t/03podcoverage.t
+t/04context.t
 t/app/mojomojo.db
 t/app/mojomojo.yml
 t/c/attachment.t

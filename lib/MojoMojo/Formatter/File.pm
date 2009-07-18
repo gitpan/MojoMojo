@@ -2,7 +2,7 @@ package MojoMojo::Formatter::File;
 
 use strict;
 use warnings;
-use base qw/MojoMojo::Formatter/;
+use parent qw/MojoMojo::Formatter/;
 use File::Slurp;
 use Module::Pluggable (
     search_path => ['MojoMojo::Formatter::File'],
@@ -53,7 +53,7 @@ sub format_content {
   $$content = "";
   foreach my $line (@lines) {
 
-    if ( $line =~ m|<p>=file\s(\w+)\s*(.*)</p>| ) {
+    if ( $line =~ m|<p>{{file\s(\w+)\s*(.*)}}</p>| ) {
       my $plugin=$1; # DocBook, Pod, ...
       my $file=$2; # Attachment
 

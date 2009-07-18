@@ -60,6 +60,7 @@
         </tr>
   [% END %]
 [% END %]
+</tbody>
 </table>
 
 </div>

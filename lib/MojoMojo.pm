@@ -15,6 +15,7 @@ use Catalyst qw/
     Unicode
     I18N
     Setenv
+    PageCache
     /;
 
 use Storable;
@@ -24,12 +25,13 @@ use DBIx::Class::ResultClass::HashRefInflator;
 use Encode ();
 use URI::Escape ();
 use MojoMojo::Formatter::Wiki;
+use Algorithm::IncludeExclude;
 use Module::Pluggable::Ordered
     search_path => 'MojoMojo::Formatter',
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999029';
+our $VERSION = '0.999030';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -37,15 +39,48 @@ MojoMojo->config->{authentication}{dbic} = {
     password_field => 'pass'
 };
 MojoMojo->config->{default_view}='TT';
-MojoMojo->config->{cache}{backend} = {
+MojoMojo->config->{'Plugin::Cache'}{backend} = {
     class => "Cache::FastMmap",
+    unlink_on_exit => 1,
+
 };
+
+MojoMojo->config(
+        'Plugin::PageCache' => {
+
+            # The expires is set in the .conf for easy edit outside of code.
+            # expires          => 300
+
+            # We don't set Cache-Control headers explicitly because
+            # firefox caches pre-login pages.
+            set_http_headers => 0,
+            auto_check_user  => 1,
+            auto_cache       => [
+                               '/.*',
+            ],
+            key_maker => sub {
+                my $c = shift;
+                return $c->stash->{path} . '.' . $c->req->path;
+            },
+            debug => 0 ,
+            cache_hook => 'cache_hook'
+        }
+);
 
 MojoMojo->setup();
 
-
 MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}
         || MojoMojo->path_to('uploads') . '' );
+
+sub prepare {
+    my $self = shift->next::method(@_);
+    if ( $self->config->{force_ssl} ) {
+        my $request = $self->request;
+        $request->base->scheme('https');
+        $request->uri->scheme('https');
+    }
+    return $self;
+}
 
 =head1 NAME
 
@@ -80,7 +115,51 @@ To find out more about how you can use MojoMojo, please visit
 http://mojomojo.org or read the installation instructions in
 L<MojoMojo::Installation> to try it out yourself.
 
+
 =cut
+
+=head2 cache_ie_list
+
+include/exclude list accessor
+
+=cut
+
+# include/exclude pages list to cache
+my $ie;
+$ie = Algorithm::IncludeExclude->new;
+$ie->include();
+# static files will be handled via web server or proxy cache control.
+$ie->exclude(qr{static});
+$ie->exclude(qr{attachment});
+$ie->exclude(qr{export});
+$ie->exclude('login');
+$ie->exclude('logout');
+$ie->exclude('edit');
+# Short cache time set in controller action for list and view
+#$ie->exclude('list');
+#$ie->exclude('recent');
+
+sub cache_ie_list {
+    return $ie;
+}
+
+=head2 cache_hook
+
+Dont cache if user_exist or CATALYST_NOCACHE is set or
+ if path is exclude from cache_ie_list
+
+=cut
+sub cache_hook {
+  my ( $c ) = @_;
+
+  if ( $c->user_exists        ||
+       $ENV{CATALYST_NOCACHE} ||
+       ! $c->cache_ie_list->evaluate($c->req->path)
+     ) {
+    return 0; # Don't cache
+  }
+  return 1;   # Cache
+}
 
 # Proxy method for the L<MojoMojo::Formatter::Wiki> expand_wikilink method.
 
@@ -137,8 +216,17 @@ sub pref_cached {
     if ( defined $c->cache->get($setting) and not defined $value ) {
         return $c->cache->get($setting);
     }
+    # Check that we have a database, i.e. script/mojomojo_spawn_db.pl was run.
+    my $row;
+    eval { $row = $c->model('DBIC::Preference')->find_or_create( { prefkey => $setting } ); };
+    if ( $@ ) {
+        my $no_db_message = "ERROR: You don't seem to have a database initialized.
+Initialize one with script/mojomojo_spawn_db.pl\n";
+        $c->response->body($no_db_message);
+        warn $no_db_message;
+        $c->detach();
+    }
 
-    my $row = $c->model('DBIC::Preference')->find_or_create( { prefkey => $setting } );
 
     # Update database
     $row->update( { prefvalue => $value } ) if defined $value;
@@ -257,7 +345,9 @@ sub uri_for {
         $_[0] = join('/', map { URI::Escape::uri_escape_utf8($_) } split(/\//, $_[0]) );
     }
 
-    $c->next::method(@_);
+    my $res = $c->next::method(@_);
+    $res->scheme('https') if $c->config->{'force_ssl'};
+    return $res;
 }
 
 sub uri_for_static {
@@ -443,12 +533,12 @@ sub check_permissions {
 
     # if no user is logged in
     unless ($user){
-      # if anonymous user is allowed
-      my $anonymous=$c->pref('anonymous_user');
-      if ($anonymous){
-        # get anonymous user for no logged-in users
-        $user= $c->model('DBIC::Person') ->search( {login => $anonymous} )->first;
-      }
+        # if anonymous user is allowed
+        my $anonymous = $c->pref('anonymous_user');
+        if ($anonymous) {
+            # get anonymous user for no logged-in users
+            $user = $c->model('DBIC::Person') ->search( {login => $anonymous} )->first;
+        }
     }
 
     my @paths_to_check = $c->_expand_path_elements($path);

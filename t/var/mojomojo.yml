@@ -5,6 +5,11 @@ Model::DBIC:
 View::Email:
   sender:
     mailer: Test
+allowed:
+  src:
+    - youtube.com
+    - youporn.org
+    - iusethis.com
 authentication:
   default_realm: members
   realms:

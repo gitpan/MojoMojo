@@ -6,11 +6,11 @@
 <form action="[%c.uri_for('attachments')%]" enctype="multipart/form-data" method="post">
     <input type="hidden" name="plain" value="1"/>
     <input type="file" name="file"/>
-    <input type="submit" name="submit" value="[%loc('Upload')%]"/>
+    <input type="submit" name="submit" value="[%loc('Click Here to Upload Attachments')%]"/>
 </form>
 [% ELSE %]
 <a href="#" id="do_upload">[%loc('Choose attachments')%]</a>
-<p>[%loc('Please select a file to attach to this page. To upload multiple files, put them in a zip.')%] </p>
+<p>[%loc('Please select a file to attach to this page. To upload multiple files, hold CTRL while selecting multiple files in the file selection pop up window.')%] </p>
 <p>[%loc('If the flash uploader gives you problems, switch to the')%] <a href="[%c.uri_for('attachments',{plain=>1})%]">[%loc('plain uploader')%]</a></p>
 
 <a href="[%c.uri_for('attachment/list')%]" id="list_link"></a>
