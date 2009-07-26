@@ -422,6 +422,7 @@ t/c/page.t
 t/c/page_edit.t
 t/c/user.t
 t/defang_xss.t
+t/error_page.t
 t/formatter_all_markdown.t
 t/formatter_all_textile.t
 t/formatter_amazon.t

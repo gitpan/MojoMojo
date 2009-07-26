@@ -21,7 +21,7 @@ requires(
     'Catalyst::Plugin::I18N'                       => 0,
     'Catalyst::Plugin::SubRequest'                 => '0.13',
     'Catalyst::Plugin::Session::State::Cookie'     => 0.11,
-    'Catalyst::Plugin::Session::Store::File'       => '0.15',
+    'Catalyst::Plugin::Session::Store::Cache'      => '0',
     'Catalyst::Plugin::Setenv'                     => 0,
     'Catalyst::Plugin::Static::Simple'             => '0.07',
     'Catalyst::Plugin::Unicode'                    => '0.8',
@@ -85,6 +85,7 @@ feature 'RSS Formatter', 'XML::Feed';
 feature 'Emoticons', 'Text::Emoticon::MSN' => 0;
 
 
+test_requires 'Test::More' => '0.82';
 test_requires 'Email::Send::Test';
 test_requires 'WWW::Mechanize' => '1.54';
 test_requires 'Test::WWW::Mechanize::Catalyst'   =>  '0.51 ',;
