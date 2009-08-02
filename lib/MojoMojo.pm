@@ -32,7 +32,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999031';
+our $VERSION = '0.999032';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -43,8 +43,10 @@ MojoMojo->config->{default_view}='TT';
 MojoMojo->config->{'Plugin::Cache'}{backend} = {
     class => "Cache::FastMmap",
     unlink_on_exit => 1,
-    share_file => '/tmp/sharefile-'.Digest::MD5::md5_hex(MojoMojo->config->{home}),
-
+    share_file => '' . Path::Class::file(
+        File::Spec->tmpdir,
+        'mojomojo-sharefile-'.Digest::MD5::md5_hex(MojoMojo->config->{home})
+    ),
 };
 
 MojoMojo->config(
@@ -69,7 +71,47 @@ MojoMojo->config(
         }
 );
 
+__PACKAGE__->config( authentication => {
+    default_realm => 'members',
+    use_session   => 1,
+    realms => {
+        members => {
+            credential => {
+                class               => 'Password',
+                password_field      => 'pass',
+                password_type       => 'hashed',
+                password_hash_type  => 'SHA-1',
+            },
+            store => {
+                class      => 'DBIx::Class',
+                user_class => 'DBIC::Person',
+            },
+        },
+    }
+});
+
+__PACKAGE__->config('Controller::HTML::FormFu' => {
+    languages_from_context => 1,
+    localize_from_context  => 1,
+});
+
 MojoMojo->setup();
+
+# Check for deployed database
+my $has_DB = 1;
+my $NO_DB_MESSAGE =<<"EOF";
+
+    ***********************************************
+    ERROR. Looks like you need to deploy a database.
+    Run script/mojomojo_spawn_db.pl
+    *********************************************** 
+    
+EOF
+eval { MojoMojo->model('DBIC')->schema->resultset('MojoMojo::Schema::Result::Person')->next };
+if ($@ ) {
+    $has_DB = 0;
+    warn $NO_DB_MESSAGE;
+}
 
 MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}
         || MojoMojo->path_to('uploads') . '' );
@@ -147,15 +189,15 @@ sub cache_ie_list {
 
 =head2 cache_hook
 
-Dont cache if user_exist or CATALYST_NOCACHE is set or
- if path is exclude from cache_ie_list
+Dont cache if CATALYST_NOCACHE is set or if the path is excluded from,
+based on the value C<cache_ie_list>.
 
 =cut
 sub cache_hook {
   my ( $c ) = @_;
 
-  if ( $c->user_exists        ||
-       $ENV{CATALYST_NOCACHE} ||
+  if ( $ENV{CATALYST_NOCACHE} ||
+       $c->response->location ||
        ! $c->cache_ie_list->evaluate($c->req->path)
      ) {
     return 0; # Don't cache
@@ -236,15 +278,7 @@ sub pref_cached {
     }
     # Check that we have a database, i.e. script/mojomojo_spawn_db.pl was run.
     my $row;
-    eval { $row = $c->model('DBIC::Preference')->find_or_create( { prefkey => $setting } ); };
-    if ( $@ ) {
-        my $no_db_message = "ERROR: You don't seem to have a database initialized.
-Initialize one with script/mojomojo_spawn_db.pl\n";
-        $c->response->body($no_db_message);
-        warn $no_db_message;
-        $c->detach();
-    }
-
+    $row = $c->model('DBIC::Preference')->find_or_create( { prefkey => $setting } );
 
     # Update database
     $row->update( { prefvalue => $value } ) if defined $value;
@@ -302,6 +336,19 @@ sub fixw {
     $w =~ s/\s/\_/g;
     $w =~ s/[^\w\/\.]//g;
     return $w;
+}
+
+sub prepare_action {
+    my $c = shift;
+    
+    if ($has_DB) {
+        $c->next::method(@_);
+    }
+    else {
+        $c->res->status( 404 );
+        $c->response->body($NO_DB_MESSAGE);
+        return;
+    }
 }
 
 =head2 prepare_path
@@ -663,6 +710,29 @@ sub check_permissions {
 
     my %perms = map { $_ => $rulescomparison{$_}{'allowed'} } keys %rulescomparison;
     return \%perms;
+}
+
+sub check_view_permission {
+    my $c = shift;
+
+    return 1 unless $c->pref('check_permission_on_view');
+
+    my $user;
+    if ( $c->user_exists() ) {
+        $user = $c->user->obj;
+    }
+
+    $c->log->info('Checking permissions') if $c->debug;
+
+    my $perms = $c->check_permissions( $c->stash->{path}, $user );
+    if ( !$perms->{view} ) {
+        $c->stash->{message}
+            = $c->loc( 'Permission Denied to view x', $c->stash->{page}->name );
+        $c->stash->{template} = 'message.tt';
+        return;
+    }
+
+    return 1;
 }
 
 my $search_setup_failed = 0;

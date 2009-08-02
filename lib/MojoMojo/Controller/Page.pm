@@ -26,7 +26,7 @@ can be called with urls like "/page1/page2.action".
 
 =head1 ACTIONS
 
-=head2  view (.view)
+=head2 view (.view)
 
 This is probably the most common action in MojoMojo. A lot of the
 other actions redispatch to this one. It will prepare the stash
@@ -61,19 +61,7 @@ sub view :Global {
 
     my $page = $stash->{'page'};
 
-    my $user;
-    if ( $c->pref('check_permission_on_view') ) {
-        if ( $c->user_exists() ) { $user = $c->user->obj; }
-        $c->log->info('Checking permissions') if $c->debug;
-
-        my $perms = $c->check_permissions( $stash->{'path'}, $user );
-        if ( !$perms->{'view'} ) {
-            $stash->{'message'} =
-              $c->loc( 'Permission Denied to view x', $page->name );
-            $stash->{'template'} = 'message.tt';
-            return;
-        }
-    }
+    return unless $c->check_view_permission;
 
     my $content;
 

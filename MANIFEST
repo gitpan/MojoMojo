@@ -158,6 +158,7 @@ root/base/page/edit.tt
 root/base/page/editbar.tt
 root/base/page/info.tt
 root/base/page/inline.tt
+root/base/page/inline_image.tt
 root/base/page/insert.tt
 root/base/page/list.tt
 root/base/page/permissions.tt
@@ -179,6 +180,7 @@ root/base/sidebar.tt
 root/base/tag/cloud.tt
 root/base/tag/list.tt
 root/base/tag/recent.tt
+root/base/this_page_link.tt
 root/base/top.tt
 root/base/user/editprofile.tt
 root/base/user/list.tt
@@ -405,6 +407,7 @@ script/textile2markdown.pl
 script/update_po.sh
 script/util/dbk2xhtml.pl
 script/util/delete_page.pl
+script/util/dir2mojomojo.pl
 script/util/init_db_re.pl
 script/wikispaces2markdown.pl
 t/01app.t
@@ -413,6 +416,7 @@ t/03podcoverage.t
 t/04context.t
 t/app/mojomojo.db
 t/app/mojomojo.yml
+t/app_leak.t
 t/c/attachment.t
 t/c/comment.t
 t/c/email.t

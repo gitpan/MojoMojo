@@ -76,6 +76,7 @@ requires:
   MRO::Compat: 0.10
   Module::Pluggable::Ordered: 1.4
   Moose: 0
+  Number::Format: 0
   String::Diff: 0
   Template: 2.20
   Template::Plugin::JavaScript: 0
@@ -88,4 +89,4 @@ requires:
   parent: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.999031
+version: 0.999032
