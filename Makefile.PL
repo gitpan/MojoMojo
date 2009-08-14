@@ -1,6 +1,11 @@
 use inc::Module::Install;
 
 name 'MojoMojo';
+resources bugtracker => 'http://github.com/marcusramberg/mojomojo/issues';
+resources homepage => 'http://mojomojo.org';
+resources repository => 'http://github.com/marcusramberg/mojomojo/';
+resources MailingList => 'http://n2.nabble.com/mojomojo-f2358427.html';
+
 all_from 'lib/MojoMojo.pm';
 
 requires(
@@ -86,7 +91,7 @@ feature 'RSS Formatter', 'XML::Feed';
 feature 'Emoticons', 'Text::Emoticon::MSN' => 0;
 
 
-test_requires 'Test::More' => '0.82';
+test_requires 'Test::More' => '0.88';
 test_requires 'Email::Send::Test';
 test_requires 'WWW::Mechanize' => '1.54';
 test_requires 'Test::WWW::Mechanize::Catalyst'   =>  '0.51 ',;

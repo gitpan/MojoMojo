@@ -21,8 +21,8 @@ our @CLASSES   = ();
 our $ENGINE    = 'CGI';
 our $CORE      = 0;
 our $MULTIARCH = 0;
-our $SCRIPT    = '';
-our $USAGE     = '';
+our $SCRIPT;
+our $USAGE;
 
 #line 42
 
@@ -81,7 +81,6 @@ sub catalyst_ignore {
 # Workaround for a namespace conflict
 sub catalyst_par {
     my ( $self, $par ) = @_;
-    $par ||= '';
     return if $SAFETY;
     $SAFETY++;
     my $name  = $self->name;
@@ -98,42 +97,42 @@ Please run "make catalyst_par" to create the PAR package!
 EOF
 }
 
-#line 126
+#line 125
 
 sub catalyst_par_core {
     my ( $self, $core ) = @_;
     $core ? ( $CORE = $core ) : $CORE++;
 }
 
-#line 135
+#line 134
 
 sub catalyst_par_classes {
     my ( $self, @classes ) = @_;
     push @CLASSES, @classes;
 }
 
-#line 144
+#line 143
 
 sub catalyst_par_engine {
     my ( $self, $engine ) = @_;
     $ENGINE = $engine;
 }
 
-#line 153
+#line 152
 
 sub catalyst_par_multiarch {
     my ( $self, $multiarch ) = @_;
     $multiarch ? ( $MULTIARCH = $multiarch ) : $MULTIARCH++;
 }
 
-#line 162
+#line 161
 
 sub catalyst_par_script {
     my ( $self, $script ) = @_;
     $SCRIPT = $script;
 }
 
-#line 171
+#line 170
 
 sub catalyst_par_usage {
     my ( $self, $usage ) = @_;
@@ -285,6 +284,6 @@ EOF
     return 1;
 }
 
-#line 332
+#line 331
 
 1;

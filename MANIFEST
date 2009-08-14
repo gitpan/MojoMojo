@@ -9,7 +9,6 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
-inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 INSTALL
@@ -409,6 +408,7 @@ script/util/dbk2xhtml.pl
 script/util/delete_page.pl
 script/util/dir2mojomojo.pl
 script/util/init_db_re.pl
+script/util/search_and_replace.pl
 script/wikispaces2markdown.pl
 t/01app.t
 t/02pod.t

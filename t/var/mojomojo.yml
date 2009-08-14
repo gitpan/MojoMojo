@@ -2,6 +2,8 @@
 Model::DBIC:
   connect_info:
     - dbi:SQLite:t/var/mojomojo.db
+    - ''
+    - ''
 View::Email:
   sender:
     mailer: Test
@@ -10,17 +12,5 @@ allowed:
     - youtube.com
     - youporn.org
     - iusethis.com
-authentication:
-  default_realm: members
-  realms:
-    members:
-      credential:
-        class: Password
-        password_field: pass
-        password_hash_type: SHA-1
-        password_type: hashed
-      store:
-        class: DBIx::Class
-        user_class: DBIC::Person
-  use_session: 1
+attachment_dir: __path_to(t/var/uploads)__
 name: MojoMojo Test Suite

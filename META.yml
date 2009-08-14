@@ -4,14 +4,11 @@ author:
   - 'Marcus Ramberg C<marcus@nordaaker.com>'
 build_requires:
   Email::Send::Test: 0
-  ExtUtils::MakeMaker: 6.42
-  Test::More: 0.82
+  Test::More: 0.88
   Test::WWW::Mechanize::Catalyst: '0.51 '
   WWW::Mechanize: 1.54
-configure_requires:
-  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.91'
+generated_by: 'Module::Install version 0.77'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -88,5 +85,9 @@ requires:
   YAML: 0.36
   parent: 0
 resources:
+  MailingList: http://n2.nabble.com/mojomojo-f2358427.html
+  bugtracker: http://github.com/marcusramberg/mojomojo/issues
+  homepage: http://mojomojo.org
   license: http://dev.perl.org/licenses/
-version: 0.999032
+  repository: http://github.com/marcusramberg/mojomojo/
+version: 0.999033
