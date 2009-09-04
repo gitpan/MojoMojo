@@ -91,12 +91,13 @@ msgid "All Pages"
 msgstr "Toutes les Pages"
 
 #. (page.path)
-#: root/base/page/list.tt:1
+#: root/base/page/list.tt:1 root/base/page/subtree.tt:1
 msgid "All Pages in x"
 msgstr "Toutes les Pages dans %1"
 
 #. (page.name)
-#: root/base/page/list.tt:19
+#. (styled_page_name)
+#: root/base/page/list.tt:19 root/base/page/subtree.tt:9
 msgid "All pages in x listed alphabetically"
 msgstr "Toutes les Pages dans %1 par ordre alphabétique"
 
@@ -109,7 +110,7 @@ msgstr "Toutes les pages taggées avec %1 listées par ordre alphabétique"
 msgid "All tags"
 msgstr "Tous les tags"
 
-#: root/base/page/list.tt:33
+#: root/base/page/list.tt:49
 msgid "All tags in this path"
 msgstr "Tous les tags dans ce chemin"
 
@@ -190,7 +191,7 @@ msgstr "Pièces jointes"
 msgid "Authors"
 msgstr "Auteurs"
 
-#: root/base/page/list.tt:34
+#: root/base/page/list.tt:50
 msgid "Authors in this path"
 msgstr ""
 
@@ -202,7 +203,7 @@ msgstr "Retour en arrière"
 msgid "Back to the page"
 msgstr "Retour à la page"
 
-#: root/base/page/list.tt:39
+#: root/base/page/list.tt:55
 msgid "Backlinks"
 msgstr "Backlinks"
 
@@ -294,8 +295,8 @@ msgstr "Cercle"
 msgid "Click for original version"
 msgstr "Cliquer pour la version originale"
 
-#: root/base/page/suggest.tt:22
-msgid "Click on any non-existent page to create it. Any missing pages above it will be created automatically."
+#: root/base/page/suggest.tt:12
+msgid "Click on a link above to create that page."
 msgstr ""
 
 #: root/base/edithelp/markdown.tt:153
@@ -339,8 +340,9 @@ msgstr "Création de la pièce jointe impossible à partir de %1"
 msgid "Could not recover password"
 msgstr ""
 
-#: lib/MojoMojo/Formatter/Include.pm:59
-msgid "Could not retrieve"
+#. ($url)
+#: lib/MojoMojo/Formatter/Include.pm:62
+msgid "Could not retrieve x"
 msgstr ""
 
 #:
@@ -411,7 +413,7 @@ msgstr "Vous n'avez pas reçus de mail ?"
 msgid "Disable internal search (use Google)"
 msgstr ""
 
-#: root/base/page/list.tt:36
+#: root/base/page/list.tt:52
 msgid "Download a zip with all the pages in this path"
 msgstr ""
 
@@ -504,11 +506,7 @@ msgstr "Une erreur s'est produite pendant la transmission par mail de votre nouv
 msgid "Exif Data"
 msgstr "Données EXIF"
 
-#: root/base/page/suggest.tt:4
-msgid "Existent Pages"
-msgstr ""
-
-#: root/base/export.tt:1 root/base/navbar.tt:14 root/base/page/list.tt:36
+#: root/base/export.tt:1 root/base/navbar.tt:14 root/base/page/list.tt:52
 msgid "Export"
 msgstr "Exporter"
 
@@ -524,7 +522,7 @@ msgstr "Albums Favoris"
 msgid "Favorite Movies"
 msgstr "Films Favoris"
 
-#: root/base/feeds.tt:1 root/base/navbar.tt:13 root/base/page/list.tt:35
+#: root/base/feeds.tt:1 root/base/navbar.tt:13 root/base/page/list.tt:51
 msgid "Feeds"
 msgstr "Feeds"
 
@@ -650,7 +648,7 @@ msgstr "Bonjour. C'est l'email pour valider votre adresse email, %1. Pour confir
 msgid "Hide changes"
 msgstr "Cacher les changements"
 
-#: root/base/admin/toplinks.tt:11 root/base/page/suggest.tt:8 root/base/page/wrapper.tt:11 root/base/sidebar.tt:3
+#: root/base/admin/toplinks.tt:11 root/base/page/wrapper.tt:11 root/base/sidebar.tt:3
 msgid "Home"
 msgstr "Accueil"
 
@@ -784,7 +782,7 @@ msgid "Leave second blank if you do not want a password"
 msgstr "Laisser le deuxième champ vide si vous ne voulez pas de mot de passe"
 
 #: root/base/page/edit.tt:69
-msgid "Leave the second field blank if you do not want a password)"
+msgid "Leave the second field blank if you do not want a password"
 msgstr ""
 
 #: root/base/gallery/photo_info.tt:5
@@ -819,7 +817,7 @@ msgstr "Liés à"
 msgid "Links to Other Sites"
 msgstr ""
 
-#: root/base/page/list.tt:50
+#: root/base/page/list.tt:66
 msgid "Links to non-existent pages."
 msgstr "Liens vers des pages inexistantes."
 
@@ -864,13 +862,13 @@ msgstr "Titre principal"
 msgid "Make current"
 msgstr ""
 
-#: root/base/edithelp/markdown.tt:1
-msgid "Markdow help"
-msgstr ""
-
 #:
 msgid "Markdown formatting tips"
 msgstr "Astuces pour le formatage"
+
+#: root/base/edithelp/markdown.tt:1
+msgid "Markdown help"
+msgstr ""
 
 #: root/base/edithelp/markdown.tt:4
 msgid "Markdown reference - the basics"
@@ -936,6 +934,10 @@ msgstr "Répéter nouveau mot de passe"
 msgid "Next"
 msgstr "Suivant"
 
+#: root/base/page/list.tt:37
+msgid "Next page"
+msgstr ""
+
 #: root/base/admin/role.tt:26
 msgid "No"
 msgstr "Non"
@@ -966,8 +968,8 @@ msgstr "Pas de changement récent"
 msgid "No results found"
 msgstr "Pas de résultat trouvé"
 
-#. ($rev,                '<span class="error_detail">'                  . '<a href="' . $page->path . '">' . $page->name . '</a>'               .'</span>')
-#: lib/MojoMojo/Controller/Page.pm:83
+#. ($rev,                '<span class="error_detail">'                  . '<a href="'                  . $page->path . '">'                  . $page->name . '</a>'                  . '</span>')
+#: lib/MojoMojo/Controller/Page.pm:87
 msgid "No revision x for x"
 msgstr ""
 
@@ -983,7 +985,7 @@ msgstr "Aucune révision correspondate pour "
 msgid "No tags in use."
 msgstr ""
 
-#: root/base/page/suggest.tt:14
+#:
 msgid "Non-Existent Pages"
 msgstr "Page inexistante"
 
@@ -999,7 +1001,7 @@ msgstr "Paragraphe normal "
 msgid "Normal paragraph"
 msgstr ""
 
-#: lib/MojoMojo/Formatter/Wiki.pm:287 root/base/page/list.tt:56
+#: lib/MojoMojo/Formatter/Wiki.pm:287 root/base/page/list.tt:72
 msgid "Not found. Click to create this page."
 msgstr "Introuvable. Cliquez pour créer cette page"
 
@@ -1023,7 +1025,7 @@ msgstr "Liste numérotée"
 msgid "Numbered list item"
 msgstr "Liste numérotée"
 
-#: root/base/page/suggest.tt:3
+#:
 msgid "One or more pages in the requested path do not exist."
 msgstr "Une ou plusieurs pages de la requête sont inexistante"
 
@@ -1040,15 +1042,15 @@ msgstr "Vous pouvez aussi vérifier %1"
 msgid "Ordered Lists"
 msgstr "Listes ordonnées"
 
-#: root/base/page/list.tt:63
+#: root/base/page/list.tt:79
 msgid "Orphaned Pages"
 msgstr "Pages orphelines"
 
-#: root/base/page/suggest.tt:24
+#:
 msgid "Other Suggestions"
 msgstr "Autres suggestions"
 
-#: root/base/page/list.tt:40
+#: root/base/page/list.tt:56
 msgid "Other pages that link to this page."
 msgstr "Autres pages liées à cette page."
 
@@ -1081,7 +1083,7 @@ msgstr " Texte de la page"
 msgid "Pages sorted by when they were last changed"
 msgstr "Pages triées par derniers changements."
 
-#: root/base/page/list.tt:64
+#: root/base/page/list.tt:80
 msgid "Pages to which no other pages link."
 msgstr "Pages auxquelles aucune page ne fait référence"
 
@@ -1191,6 +1193,10 @@ msgstr "Prévisualisation"
 msgid "Previous"
 msgstr "Précédent"
 
+#: root/base/page/list.tt:29
+msgid "Previous page"
+msgstr ""
+
 #: root/base/page/bottomnav.tt:58
 msgid "Print"
 msgstr "Impression"
@@ -1217,7 +1223,7 @@ msgid "Recent Pages"
 msgstr "Pages récentes"
 
 #. (page.path)
-#: root/base/page/atom.tt:6 root/base/page/list.tt:32 root/base/page/rss.tt:6 root/base/page/rss_full.tt:7
+#: root/base/page/atom.tt:6 root/base/page/list.tt:48 root/base/page/rss.tt:6 root/base/page/rss_full.tt:7
 msgid "Recent changes in x"
 msgstr "Changements récents dans %1"
 
@@ -1479,7 +1485,7 @@ msgstr "Carré"
 msgid "Sub Header"
 msgstr ""
 
-#: root/base/page/list.tt:29
+#: root/base/page/list.tt:45
 msgid "Sub Page Tools"
 msgstr ""
 
@@ -1491,7 +1497,7 @@ msgstr ""
 msgid "Sub pages"
 msgstr "Sous-pages"
 
-#: root/base/navbar.tt:13 root/base/page/list.tt:35
+#: root/base/navbar.tt:13 root/base/page/list.tt:51
 msgid "Subscribe to changes by RSS"
 msgstr "S'abonner aux modifications par flux RSS"
 
@@ -1515,7 +1521,7 @@ msgstr "LEURS CHANGEMENTS"
 msgid "Table"
 msgstr "Table"
 
-#: root/base/navbar.tt:11 root/base/page/list.tt:33 root/base/page/list.tt:7 root/base/page/recent.tt:18 root/base/tag/recent.tt:7
+#: root/base/navbar.tt:11 root/base/page/list.tt:49 root/base/page/list.tt:7 root/base/page/recent.tt:18 root/base/tag/recent.tt:7
 msgid "Tags"
 msgstr "Tags"
 
@@ -1559,6 +1565,10 @@ msgstr "La page Wikilious"
 #. (user.email)
 #: root/base/user/validate.tt:8
 msgid "The email was sent to x."
+msgstr ""
+
+#: root/base/page/suggest.tt:4
+msgid "The following pages in the requested path do not exist:"
 msgstr ""
 
 #:
@@ -1700,7 +1710,7 @@ msgstr "Voir comme une gallerie"
 msgid "Views"
 msgstr "Vues"
 
-#: root/base/page/list.tt:49
+#: root/base/page/list.tt:65
 msgid "Wanted Pages"
 msgstr "Pages Souhaitées"
 
@@ -1713,7 +1723,7 @@ msgstr "Un mail d'activation vous a été transmis. Merci de cliquer sur le lien
 msgid "Welcome, x your email is validated. Please log in."
 msgstr "Bienvenue, %1 votre email est validé. Merci de vous identifiez"
 
-#: root/base/navbar.tt:12 root/base/page/list.tt:34
+#: root/base/navbar.tt:12 root/base/page/list.tt:50
 msgid "Who wrote what"
 msgstr "Qui a écrit ça"
 
@@ -2028,7 +2038,7 @@ msgstr ""
 msgid "is not a valid link to youtube video"
 msgstr ""
 
-#: lib/MojoMojo/Formatter/Include.pm:51 lib/MojoMojo/Formatter/YouTube.pm:58
+#: lib/MojoMojo/Formatter/YouTube.pm:58
 msgid "is not a valid url"
 msgstr ""
 
@@ -2137,7 +2147,7 @@ msgid "redirect to"
 msgstr ""
 
 #. (wanted.from_page.path)
-#: root/base/page/list.tt:57
+#: root/base/page/list.tt:73
 msgid "referenced by x"
 msgstr ""
 
@@ -2209,6 +2219,11 @@ msgstr ""
 #: root/base/page/permissions.tt:14 root/base/page/permissions.tt:18 root/base/page/permissions.tt:36 root/base/page/permissions.tt:53
 msgid "write"
 msgstr "écrire"
+
+#. ($url)
+#: lib/MojoMojo/Formatter/Include.pm:53
+msgid "x is not a valid URL"
+msgstr ""
 
 #. (page.content.max_version - page.content_version)
 #. (page.content.max_version - rev)

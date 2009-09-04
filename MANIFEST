@@ -9,6 +9,7 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 INSTALL
@@ -168,6 +169,7 @@ root/base/page/rss.tt
 root/base/page/rss_full.tt
 root/base/page/search.tt
 root/base/page/search_inline.tt
+root/base/page/subtree.tt
 root/base/page/suggest.tt
 root/base/page/tags.tt
 root/base/page/view.tt
@@ -290,6 +292,7 @@ root/static/js/edit.js
 root/static/js/fat.js
 root/static/js/jquery.autocomplete.js
 root/static/js/jquery.cookies.2.0.1.min.js
+root/static/js/jquery.editinplace.js
 root/static/js/jquery.form.js
 root/static/js/jquery.inplace.js
 root/static/js/jquery.js
@@ -311,6 +314,7 @@ root/static/mojomojo.css
 root/static/overrides.css
 root/static/pod.css
 root/static/reset.css
+root/static/robots.txt
 root/static/shrinkedhead.jpg
 root/static/spinner.gif
 root/static/themes/catalyst/generic.css
@@ -341,6 +345,15 @@ root/static/themes/catalyst/layout.css
 root/static/themes/catalyst/menu_global_bg_left.png
 root/static/themes/catalyst/planet.css
 root/static/themes/catalyst/theme.css
+root/static/themes/catapulse/config.rb
+root/static/themes/catapulse/ie.css
+root/static/themes/catapulse/images/grid.png
+root/static/themes/catapulse/images/mainbg.jpg
+root/static/themes/catapulse/print.css
+root/static/themes/catapulse/src/ie.sass
+root/static/themes/catapulse/src/print.sass
+root/static/themes/catapulse/src/theme.sass
+root/static/themes/catapulse/theme.css
 root/static/themes/default/images/background.jpg
 root/static/themes/default/images/header.png
 root/static/themes/default/images/mmlogo.png
@@ -352,6 +365,8 @@ root/static/themes/epo/images/nordadiffus.png
 root/static/themes/epo/theme.css
 root/static/themes/grey-scale/images/mmlogo.png
 root/static/themes/grey-scale/theme.css
+root/static/themes/madrid-pm/images/onion-madrid.png
+root/static/themes/madrid-pm/theme.css
 root/static/themes/nordaaker/images/background.png
 root/static/themes/nordaaker/images/nordaaker.png
 root/static/themes/nordaaker/images/nordadiffus.png
@@ -385,6 +400,7 @@ root/static/toolbar/super.png
 root/static/toolbar/wikilink.png
 root/themes/catalyst/footer.tt
 root/themes/catalyst/top.tt
+root/themes/madrid-pm/top.tt
 root/themes/pink-lady/footer.tt
 root/themes/pink-lady/page/tags.tt
 root/themes/purple-pleasure/footer.tt
@@ -414,6 +430,7 @@ t/01app.t
 t/02pod.t
 t/03podcoverage.t
 t/04context.t
+t/05cookie.t
 t/app/mojomojo.db
 t/app/mojomojo.yml
 t/app_leak.t
@@ -424,6 +441,7 @@ t/c/journal.t
 t/c/jsrpc.t
 t/c/page.t
 t/c/page_edit.t
+t/c/tag.t
 t/c/user.t
 t/defang_xss.t
 t/error_page.t

@@ -12,7 +12,9 @@ MojoMojo::Formatter::Include - Include files in your content.
 
 =head1 DESCRIPTION
 
-Include files verbatim in your content, by writing {{<url>}}.
+Include files verbatim in your content, by writing {{<url>}}. Can be used for
+transclusion from the same wiki, in which case the
+L<inline|MojoMojo::Controller::Page/inline> version of the page is pulled.
 
 =head1 METHODS
 
@@ -35,7 +37,10 @@ sub format_content {
     my ( $class, $content, $c ) = @_;
     return unless $class->module_loaded;
     my $re=$class->gen_re(qr/(http\:\/\/[^}]+)/);
-    $$content =~ s|$re|$class->include( $c, $1 )|meg;
+    if ( $$content =~ s|$re|$class->include( $c, $1 )|meg ) {
+        # We don't want to precompile a page with comments so turn it off
+        $c->stash->{precompile_off} = 1;
+    }
 }
 
 =head2 include <c> <url>
@@ -48,15 +53,16 @@ C<< $c->cache >>.
 sub include {
     my ( $class, $c, $url ) = @_;
     $url = URI->new($url);
-    return "$url ".$c->loc('is not a valid url') unless $url;
+    return $c->loc('x is not a valid URL', $url) unless $url;
+    # check if we're including a page from the same wiki
     my $rel = $url->rel( $c->req->base );
-    unless ($rel->scheme) {
-        #warn "Trying to get ".$rel;
+    if (not $rel->scheme) {
+        # if so, then return the inline version of the page is requests
         return $c->subreq( '/inline', { path => '/'.$rel } );
     }
     my $res = URI::Fetch->fetch( $url, Cache => $c->cache );
     return $res->content if defined $res;
-    return $c->loc('Could not retrieve')." $url.\n";
+    return $c->loc('Could not retrieve x', $url);
 }
 
 =head1 SEE ALSO

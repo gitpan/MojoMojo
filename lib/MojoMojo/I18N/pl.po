@@ -47,7 +47,7 @@ msgstr "Akcje"
 msgid "Active"
 msgstr "Aktywny"
 
-#: root/base/page/info.tt:43
+#: root/base/page/info.tt:45
 msgid "Active version"
 msgstr "Wersja aktywna"
 
@@ -84,12 +84,13 @@ msgid "All Pages"
 msgstr "Wszystkie strony"
 
 #. (page.path)
-#: root/base/page/list.tt:1
+#: root/base/page/list.tt:1 root/base/page/subtree.tt:1
 msgid "All Pages in x"
 msgstr "Wszystkie strony w %1"
 
 #. (page.name)
-#: root/base/page/list.tt:19
+#. (styled_page_name)
+#: root/base/page/list.tt:19 root/base/page/subtree.tt:9
 msgid "All pages in x listed alphabetically"
 msgstr "Wszystkie strony w %1 posortowane alfabetycznie"
 
@@ -102,13 +103,13 @@ msgstr "Wszystkie strony oznaczone %1 posortowane alfabetycznie"
 msgid "All tags"
 msgstr "wszystkie tagi"
 
-#: root/base/page/list.tt:33
+#: root/base/page/list.tt:49
 msgid "All tags in this path"
 msgstr "Wszystkie tagi w tej ścieżce"
 
 #: root/base/navbar.tt:11
 msgid "All tags in this wiki"
-msgstr ""
+msgstr "Wszystkie tagi"
 
 #:
 msgid "All tags on photos"
@@ -146,13 +147,17 @@ msgstr "Anonim"
 msgid "Anonymous Coward"
 msgstr "Gall Anonim"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:96
+#:
 msgid "Anonymous Edit disabled"
 msgstr "Wyłącz anonimowe edycje"
 
 #: root/forms/admin/settings.yml:23
 msgid "Anonymous User (blank to disable)"
 msgstr "Użytkownik anonimowy (puste, aby zablokować)"
+
+#: lib/MojoMojo/Controller/PageAdmin.pm:112
+msgid "Anonymous edit disabled"
+msgstr "Edycja zabroniona dla użytkowników anonimowych"
 
 #: root/base/edithelp.tt:4
 msgid "Any phrase surrounded by double brackets or parentheses is a wiki word (camel-case wiki words are not supported for good reasons, one being that some languages don't have the concept of case)."
@@ -166,11 +171,11 @@ msgstr "Przysłona"
 msgid "Attachment allowed by default"
 msgstr "Domyślnie włącz załączniki"
 
-#: lib/MojoMojo/Controller/Attachment.pm:150
+#: lib/MojoMojo/Controller/Attachment.pm:58
 msgid "Attachment not found."
 msgstr "Załącznik nie został znaleziony"
 
-#: root/base/navbar.tt:44 root/base/page/editbar.tt:14 root/base/page/editbar.tt:9 root/base/page/info.tt:61
+#: root/base/navbar.tt:44 root/base/page/editbar.tt:14 root/base/page/editbar.tt:9 root/base/page/info.tt:63
 msgid "Attachments"
 msgstr "Załączniki"
 
@@ -178,9 +183,9 @@ msgstr "Załączniki"
 msgid "Authors"
 msgstr "Autorzy"
 
-#: root/base/page/list.tt:34
+#: root/base/page/list.tt:50
 msgid "Authors in this path"
-msgstr ""
+msgstr "Autorzy występujący w tej ścieżce"
 
 #: root/base/page/bottomnav.tt:21 root/base/page/bottomnav.tt:38
 msgid "Back in time"
@@ -190,7 +195,7 @@ msgstr "Wersja poprzednia"
 msgid "Back to the page"
 msgstr "Powrót na stronę"
 
-#: root/base/page/list.tt:39
+#: root/base/page/list.tt:55
 msgid "Backlinks"
 msgstr "Linki zwrotne"
 
@@ -230,7 +235,7 @@ msgstr "W wersji wbudowanej mogę pokazać wyłącznie zdjęcia"
 msgid "Can only make thumbnails of photos"
 msgstr "Miniaturki dostępne wyłącznie dla zdjęć"
 
-#: lib/MojoMojo/Controller/Admin.pm:82
+#: lib/MojoMojo/Controller/Admin.pm:87
 msgid "Cant find admin user: "
 msgstr "Nie mogę znaleźć administratora: "
 
@@ -254,7 +259,7 @@ msgstr "Zmień ustawienia strony"
 msgid "Check permission on view"
 msgstr "Sprawdzaj uprawnienia przy przeglądaniu"
 
-#: root/base/page/info.tt:49
+#: root/base/page/info.tt:51
 msgid "Children"
 msgstr "Podrzędnych"
 
@@ -270,13 +275,17 @@ msgstr "Kółko"
 msgid "Click for original version"
 msgstr "Kliknij aby zobaczyć oryginał"
 
-#: root/base/page/suggest.tt:22
+#: root/base/page/suggest.tt:12
+msgid "Click on a link above to create that page."
+msgstr "Aby utworzyć stronę, kliknij na linku"
+
+#:
 msgid "Click on any non-existent page to create it. Any missing pages above it will be created automatically."
 msgstr "Kliknij na nieistniejącej stronie, aby ją utworzyć. Brakujące nadrzędne strony zostaną automatycznie utworzone."
 
 #: root/base/edithelp/markdown.tt:153
 msgid "Code"
-msgstr ""
+msgstr "Kod"
 
 #:
 msgid "Code Spans"
@@ -298,7 +307,7 @@ msgstr "Komentarze"
 msgid "Configuration"
 msgstr "Konfiguracja"
 
-#: root/base/page/info.tt:46
+#: root/base/page/info.tt:48
 msgid "Content size"
 msgstr "Rozmiar treści"
 
@@ -307,7 +316,7 @@ msgid "Could not authenticate that login."
 msgstr "Nie mogę sprawdzić tego loginu."
 
 #. ($file)
-#: lib/MojoMojo/Controller/Attachment.pm:100
+#: lib/MojoMojo/Controller/Attachment.pm:114
 msgid "Could not create attachment from x"
 msgstr "Could not create attachment from %1"
 
@@ -315,9 +324,14 @@ msgstr "Could not create attachment from %1"
 msgid "Could not recover password"
 msgstr "Błąd w czasie odzyskiwania hasła"
 
-#: lib/MojoMojo/Formatter/Include.pm:59
+#:
 msgid "Could not retrieve"
 msgstr "Nie mogę pobrać"
+
+#. ($url)
+#: lib/MojoMojo/Formatter/Include.pm:62
+msgid "Could not retrieve x"
+msgstr "Nie mogę pobrać %1"
 
 #: root/base/admin/create_role.tt:10
 msgid "Create Role"
@@ -335,9 +349,9 @@ msgstr "Domyślnie pozwól na tworzenie"
 msgid "Create and View"
 msgstr "Utwórz i Zobacz"
 
-#: root/base/page/info.tt:19
+#: root/base/page/info.tt:21
 msgid "Created by"
-msgstr ""
+msgstr "Utworzony przez"
 
 #: root/base/edithelp/markdown.tt:150
 msgid "Creates"
@@ -355,9 +369,9 @@ msgstr "Aktualna wersja"
 msgid "Current password"
 msgstr "Aktualne hasło"
 
-#: root/base/page/info.tt:18
+#: root/base/page/info.tt:20
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: root/base/user/profile.tt:54
 msgid "Date registered"
@@ -367,7 +381,7 @@ msgstr "Data rejestracji"
 msgid "Delete allowed by default"
 msgstr "Domyślnie zezwól na usuwanie"
 
-#: root/base/page/info.tt:52
+#: root/base/page/info.tt:54
 msgid "Descendants"
 msgstr "Potomnych"
 
@@ -379,15 +393,15 @@ msgstr "Nie otrzymałeś wiadomości pocztowej?"
 msgid "Disable internal search (use Google)"
 msgstr "Wyłącz wbudowane wyszukiwanie (użyj Google)"
 
-#: root/base/page/list.tt:36
+#: root/base/page/list.tt:52
 msgid "Download a zip with all the pages in this path"
-msgstr ""
+msgstr "Pobierz archiwum zip ze wszystkimi stronami w tej ścieżce"
 
 #: root/base/navbar.tt:14
 msgid "Download a zip with all the pages in this wiki"
 msgstr "Pobierz archiwum zip ze wszystkimi stronami na tej wiki"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:154
+#: lib/MojoMojo/Controller/PageAdmin.pm:169
 msgid "END OF CONFLICT"
 msgstr "KONIEC KONFLIKTU"
 
@@ -464,11 +478,11 @@ msgstr "Wystąpił błąd w czasie wysyłania nowego hasła."
 msgid "Exif Data"
 msgstr "Dane Exif"
 
-#: root/base/page/suggest.tt:4
+#:
 msgid "Existent Pages"
 msgstr "Strony istniejące"
 
-#: root/base/export.tt:1 root/base/navbar.tt:14 root/base/page/list.tt:36
+#: root/base/export.tt:1 root/base/navbar.tt:14 root/base/page/list.tt:52
 msgid "Export"
 msgstr "Eksport"
 
@@ -480,7 +494,7 @@ msgstr "Ulubione albumy"
 msgid "Favorite Movies"
 msgstr "Ulubione filmy"
 
-#: root/base/feeds.tt:1 root/base/navbar.tt:13 root/base/page/list.tt:35
+#: root/base/feeds.tt:1 root/base/navbar.tt:13 root/base/page/list.tt:51
 msgid "Feeds"
 msgstr "Źródła RSS"
 
@@ -494,11 +508,11 @@ msgstr "Stopki"
 
 #: root/base/edithelp/markdown.tt:107
 msgid "For nested lists, indent each level by 3 spaces"
-msgstr ""
+msgstr "Dla list zagnieżdżonych wyrównaj każdy poziom przez 3 spacje"
 
 #: root/base/edithelp/markdown.tt:98
 msgid "For numbered lists, just use numbers instead of asterisks"
-msgstr ""
+msgstr "Dla list numerowanych użyj liczb zamiast gwiazdek"
 
 #: root/base/edithelp.tt:59
 msgid "Format content until {{end}} as plain old documentation"
@@ -598,7 +612,7 @@ msgstr "Witaj, aby zweryfikować Twój adres email %1, kliknij na link:"
 msgid "Hide changes"
 msgstr "Ukryj zmiany"
 
-#: root/base/admin/toplinks.tt:11 root/base/page/suggest.tt:8 root/base/page/wrapper.tt:11 root/base/sidebar.tt:3
+#: root/base/admin/toplinks.tt:11 root/base/page/wrapper.tt:11 root/base/sidebar.tt:3
 msgid "Home"
 msgstr "Strona domowa"
 
@@ -677,23 +691,23 @@ msgstr "Pozycja"
 
 #: root/base/edithelp/markdown.tt:109 root/base/edithelp/markdown.tt:121
 msgid "Item 1"
-msgstr ""
+msgstr "Pozycja 1"
 
 #: root/base/edithelp/markdown.tt:111 root/base/edithelp/markdown.tt:122
 msgid "Item 1.1"
-msgstr ""
+msgstr "Pozycja 1.1"
 
 #: root/base/edithelp/markdown.tt:112 root/base/edithelp/markdown.tt:123
 msgid "Item 1.2"
-msgstr ""
+msgstr "Pozycja 1.2"
 
 #: root/base/edithelp/markdown.tt:114 root/base/edithelp/markdown.tt:124
 msgid "Item 1.2.1"
-msgstr ""
+msgstr "Pozycja 1.2.1"
 
 #: root/base/edithelp/markdown.tt:117 root/base/edithelp/markdown.tt:125
 msgid "Item 2"
-msgstr ""
+msgstr "Pozycja 2"
 
 #: root/base/edithelp/markdown.tt:136
 msgid "Just like email quoting!"
@@ -708,8 +722,12 @@ msgid "Leave second blank if you do not want a password"
 msgstr "Drugie pole pozostaw puste, jeśli nie chcesz używać hasła"
 
 #: root/base/page/edit.tt:69
+msgid "Leave the second field blank if you do not want a password"
+msgstr "Jeśli nie chcesz używać hasła, drugie pole pozostaw puste"
+
+#:
 msgid "Leave the second field blank if you do not want a password)"
-msgstr ""
+msgstr "Jeśli nie chcesz hasła, drugie pole pozostaw puste)"
 
 #: root/base/gallery/photo_info.tt:5
 msgid "Lens"
@@ -721,9 +739,9 @@ msgstr "Tytuł linku"
 
 #: root/base/edithelp/markdown.tt:24
 msgid "Link to Another Page"
-msgstr ""
+msgstr "Link do innej strony"
 
-#: root/base/page/info.tt:71
+#: root/base/page/info.tt:73
 msgid "Linked from"
 msgstr "Linkowane z"
 
@@ -731,19 +749,19 @@ msgstr "Linkowane z"
 msgid "Links"
 msgstr "Linki"
 
-#: root/base/page/info.tt:58
+#: root/base/page/info.tt:60
 msgid "Links from"
 msgstr "Linków ze strony"
 
-#: root/base/page/info.tt:55
+#: root/base/page/info.tt:57
 msgid "Links to"
 msgstr "Linków do strony"
 
 #: root/base/edithelp/markdown.tt:30
 msgid "Links to Other Sites"
-msgstr ""
+msgstr "Linki do innych stron"
 
-#: root/base/page/list.tt:50
+#: root/base/page/list.tt:66
 msgid "Links to non-existent pages."
 msgstr "Linki do nieistniejących stron."
 
@@ -754,7 +772,7 @@ msgstr "Pokaż wg. %1"
 
 #: root/base/edithelp/markdown.tt:79
 msgid "Lists"
-msgstr ""
+msgstr "Listy"
 
 #:
 msgid "Lists can be nested by indentation level"
@@ -778,7 +796,7 @@ msgstr "Login"
 
 #: root/base/edithelp/markdown.tt:50 root/base/edithelp/markdown.tt:51 root/base/edithelp/markdown.tt:56 root/base/edithelp/markdown.tt:57
 msgid "Main Header"
-msgstr ""
+msgstr "Główny nagłówek"
 
 #: root/forms/admin/settings.yml:29
 msgid "Main formatter"
@@ -789,8 +807,8 @@ msgid "Make current"
 msgstr "Ustaw jako aktualna"
 
 #: root/base/edithelp/markdown.tt:1
-msgid "Markdow help"
-msgstr ""
+msgid "Markdown help"
+msgstr "Pomoc Markdown"
 
 #:
 msgid "Markdown reference"
@@ -798,7 +816,7 @@ msgstr "Opis składni Markdown"
 
 #: root/base/edithelp/markdown.tt:4
 msgid "Markdown reference - the basics"
-msgstr ""
+msgstr "Markdown - podstawy"
 
 #:
 msgid "MojoMojo - Spirit in a box"
@@ -806,7 +824,7 @@ msgstr "MojoMojo - Wiki z klasą"
 
 #: root/base/mail/reset_password.tt:9
 msgid "MojoMojo - The elegant wiki, Catalyst-powered"
-msgstr ""
+msgstr "MojMojo - Wiki z klasą"
 
 #: root/base/user/profile.tt:51
 msgid "Movies"
@@ -818,7 +836,7 @@ msgstr "Ściągawka z formatowania MultiMarkdown"
 
 #: root/base/edithelp/markdown.tt:5
 msgid "MultiMarkdown reference - the extended syntax"
-msgstr ""
+msgstr "MultiMarkdown - składnia rozszerzona"
 
 #: root/base/user/profile.tt:46
 msgid "Music"
@@ -830,7 +848,7 @@ msgstr "Moje tagi"
 
 #: root/base/edithelp/markdown.tt:92
 msgid "NOTE: you need a blank line before and after the list"
-msgstr ""
+msgstr "UWAGA: wstaw pustą linię przed i za listą"
 
 #: root/base/admin/role.tt:16 root/base/user/profile.tt:15 root/forms/user/editprofile.yml:8 root/forms/user/prefs.yml:17 root/forms/user/register.yml:42
 msgid "Name"
@@ -868,6 +886,10 @@ msgstr "Powtórz nowe hasło"
 msgid "Next"
 msgstr "Następne"
 
+#: root/base/page/list.tt:37
+msgid "Next page"
+msgstr "Następna strona"
+
 #: root/base/admin/role.tt:26
 msgid "No"
 msgstr "Nie"
@@ -886,9 +908,14 @@ msgstr "W tej chwili brak pomocy dla %1"
 msgid "No members added yet."
 msgstr "Brak członków."
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:40
+#:
 msgid "No permissions to edit this page"
 msgstr "Brak uprawnień do edycji tej strony"
+
+#. ($operation || $c->loc('update')
+#: lib/MojoMojo/Controller/PageAdmin.pm:36
+msgid "No permissions to x this page"
+msgstr "Brak uprawnień do %1 na tej stronie"
 
 #: root/base/user/list.tt:14
 msgid "No recent changes"
@@ -898,8 +925,8 @@ msgstr "Brak nowych zmian"
 msgid "No results found"
 msgstr "Nie znaleziono"
 
-#. ($rev,                '<span class="error_detail">'                  . '<a href="' . $page->path . '">' . $page->name . '</a>'               .'</span>')
-#: lib/MojoMojo/Controller/Page.pm:83
+#. ($rev,                '<span class="error_detail">'                  . '<a href="'                  . $page->path . '">'                  . $page->name . '</a>'                  . '</span>')
+#: lib/MojoMojo/Controller/Page.pm:87
 msgid "No revision x for x"
 msgstr "Brak wersji %1 dla %2"
 
@@ -911,7 +938,7 @@ msgstr "Nie utworzono jeszcze ról."
 msgid "No tags in use."
 msgstr "Brak tagów"
 
-#: root/base/page/suggest.tt:14
+#:
 msgid "Non-Existent Pages"
 msgstr "Strony nieistniejące"
 
@@ -925,9 +952,9 @@ msgstr "Zwykły paragraf"
 
 #: root/base/edithelp/markdown.tt:169
 msgid "Normal paragraph"
-msgstr ""
+msgstr "Zwykły akapit"
 
-#: lib/MojoMojo/Formatter/Wiki.pm:287 root/base/page/list.tt:56
+#: lib/MojoMojo/Formatter/Wiki.pm:315 root/base/page/list.tt:72
 msgid "Not found. Click to create this page."
 msgstr "Nie znaleziono. Kliknij aby utworzyć stronę."
 
@@ -937,13 +964,13 @@ msgstr "Słowa nie będące wikisłowami"
 
 #: root/base/edithelp/markdown.tt:177
 msgid "Note that for programming language code, it may be better to use the Syntax highlight plugin."
-msgstr ""
+msgstr "Dla kodu języków programowania lepsze jest użycie plugina składni."
 
 #: root/base/edithelp/textile.tt:25 root/base/edithelp/textile.tt:27
 msgid "Numbered list"
 msgstr "Lista numerowana"
 
-#: root/base/page/suggest.tt:3
+#:
 msgid "One or more pages in the requested path do not exist."
 msgstr "Co najmniej jedna strona w żądanej ścieżce nie istnieje."
 
@@ -960,15 +987,15 @@ msgstr "Możesz również sprawdzić %1"
 msgid "Ordered Lists"
 msgstr "Lista uporządkowana"
 
-#: root/base/page/list.tt:63
+#: root/base/page/list.tt:79
 msgid "Orphaned Pages"
 msgstr "Strony opuszczone"
 
-#: root/base/page/suggest.tt:24
+#:
 msgid "Other Suggestions"
 msgstr "Inne propozycje"
 
-#: root/base/page/list.tt:40
+#: root/base/page/list.tt:56
 msgid "Other pages that link to this page."
 msgstr "Inne strony linkujące do tej strony"
 
@@ -982,7 +1009,7 @@ msgstr "Informacje o stronie"
 
 #: root/base/edithelp/markdown.tt:26
 msgid "Page Name Here"
-msgstr ""
+msgstr "Tutaj nazwa strony"
 
 #:
 msgid "Page abstract"
@@ -1005,7 +1032,7 @@ msgstr "Tekst strony"
 msgid "Pages sorted by when they were last changed"
 msgstr "Strony ułożone według ostatniej zmiany"
 
-#: root/base/page/list.tt:64
+#: root/base/page/list.tt:80
 msgid "Pages to which no other pages link."
 msgstr "Strony do których nie linkują inne strony."
 
@@ -1022,13 +1049,17 @@ msgid "Password must be between 4 and 14 chars"
 msgstr "Hasło musi zawierać od 4 do 14 znaków"
 
 #. ($c->stash->{page}->name)
-#: lib/MojoMojo.pm:736
+#: lib/MojoMojo.pm:666
 msgid "Permission Denied to view x"
 msgstr "Brak uprawnień do przeglądania %1"
 
-#. ([ $loc_permtocheck, $name ])
-#: lib/MojoMojo/Controller/PageAdmin.pm:91
+#:
 msgid "Permission Denied to x x"
+msgstr "Brak uprawnień do %1 %2"
+
+#. ([ $loc_permtocheck, $name ])
+#: lib/MojoMojo/Controller/PageAdmin.pm:107
+msgid "Permission denied to x x"
 msgstr "Brak uprawnień do %1 %2"
 
 #: root/base/page/editbar.tt:11 root/base/page/editbar.tt:15 root/base/page/editbar.tt:5
@@ -1043,7 +1074,11 @@ msgstr "Uprawnienia dla tej strony"
 msgid "Photo Album"
 msgstr "Album fotografii"
 
-#: root/base/page/info.tt:64
+#: lib/MojoMojo/Controller/Gallery.pm:31
+msgid "Photo not found"
+msgstr "Zdjęcie nie zostało odnalezione"
+
+#: root/base/page/info.tt:66
 msgid "Photos"
 msgstr "Zdjęć"
 
@@ -1057,7 +1092,7 @@ msgstr "Wprowadź dane, aby się zarejestrować. Wszystkie pola są wymagane."
 
 #: root/base/page/attachments.tt:19
 msgid "Please select a file to attach to this page. To upload multiple files, hold CTRL while selecting multiple files in the file selection pop up window."
-msgstr ""
+msgstr "Proszę wybrać plik, który chcesz dołączyć do tej strony. Aby wgrać wiele plików, przytrzymaj klawisz CTRL podczas zaznaczania plików."
 
 #:
 msgid "Please select a file to attach to this page. To upload multiple files, put them in a zip."
@@ -1099,6 +1134,10 @@ msgstr "Podgląd"
 msgid "Previous"
 msgstr "Poprzedni"
 
+#: root/base/page/list.tt:29
+msgid "Previous page"
+msgstr "Strona poprzednia"
+
 #: root/base/page/bottomnav.tt:58
 msgid "Print"
 msgstr "Drukuj"
@@ -1108,9 +1147,9 @@ msgid "Profile"
 msgstr "Profil"
 
 #. (version.creator.name)
-#: root/base/page/info.tt:30
+#: root/base/page/info.tt:32
 msgid "Profile for x"
-msgstr ""
+msgstr "Profil dla %1"
 
 #: root/base/export.tt:7
 msgid "Raw markup"
@@ -1125,16 +1164,16 @@ msgid "Recent Pages"
 msgstr "Ostatnie strony"
 
 #. (page.path)
-#: root/base/page/atom.tt:6 root/base/page/list.tt:32 root/base/page/rss.tt:6 root/base/page/rss_full.tt:7
+#: root/base/page/atom.tt:6 root/base/page/list.tt:48 root/base/page/rss.tt:6 root/base/page/rss_full.tt:7
 msgid "Recent changes in x"
 msgstr "Ostatnie zmiany w %1"
 
 #: root/base/page/recent.tt:1 root/base/page/recent.tt:3
 msgid "Recent pages in this wiki"
-msgstr ""
+msgstr "Ostatnio zmieniane strony w wiki"
 
-#. (activetag)
 #. (page.path)
+#. (activetag)
 #: root/base/page/recent.tt:1 root/base/page/recent.tt:5 root/base/tag/list.tt:23
 msgid "Recent pages in x"
 msgstr "Ostatnio zmieniane strony w %1"
@@ -1189,7 +1228,7 @@ msgstr "Powtórz hasło"
 msgid "Restrict user editing to home directory"
 msgstr "Ogranicz użytkowników do edycji strony domowej"
 
-#: lib/MojoMojo/Controller/Admin.pm:28
+#: lib/MojoMojo/Controller/Admin.pm:30
 msgid "Restricted area. Admin access required"
 msgstr "Dostęp tylko dla administratorów"
 
@@ -1199,7 +1238,7 @@ msgstr "Strony wynikowe"
 
 #: root/base/page/search_inline.tt:45
 msgid "Result Page:"
-msgstr ""
+msgstr "Wyniki wyszukiwania:"
 
 #. ([pager.first, pager.last, pager.total_entries, found_within])
 #. ([ pager.first, pager.last, pager.total_entries, found_within ])
@@ -1251,7 +1290,7 @@ msgstr "Przywrócono (aktualna: %1)"
 msgid "Rounded square"
 msgstr "Kwadrat z zaokrąglonymi rogami"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:170 root/base/admin/role_form.tt:37 root/base/page/edit.tt:59 root/base/page/permissions.tt:74 root/forms/admin/role_form.yml:21 root/forms/admin/settings.yml:102 root/forms/user/password.yml:26 root/forms/user/prefs.yml:32
+#: lib/MojoMojo/Controller/PageAdmin.pm:190 root/base/admin/role_form.tt:37 root/base/page/edit.tt:59 root/base/page/permissions.tt:74 root/forms/admin/role_form.yml:21 root/forms/admin/settings.yml:102 root/forms/user/password.yml:26 root/forms/user/prefs.yml:32
 msgid "Save"
 msgstr "Zapisz"
 
@@ -1282,7 +1321,7 @@ msgstr "Szukaj w %1"
 
 #: root/base/page/search_inline.tt:6 root/base/page/search_inline.tt:9
 msgid "Search:"
-msgstr ""
+msgstr "Szukaj:"
 
 #: root/base/edithelp/textile.tt:20 root/base/edithelp/textile.tt:22 root/base/edithelp/textile.tt:25 root/base/edithelp/textile.tt:27
 msgid "Second item"
@@ -1324,7 +1363,7 @@ msgstr "Pokaż zwykłą stronę"
 msgid "Show picture"
 msgstr "Pokaż obrazek"
 
-#: root/base/page/info.tt:34
+#: root/base/page/info.tt:36
 msgid "Show revision"
 msgstr "Pokaż wersję"
 
@@ -1372,7 +1411,7 @@ msgstr "Ustawienia strony"
 msgid "Some fields are invalid. Please correct them and try again:"
 msgstr "Niektóre pola są nieprawidłowe. Popraw je i spróbuj ponownie:"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:142
+#: lib/MojoMojo/Controller/PageAdmin.pm:157
 msgid "Someone else changed the page while you edited. Your changes has been merged. Please review and save again"
 msgstr "W czasie gdy edytowałeś tę stronę ktoś inny również ją zmienił. Wasze zmiany zostały połączone. Proszę przejrzyj je i zapisz ponownie."
 
@@ -1382,6 +1421,9 @@ msgid ""
 "    render text in monospace\n"
 "    like this example"
 msgstr ""
+"Spacje z lewej strony\n"
+"    wyświetlają tekst o stałej szerokości znaków\n"
+"    tak jak w tym przykładzie"
 
 #:
 msgid "Square"
@@ -1389,21 +1431,21 @@ msgstr "Kwadrat"
 
 #: root/base/edithelp/markdown.tt:60 root/base/edithelp/markdown.tt:61 root/base/edithelp/markdown.tt:65 root/base/edithelp/markdown.tt:66 root/base/edithelp/markdown.tt:67
 msgid "Sub Header"
-msgstr ""
+msgstr "Nagłówek niższego rzędu"
 
-#: root/base/page/list.tt:29
+#: root/base/page/list.tt:45
 msgid "Sub Page Tools"
-msgstr ""
+msgstr "Narzędzia podstron"
 
 #: root/base/edithelp/markdown.tt:71 root/base/edithelp/markdown.tt:75 root/base/edithelp/markdown.tt:76
 msgid "Sub Sub ... Header"
-msgstr ""
+msgstr "Jeszcze niższy nagłówek"
 
 #: root/base/navbar.tt:45
 msgid "Sub pages"
 msgstr "Podstrony"
 
-#: root/base/navbar.tt:13 root/base/page/list.tt:35
+#: root/base/navbar.tt:13 root/base/page/list.tt:51
 msgid "Subscribe to changes by RSS"
 msgstr "Subskrybuj zmiany przez RSS"
 
@@ -1415,7 +1457,7 @@ msgstr "Subskrybuj zmiany na stronie"
 msgid "Switch to flash uploader"
 msgstr "Przełącz na wgrywanie przy pomocy flasha"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:152
+#: lib/MojoMojo/Controller/PageAdmin.pm:167
 msgid "THEIR CHANGES"
 msgstr "ICH ZMIANY"
 
@@ -1423,7 +1465,11 @@ msgstr "ICH ZMIANY"
 msgid "Table"
 msgstr "Tabela"
 
-#: root/base/navbar.tt:11 root/base/page/list.tt:33 root/base/page/list.tt:7 root/base/page/recent.tt:18 root/base/tag/recent.tt:7
+#: lib/MojoMojo/Controller/Gallery.pm:67
+msgid "Tag not found"
+msgstr "Tag nie został odnaleziony"
+
+#: root/base/navbar.tt:11 root/base/page/list.tt:49 root/base/page/list.tt:7 root/base/page/recent.tt:18 root/base/tag/recent.tt:7
 msgid "Tags"
 msgstr "Tagi"
 
@@ -1450,11 +1496,11 @@ msgstr "Informacje o formatowaniu Textile"
 
 #: root/base/edithelp/textile.tt:1
 msgid "Textile help"
-msgstr ""
+msgstr "Pomoc Textile"
 
 #: root/base/edithelp/textile.tt:2
 msgid "Textile2 complete reference"
-msgstr ""
+msgstr "Kompletna składnia Textile2"
 
 #:
 msgid "Textile2 reference"
@@ -1472,6 +1518,10 @@ msgstr "Strona wiki"
 #: root/base/user/validate.tt:8
 msgid "The email was sent to x."
 msgstr "Wiadomość została wysłana na konto %1."
+
+#: root/base/page/suggest.tt:4
+msgid "The following pages in the requested path do not exist:"
+msgstr "Następujące strony w żądanej ścieżce nie istnieją:"
 
 #. ('<span class="error_detail">' . $c->stash->{pre_hacked_uri} . '</span>')
 #: lib/MojoMojo/Controller/Root.pm:49
@@ -1518,7 +1568,7 @@ msgstr "Aktualizuj"
 msgid "Updated preferences"
 msgstr "Dane zaktualizowane"
 
-#: lib/MojoMojo/Controller/Admin.pm:106
+#: lib/MojoMojo/Controller/Admin.pm:114
 msgid "Updated successfully."
 msgstr "Dane zostały zaktualizowane."
 
@@ -1568,9 +1618,9 @@ msgstr "Użytkownicy"
 msgid "Validation"
 msgstr "Weryfikacja"
 
-#: root/base/page/info.tt:17
+#: root/base/page/info.tt:19
 msgid "Version"
-msgstr ""
+msgstr "Wersja"
 
 #: root/base/page/recent.tt:63
 msgid "View Diff"
@@ -1592,7 +1642,7 @@ msgstr "Widok galerii"
 msgid "Views"
 msgstr "Widok"
 
-#: root/base/page/list.tt:49
+#: root/base/page/list.tt:65
 msgid "Wanted Pages"
 msgstr "Potrzebne strony"
 
@@ -1605,7 +1655,7 @@ msgstr "Na Twoje konto pocztowe został wysłany link aktywacyjny. Użyj go, aby
 msgid "Welcome, x your email is validated. Please log in."
 msgstr "witaj %1, Twój adres pocztowy został zweryfikowany. Proszę się zalogować."
 
-#: root/base/navbar.tt:12 root/base/page/list.tt:34
+#: root/base/navbar.tt:12 root/base/page/list.tt:50
 msgid "Who wrote what"
 msgstr "Osoby, które tworzyły stronę"
 
@@ -1621,7 +1671,7 @@ msgstr "Drugi paragraf"
 msgid "Write"
 msgstr "Zapis"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:153
+#: lib/MojoMojo/Controller/PageAdmin.pm:168
 msgid "YOUR CHANGES"
 msgstr "TWOJE ZMIANY"
 
@@ -1644,7 +1694,7 @@ msgstr "Nie masz uprawnień do edycji załączników na tej stronie"
 #. ($operation)
 #: lib/MojoMojo/Controller/Attachment.pm:45
 msgid "You do not have permissions to x attachments for this page"
-msgstr ""
+msgstr "Nie masz uprawnień do %1 załączników na tej stronie"
 
 #: lib/MojoMojo/Controller/User.pm:442
 msgid "You have to fill in all required fields."
@@ -1681,13 +1731,9 @@ msgstr "Twoje hasło zostało zaktualizowane"
 msgid "Your password on x has been reset. This is your new password:"
 msgstr "Twoje hasło na %1 zostało zrestartowane. To jest Twoje nowe hasło:"
 
-#:
-msgid "[[C++]], [[Let's play again!]] ((easy to type))"
-msgstr "[[C++]], [[Link w nawiasach kwadratowych]] ((szybszy sposób na zapis linku))"
-
 #: root/base/edithelp.tt:7
 msgid "[[C++]], [[Let's rock!]] ((easy to type))"
-msgstr ""
+msgstr "[[C++]], [[Link w nawiasach kwadratowych]] ((szybszy sposób na zapis linku))"
 
 #. ($c->pref('name')
 #: lib/MojoMojo/Controller/User.pm:307
@@ -1763,7 +1809,7 @@ msgstr "wskaźnik zajętości"
 msgid "by"
 msgstr "przez"
 
-#: root/base/page/info.tt:62
+#: root/base/page/info.tt:64
 msgid "bytes"
 msgstr "bajtów"
 
@@ -1771,7 +1817,7 @@ msgstr "bajtów"
 msgid "can"
 msgstr ":"
 
-#: root/base/page/info.tt:47
+#: root/base/page/info.tt:49
 msgid "chars"
 msgstr "znaków"
 
@@ -1795,7 +1841,7 @@ msgstr "najczęściej używane"
 msgid "confirmation message resent"
 msgstr "wysłano wiadomość potwierdzającą"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:87 root/base/page/permissions.tt:36 root/base/page/permissions.tt:51
+#: lib/MojoMojo/Controller/PageAdmin.pm:99 root/base/page/permissions.tt:36 root/base/page/permissions.tt:51
 msgid "create"
 msgstr "tworzenie"
 
@@ -1819,7 +1865,7 @@ msgstr "Zrób sobie przerwę..."
 msgid "download"
 msgstr "pobierz"
 
-#: lib/MojoMojo/Controller/PageAdmin.pm:87
+#: lib/MojoMojo/Controller/PageAdmin.pm:100 lib/MojoMojo/Controller/PageAdmin.pm:52
 msgid "edit"
 msgstr "edycja"
 
@@ -1862,11 +1908,11 @@ msgstr ""
 
 #: root/base/edithelp/markdown.tt:43
 msgid "hover over the link to see the title"
-msgstr ""
+msgstr "Przesuń wskaźnik nad link aby zobaczyć tytuł"
 
 #: root/base/edithelp/markdown.tt:34 root/base/edithelp/markdown.tt:41
 msgid "http://example.com"
-msgstr ""
+msgstr "http://przykład.com.pl"
 
 #: root/base/edithelp/markdown.tt:32 root/base/edithelp/markdown.tt:39
 msgid "http://example.com/"
@@ -1898,17 +1944,17 @@ msgstr "wstaw link"
 
 #: root/base/attachments/list.tt:59
 msgid "insert thumbnail"
-msgstr ""
+msgstr "wstaw miniaturkę"
 
 #: root/base/edithelp/markdown.tt:33 root/base/edithelp/markdown.tt:40
 msgid "is formatted as:"
-msgstr ""
+msgstr "zostanie sformatowany jako:"
 
 #: lib/MojoMojo/Formatter/YouTube.pm:65
 msgid "is not a valid link to youtube video"
 msgstr "nie jest prawidłowym linkiem do filmu video na youtube"
 
-#: lib/MojoMojo/Formatter/Include.pm:51 lib/MojoMojo/Formatter/YouTube.pm:58
+#: lib/MojoMojo/Formatter/YouTube.pm:58
 msgid "is not a valid url"
 msgstr "nie jest prawidłowym adresem"
 
@@ -1970,13 +2016,13 @@ msgstr "dnia"
 
 #: root/base/edithelp/markdown.tt:68
 msgid "optionally, you can add the same number of trailing # marks"
-msgstr ""
+msgstr "możesz też dodać taką samą ilość znaków #"
 
 #: root/base/edithelp/markdown.tt:149 root/base/message.tt:10 root/base/user/login.tt:11
 msgid "or"
 msgstr "lub"
 
-#: root/base/page/info.tt:56 root/base/page/info.tt:59
+#: root/base/page/info.tt:58 root/base/page/info.tt:61
 msgid "pages"
 msgstr " "
 
@@ -2013,7 +2059,7 @@ msgid "redirect to"
 msgstr "przekierowanie do"
 
 #. (wanted.from_page.path)
-#: root/base/page/list.tt:57
+#: root/base/page/list.tt:73
 msgid "referenced by x"
 msgstr "odnośnik w %1"
 
@@ -2025,6 +2071,10 @@ msgstr "zarejestruj"
 msgid "remove"
 msgstr "usuń"
 
+#: lib/MojoMojo/Controller/PageAdmin.pm:342
+msgid "rename via non-POST method"
+msgstr "zmiana nazwy poprzez metodę inną niż POST"
+
 #: root/base/page/bottomnav.tt:22
 msgid "revision"
 msgstr "wersja"
@@ -2032,6 +2082,10 @@ msgstr "wersja"
 #: root/base/admin/user.tt:15
 msgid "roles"
 msgstr "role"
+
+#: lib/MojoMojo/Controller/PageAdmin.pm:310
+msgid "rollback"
+msgstr "cofnięcie"
 
 #: root/base/message.tt:4
 msgid "shrinked head"
@@ -2055,7 +2109,7 @@ msgstr "brak następujących:"
 
 #: root/base/edithelp/markdown.tt:73
 msgid "up to 6 levels of headers"
-msgstr ""
+msgstr "do 6 poziomów nagłowka"
 
 #:
 msgid "view"
@@ -2063,11 +2117,11 @@ msgstr "przeglądanie"
 
 #: root/base/attachments/list.tt:46
 msgid "view full size"
-msgstr ""
+msgstr "zobacz pełny rozmiar"
 
 #: root/base/attachments/list.tt:50
 msgid "view in your browser"
-msgstr ""
+msgstr "zobacz w przeglądarce"
 
 #. ("test")
 #: lib/MojoMojo/Schema.pm:152
@@ -2088,6 +2142,11 @@ msgstr ""
 msgid "write"
 msgstr "zapis"
 
+#. ($url)
+#: lib/MojoMojo/Formatter/Include.pm:53
+msgid "x is not a valid URL"
+msgstr "%1 nie jest poprawnym adresem URL"
+
 #. (page.content.max_version - page.content_version)
 #. (page.content.max_version - rev)
 #. (rev - 1)
@@ -2096,7 +2155,7 @@ msgid "x more"
 msgstr "jeszcze %1"
 
 #. (page.versions_rs.count)
-#: root/base/page/info.tt:12
+#: root/base/page/info.tt:14
 msgid "x revisions"
 msgstr "Wersji: %1"
 

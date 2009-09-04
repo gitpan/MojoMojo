@@ -88,12 +88,13 @@ msgid "All Pages"
 msgstr "全てのページ"
 
 #. (page.path)
-#: root/base/page/list.tt:1
+#: root/base/page/list.tt:1 root/base/page/subtree.tt:1
 msgid "All Pages in x"
 msgstr "「%1」以下の全てのページ"
 
 #. (page.name)
-#: root/base/page/list.tt:19
+#. (styled_page_name)
+#: root/base/page/list.tt:19 root/base/page/subtree.tt:9
 msgid "All pages in x listed alphabetically"
 msgstr "「%1」以下の全てのページ（アルファベット順）"
 
@@ -106,7 +107,7 @@ msgstr "All pages tagged with %1 listed alphabetically"
 msgid "All tags"
 msgstr ""
 
-#: root/base/page/list.tt:33
+#: root/base/page/list.tt:49
 msgid "All tags in this path"
 msgstr ""
 
@@ -178,7 +179,7 @@ msgstr "添付ファイル"
 msgid "Authors"
 msgstr "メンバー"
 
-#: root/base/page/list.tt:34
+#: root/base/page/list.tt:50
 msgid "Authors in this path"
 msgstr ""
 
@@ -190,7 +191,7 @@ msgstr "過去の状態"
 msgid "Back to the page"
 msgstr "ページに戻る"
 
-#: root/base/page/list.tt:39
+#: root/base/page/list.tt:55
 msgid "Backlinks"
 msgstr "リンク元"
 
@@ -266,8 +267,8 @@ msgstr ""
 msgid "Click for original version"
 msgstr ""
 
-#: root/base/page/suggest.tt:22
-msgid "Click on any non-existent page to create it. Any missing pages above it will be created automatically."
+#: root/base/page/suggest.tt:12
+msgid "Click on a link above to create that page."
 msgstr ""
 
 #: root/base/edithelp/markdown.tt:153
@@ -307,8 +308,9 @@ msgstr "Could not create attachment from %1"
 msgid "Could not recover password"
 msgstr ""
 
-#: lib/MojoMojo/Formatter/Include.pm:59
-msgid "Could not retrieve"
+#. ($url)
+#: lib/MojoMojo/Formatter/Include.pm:62
+msgid "Could not retrieve x"
 msgstr ""
 
 #:
@@ -379,7 +381,7 @@ msgstr "メールが受け取れなかった場合"
 msgid "Disable internal search (use Google)"
 msgstr ""
 
-#: root/base/page/list.tt:36
+#: root/base/page/list.tt:52
 msgid "Download a zip with all the pages in this path"
 msgstr ""
 
@@ -468,11 +470,7 @@ msgstr ""
 msgid "Exif Data"
 msgstr ""
 
-#: root/base/page/suggest.tt:4
-msgid "Existent Pages"
-msgstr ""
-
-#: root/base/export.tt:1 root/base/navbar.tt:14 root/base/page/list.tt:36
+#: root/base/export.tt:1 root/base/navbar.tt:14 root/base/page/list.tt:52
 msgid "Export"
 msgstr "エクスポート"
 
@@ -488,7 +486,7 @@ msgstr "好きなCD"
 msgid "Favorite Movies"
 msgstr "好きな映画"
 
-#: root/base/feeds.tt:1 root/base/navbar.tt:13 root/base/page/list.tt:35
+#: root/base/feeds.tt:1 root/base/navbar.tt:13 root/base/page/list.tt:51
 msgid "Feeds"
 msgstr "フィード"
 
@@ -594,7 +592,7 @@ msgstr "Hi. This is a mail to validate your email address, %1. To confirm, pleas
 msgid "Hide changes"
 msgstr "変更部分を非表示"
 
-#: root/base/admin/toplinks.tt:11 root/base/page/suggest.tt:8 root/base/page/wrapper.tt:11 root/base/sidebar.tt:3
+#: root/base/admin/toplinks.tt:11 root/base/page/wrapper.tt:11 root/base/sidebar.tt:3
 msgid "Home"
 msgstr "ホーム"
 
@@ -692,7 +690,7 @@ msgid "Last changes"
 msgstr "更新履歴"
 
 #: root/base/page/edit.tt:69
-msgid "Leave the second field blank if you do not want a password)"
+msgid "Leave the second field blank if you do not want a password"
 msgstr ""
 
 #: root/base/gallery/photo_info.tt:5
@@ -727,7 +725,7 @@ msgstr ""
 msgid "Links to Other Sites"
 msgstr ""
 
-#: root/base/page/list.tt:50
+#: root/base/page/list.tt:66
 msgid "Links to non-existent pages."
 msgstr "リンクは作成されているが、まだ未作成なページ"
 
@@ -769,7 +767,7 @@ msgid "Mark some text to apply the toolbar actions to that text"
 msgstr "ツールバーにあるアクションを使うには対象の文字をハイライトしてください"
 
 #: root/base/edithelp/markdown.tt:1
-msgid "Markdow help"
+msgid "Markdown help"
 msgstr ""
 
 #: root/base/edithelp/markdown.tt:4
@@ -832,6 +830,10 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#: root/base/page/list.tt:37
+msgid "Next page"
+msgstr ""
+
 #: root/base/admin/role.tt:26
 msgid "No"
 msgstr ""
@@ -862,8 +864,8 @@ msgstr "最近の更新はありません"
 msgid "No results found"
 msgstr ""
 
-#. ($rev,                '<span class="error_detail">'                  . '<a href="' . $page->path . '">' . $page->name . '</a>'               .'</span>')
-#: lib/MojoMojo/Controller/Page.pm:83
+#. ($rev,                '<span class="error_detail">'                  . '<a href="'                  . $page->path . '">'                  . $page->name . '</a>'                  . '</span>')
+#: lib/MojoMojo/Controller/Page.pm:87
 msgid "No revision x for x"
 msgstr ""
 
@@ -875,10 +877,6 @@ msgstr ""
 msgid "No tags in use."
 msgstr ""
 
-#: root/base/page/suggest.tt:14
-msgid "Non-Existent Pages"
-msgstr ""
-
 #: root/base/page/permissions.tt:26 root/base/page/permissions.tt:42
 msgid "None"
 msgstr ""
@@ -887,7 +885,7 @@ msgstr ""
 msgid "Normal paragraph"
 msgstr ""
 
-#: lib/MojoMojo/Formatter/Wiki.pm:287 root/base/page/list.tt:56
+#: lib/MojoMojo/Formatter/Wiki.pm:287 root/base/page/list.tt:72
 msgid "Not found. Click to create this page."
 msgstr ""
 
@@ -907,10 +905,6 @@ msgstr "-"
 msgid "Numbered list"
 msgstr ""
 
-#: root/base/page/suggest.tt:3
-msgid "One or more pages in the requested path do not exist."
-msgstr ""
-
 #: root/base/edithelp/markdown.tt:194
 msgid "Optional Title"
 msgstr ""
@@ -920,15 +914,11 @@ msgstr ""
 msgid "Or you can check out x instead"
 msgstr "もしかして：%1"
 
-#: root/base/page/list.tt:63
+#: root/base/page/list.tt:79
 msgid "Orphaned Pages"
 msgstr "リンクがないページ"
 
-#: root/base/page/suggest.tt:24
-msgid "Other Suggestions"
-msgstr ""
-
-#: root/base/page/list.tt:40
+#: root/base/page/list.tt:56
 msgid "Other pages that link to this page."
 msgstr "このページへリンクするページ"
 
@@ -961,7 +951,7 @@ msgstr ""
 msgid "Pages sorted by when they were last changed"
 msgstr ""
 
-#: root/base/page/list.tt:64
+#: root/base/page/list.tt:80
 msgid "Pages to which no other pages link."
 msgstr "どこからもリンクされていないページ"
 
@@ -1063,6 +1053,10 @@ msgstr "プレビュー"
 msgid "Previous"
 msgstr "前"
 
+#: root/base/page/list.tt:29
+msgid "Previous page"
+msgstr ""
+
 #: root/base/page/bottomnav.tt:58
 msgid "Print"
 msgstr "印刷"
@@ -1089,7 +1083,7 @@ msgid "Recent Pages"
 msgstr ""
 
 #. (page.path)
-#: root/base/page/atom.tt:6 root/base/page/list.tt:32 root/base/page/rss.tt:6 root/base/page/rss_full.tt:7
+#: root/base/page/atom.tt:6 root/base/page/list.tt:48 root/base/page/rss.tt:6 root/base/page/rss_full.tt:7
 msgid "Recent changes in x"
 msgstr "Recent changes in %1"
 
@@ -1335,7 +1329,7 @@ msgstr ""
 msgid "Sub Header"
 msgstr ""
 
-#: root/base/page/list.tt:29
+#: root/base/page/list.tt:45
 msgid "Sub Page Tools"
 msgstr ""
 
@@ -1347,7 +1341,7 @@ msgstr ""
 msgid "Sub pages"
 msgstr "関連ページ"
 
-#: root/base/navbar.tt:13 root/base/page/list.tt:35
+#: root/base/navbar.tt:13 root/base/page/list.tt:51
 msgid "Subscribe to changes by RSS"
 msgstr ""
 
@@ -1371,7 +1365,7 @@ msgstr ""
 msgid "Table"
 msgstr ""
 
-#: root/base/navbar.tt:11 root/base/page/list.tt:33 root/base/page/list.tt:7 root/base/page/recent.tt:18 root/base/tag/recent.tt:7
+#: root/base/navbar.tt:11 root/base/page/list.tt:49 root/base/page/list.tt:7 root/base/page/recent.tt:18 root/base/tag/recent.tt:7
 msgid "Tags"
 msgstr "タグ"
 
@@ -1408,6 +1402,10 @@ msgstr ""
 #: root/base/user/validate.tt:8
 msgid "The email was sent to x."
 msgstr "The email was sent to %1."
+
+#: root/base/page/suggest.tt:4
+msgid "The following pages in the requested path do not exist:"
+msgstr ""
 
 #:
 msgid "The requested URL (x) was not found"
@@ -1524,7 +1522,7 @@ msgstr "ギャラリー形式"
 msgid "Views"
 msgstr "表示"
 
-#: root/base/page/list.tt:49
+#: root/base/page/list.tt:65
 msgid "Wanted Pages"
 msgstr "未作成ページ"
 
@@ -1537,7 +1535,7 @@ msgstr "アクティベーションリンクを記載したメールをお送り
 msgid "Welcome, x your email is validated. Please log in."
 msgstr "Welcome, %1 your email is validated. Please log in."
 
-#: root/base/navbar.tt:12 root/base/page/list.tt:34
+#: root/base/navbar.tt:12 root/base/page/list.tt:50
 msgid "Who wrote what"
 msgstr ""
 
@@ -1828,7 +1826,7 @@ msgstr ""
 msgid "is not a valid link to youtube video"
 msgstr ""
 
-#: lib/MojoMojo/Formatter/Include.pm:51 lib/MojoMojo/Formatter/YouTube.pm:58
+#: lib/MojoMojo/Formatter/YouTube.pm:58
 msgid "is not a valid url"
 msgstr ""
 
@@ -1929,7 +1927,7 @@ msgid "redirect to"
 msgstr ""
 
 #. (wanted.from_page.path)
-#: root/base/page/list.tt:57
+#: root/base/page/list.tt:73
 msgid "referenced by x"
 msgstr "referenced by %1"
 
@@ -2007,6 +2005,11 @@ msgstr ""
 #:
 msgid "x hits"
 msgstr "%1 hits"
+
+#. ($url)
+#: lib/MojoMojo/Formatter/Include.pm:53
+msgid "x is not a valid URL"
+msgstr ""
 
 #. (page.content.max_version - page.content_version)
 #. (page.content.max_version - rev)

@@ -4,11 +4,14 @@ author:
   - 'Marcus Ramberg C<marcus@nordaaker.com>'
 build_requires:
   Email::Send::Test: 0
+  ExtUtils::MakeMaker: 6.42
   Test::More: 0.88
   Test::WWW::Mechanize::Catalyst: '0.51 '
   WWW::Mechanize: 1.54
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.77'
+generated_by: 'Module::Install version 0.91'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -20,7 +23,6 @@ no_index:
     - t
 requires:
   Algorithm::Diff: 1.1901
-  Algorithm::IncludeExclude: 0
   Algorithm::Merge: 0
   Archive::Zip: 1.14
   Cache::FastMmap: 1.31
@@ -33,7 +35,6 @@ requires:
   Catalyst::Plugin::Cache: 0.08
   Catalyst::Plugin::ConfigLoader: 0.13
   Catalyst::Plugin::I18N: 0
-  Catalyst::Plugin::PageCache: 0.21
   Catalyst::Plugin::Session::State::Cookie: 0.11
   Catalyst::Plugin::Session::Store::Cache: 0
   Catalyst::Plugin::Setenv: 0
@@ -41,7 +42,7 @@ requires:
   Catalyst::Plugin::SubRequest: 0.13
   Catalyst::Plugin::Unicode: 0.8
   Catalyst::View::Email::Template: 0
-  Catalyst::View::JSON: 0
+  Catalyst::View::JSON: 0.26
   Catalyst::View::TT: 0.23
   Config::General: 0
   Config::JFDI: 0
@@ -51,7 +52,6 @@ requires:
   DBIx::Class::DateTime::Epoch: 0.04
   DBIx::Class::EncodedColumn: 0
   DBIx::Class::TimeStamp: 0.11
-  Data::FormValidator::Constraints::DateTime: 0
   Data::Page: 2.00
   DateTime: 0.28
   DateTime::Format::Mail: 0
@@ -79,6 +79,7 @@ requires:
   Template::Plugin::JavaScript: 0
   Term::Prompt: 0
   Text::Context: 3.5
+  Text::MultiMarkdown: 1.0.17
   Text::Password::Pronounceable: 0
   Text::Textile: 0
   URI: 1.37
@@ -90,4 +91,4 @@ resources:
   homepage: http://mojomojo.org
   license: http://dev.perl.org/licenses/
   repository: http://github.com/marcusramberg/mojomojo/
-version: 0.999033
+version: 0.999040
