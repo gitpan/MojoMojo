@@ -36,10 +36,6 @@ lib/MojoMojo/Formatter/Defang.pm
 lib/MojoMojo/Formatter/DocBook.pm
 lib/MojoMojo/Formatter/DocBook/Colorize.pm
 lib/MojoMojo/Formatter/Emote.pm
-lib/MojoMojo/Formatter/File.pm
-lib/MojoMojo/Formatter/File/DocBook.pm
-lib/MojoMojo/Formatter/File/Pod.pm
-lib/MojoMojo/Formatter/File/Test.pm
 lib/MojoMojo/Formatter/Include.pm
 lib/MojoMojo/Formatter/IRCLog.pm
 lib/MojoMojo/Formatter/Main.pm
@@ -63,6 +59,8 @@ lib/MojoMojo/I18N/es.js.po
 lib/MojoMojo/I18N/es.po
 lib/MojoMojo/I18N/fr.js.po
 lib/MojoMojo/I18N/fr.po
+lib/MojoMojo/I18N/it.js.po
+lib/MojoMojo/I18N/it.po
 lib/MojoMojo/I18N/ja.js.po
 lib/MojoMojo/I18N/ja.po
 lib/MojoMojo/I18N/no.js.po
@@ -192,7 +190,6 @@ root/base/user/recover_pass.tt
 root/base/user/register.tt
 root/base/user/user_search.tt
 root/base/user/validate.tt
-root/favicon.ico
 root/forms/admin/role_form.yml
 root/forms/admin/settings.yml
 root/forms/comment/comment.yml
@@ -294,7 +291,6 @@ root/static/js/jquery.autocomplete.js
 root/static/js/jquery.cookies.2.0.1.min.js
 root/static/js/jquery.editinplace.js
 root/static/js/jquery.form.js
-root/static/js/jquery.inplace.js
 root/static/js/jquery.js
 root/static/js/jquery.livequery.js
 root/static/js/swfupload.js
@@ -305,6 +301,7 @@ root/static/json/de.po.json
 root/static/json/en.po.json
 root/static/json/es.po.json
 root/static/json/fr.po.json
+root/static/json/it.po.json
 root/static/json/ja.po.json
 root/static/json/no.po.json
 root/static/json/pl.po.json
@@ -365,6 +362,7 @@ root/static/themes/epo/images/nordadiffus.png
 root/static/themes/epo/theme.css
 root/static/themes/grey-scale/images/mmlogo.png
 root/static/themes/grey-scale/theme.css
+root/static/themes/madrid-pm/favicon.ico
 root/static/themes/madrid-pm/images/onion-madrid.png
 root/static/themes/madrid-pm/theme.css
 root/static/themes/nordaaker/images/background.png
@@ -400,6 +398,8 @@ root/static/toolbar/super.png
 root/static/toolbar/wikilink.png
 root/themes/catalyst/footer.tt
 root/themes/catalyst/top.tt
+root/themes/madrid-pm/header.tt
+root/themes/madrid-pm/navbar.tt
 root/themes/madrid-pm/top.tt
 root/themes/pink-lady/footer.tt
 root/themes/pink-lady/page/tags.tt
@@ -435,6 +435,7 @@ t/app/mojomojo.db
 t/app/mojomojo.yml
 t/app_leak.t
 t/c/attachment.t
+t/c/bottomnav.t
 t/c/comment.t
 t/c/email.t
 t/c/journal.t
@@ -442,6 +443,7 @@ t/c/jsrpc.t
 t/c/page.t
 t/c/page_edit.t
 t/c/tag.t
+t/c/toplinks.t
 t/c/user.t
 t/defang_xss.t
 t/error_page.t
@@ -452,7 +454,6 @@ t/formatter_comment.t
 t/formatter_cpanhyperlink.t
 t/formatter_defang.t
 t/formatter_docbook.t
-t/formatter_file.t
 t/formatter_include.t
 t/formatter_irclog.t
 t/formatter_markdown.t
