@@ -30,7 +30,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999041';
+our $VERSION = '0.999042';
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -87,6 +87,7 @@ eval { MojoMojo->model('DBIC')->schema->resultset('MojoMojo::Schema::Result::Per
 if ($@ ) {
     $has_DB = 0;
     warn $NO_DB_MESSAGE;
+    warn "(Error: $@)";
 }
 
 MojoMojo->model('DBIC')->schema->attachment_dir( MojoMojo->config->{attachment_dir}

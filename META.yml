@@ -5,6 +5,8 @@ author:
 build_requires:
   Email::Send::Test: 0
   ExtUtils::MakeMaker: 6.42
+  SQL::Translator: 0.09006
+  Test::Differences: 0
   Test::More: 0.88
   Test::WWW::Mechanize::Catalyst: '0.51 '
   WWW::Mechanize: 1.54
@@ -75,7 +77,6 @@ requires:
   Module::Pluggable::Ordered: 1.4
   Moose: 0
   Number::Format: 0
-  String::Diff: 0
   Template: 2.20
   Template::Plugin::JavaScript: 0
   Term::Prompt: 0
@@ -92,4 +93,4 @@ resources:
   homepage: http://mojomojo.org
   license: http://dev.perl.org/licenses/
   repository: http://github.com/marcusramberg/mojomojo/
-version: 0.999041
+version: 0.999042

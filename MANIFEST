@@ -13,7 +13,6 @@ inc/Module/Install/Scripts.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 INSTALL
-lib/HTML/Declaw.pm
 lib/MojoMojo.pm
 lib/MojoMojo/Controller/Admin.pm
 lib/MojoMojo/Controller/Attachment.pm
@@ -28,6 +27,7 @@ lib/MojoMojo/Controller/PageAdmin.pm
 lib/MojoMojo/Controller/Root.pm
 lib/MojoMojo/Controller/Tag.pm
 lib/MojoMojo/Controller/User.pm
+lib/MojoMojo/Declaw.pm
 lib/MojoMojo/Formatter.pm
 lib/MojoMojo/Formatter/Amazon.pm
 lib/MojoMojo/Formatter/Comment.pm
@@ -103,6 +103,7 @@ lib/MojoMojo/Schema/ResultSet/Tag.pm
 lib/MojoMojo/View/Email.pm
 lib/MojoMojo/View/JSON.pm
 lib/MojoMojo/View/TT.pm
+lib/MojoMojo/WordDiff.pm
 lib/Text/SmartyPants.pm
 lib/Text/Wikispaces2Markdown.pm
 Makefile.PL
@@ -152,6 +153,8 @@ root/base/page/addtags.tt
 root/base/page/atom.tt
 root/base/page/attachments.tt
 root/base/page/bottomnav.tt
+root/base/page/delete.tt
+root/base/page/deleted.tt
 root/base/page/edit.tt
 root/base/page/editbar.tt
 root/base/page/info.tt
@@ -194,6 +197,7 @@ root/forms/admin/role_form.yml
 root/forms/admin/settings.yml
 root/forms/comment/comment.yml
 root/forms/defaults.yml
+root/forms/pageadmin/delete.yml
 root/forms/pageadmin/edit.yml
 root/forms/user/editprofile.yml
 root/forms/user/login.yml
@@ -383,6 +387,7 @@ root/static/toolbar/drawing_left.png
 root/static/toolbar/drawing_right.png
 root/static/toolbar/heading.png
 root/static/toolbar/hyperlink.png
+root/static/toolbar/insert_table.png
 root/static/toolbar/italic.png
 root/static/toolbar/justify.png
 root/static/toolbar/left.png
@@ -438,9 +443,9 @@ t/c/attachment.t
 t/c/bottomnav.t
 t/c/comment.t
 t/c/email.t
-t/c/journal.t
 t/c/jsrpc.t
 t/c/page.t
+t/c/page_delete.t
 t/c/page_edit.t
 t/c/tag.t
 t/c/toplinks.t
@@ -459,6 +464,7 @@ t/formatter_irclog.t
 t/formatter_markdown.t
 t/formatter_pod.t
 t/formatter_redirect.t
+t/formatter_rss.t
 t/formatter_syntax_highlight.t
 t/formatter_textile.t
 t/formatter_toc.t
@@ -482,3 +488,4 @@ t/var/files/test.tst
 t/var/files/test.xml
 t/var/mojomojo.yml
 t/wikispaces2markdown.t
+t/worddiff.t

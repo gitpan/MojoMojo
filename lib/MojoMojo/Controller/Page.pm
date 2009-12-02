@@ -19,7 +19,7 @@ MojoMojo::Controller::Page - Page controller
 
 This controller is the main juice of MojoMojo. It handles all the
 actions related to wiki pages. Actions are redispatched to this
-controller based on a Regex controller in the main MojoMojo class.
+controller based on MojoMojo's custom prepare_path method.
 
 Every private action here expects to have a page path in args. They
 can be called with urls like "/page1/page2.action".
@@ -326,7 +326,8 @@ sub list : Global {
 
     $c->stash->{orphans} = [];    # FIXME - real data here please
 
-# no need to check any permissions here because the user already views this page, and wanted pages are redlinks in it
+    # no need to check any permissions here because the user already
+    # views this page, and wanted pages are redlinks in it
     $c->stash->{wanted} = [
         $c->model("DBIC::WantedPage")->search(
             { from_page => [ $page->id, map { $_->id } @all_pages_viewable ] }
@@ -366,7 +367,8 @@ sub subtree : Global {
 
 =head2 recent (.recent)
 
-Recently changed pages in this namespace.
+Recently changed pages in this namespace. Also computes the most used
+tags.
 
 =cut
 
@@ -384,8 +386,6 @@ sub recent : Global {
         @pages_viewable = pages_viewable( $c, $user, @pages_viewable );
     }
     $c->stash->{pages} = \@pages_viewable;
-
-    # FIXME - needs to be populated even without tags
 }
 
 =head2 feeds (.feeds)
