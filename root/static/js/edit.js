@@ -117,7 +117,7 @@ setup_formatter_toolbar = function() {
         [ loc('comments'), '\n{{comments}}\n', '', ''],
         [ loc('toc'), '\n{{toc}}','',''],
         [ loc('redirect'), '\n{{redirect ', '}}', '/new/location'],
-        [ loc('include'), '\n{{', '}}', 'http://www.google.com'],
+        [ loc('include'), '\n{{include ', '}}', 'http://www.google.com'],
         [ loc('youtube'), '\n{{youtube ','}}', 'http://www.youtube.com'],
         [ loc('cpan'), '\n{{cpan ', '}}', 'MojoMojo::Formatter']
     ]));
@@ -171,7 +171,7 @@ setup_formatter_toolbar = function() {
     // markdown buttons
     else if(wiki_type = 'markdown') {
         buttons = [
-            [ 'heading', loc('Main heading'), '\n\n# ',' #\n\n', loc('increase # for smaller headline')],
+            [ 'heading', loc('Main heading'), '\n# ',' #\n', loc('increase # for smaller headline')],
             [ 'list_bullet', loc('Bullet list'), '\n\n* ','\n\n', loc('List item 1')],
             [ 'list_enum', loc('Enum list'), '\n\n1. ', '\n\n', loc('Numbered list item')],
             [ 'insert_table',  loc('Insert table'),  '\n|             |          '+loc('Grouping')+'           ||\n'+
@@ -200,7 +200,7 @@ setup_formatter_toolbar = function() {
         var button = $('<input type="image">');
 
         button.attr({
-            'src': $.uri_for('/.static/toolbar/' + data.shift() + '.png'),
+            'src': $.uri_for_static('/toolbar/' + data.shift() + '.png'),
             'title': loc(data.shift())
         });
 

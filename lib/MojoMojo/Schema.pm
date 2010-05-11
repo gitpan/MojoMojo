@@ -11,7 +11,7 @@ __PACKAGE__->load_namespaces( default_resultset_class => '+MojoMojo::Schema::Bas
 
 =head1 NAME
 
-MojoMojo::Schema
+MojoMojo::Schema - DBIC Schema
 
 =head1 METHODS
 
@@ -88,14 +88,19 @@ sub create_initial_data {
         ]
     );
 
-    my @path_permissions = $schema->populate(
-        'PathPermissions',
-        [
-            [ qw/path role apply_to_subpages create_allowed delete_allowed edit_allowed view_allowed attachment_allowed / ],
-            [ '/', $roles[0]->id, qw/ no yes yes yes yes yes yes/ ],
-            [ '/', $roles[0]->id, qw/yes yes yes yes yes yes yes/ ]
-        ]
-    );
+     my @path_permissions = $schema->populate(
+         'PathPermissions',
+         [
+             [ qw/path role apply_to_subpages create_allowed delete_allowed edit_allowed view_allowed attachment_allowed / ],
+             [ '/', $roles[0]->id, qw/ no yes yes yes yes yes / ],
+             [ '/', $roles[0]->id, qw/yes yes yes yes yes yes / ],
+             [ '/', $roles[1]->id, qw/ no yes no  yes yes yes / ],
+             [ '/', $roles[1]->id, qw/yes yes no  yes yes yes / ],
+             [ '/', $roles[2]->id, qw/ no yes no  yes yes no / ],
+             [ '/', $roles[2]->id, qw/yes yes no  yes yes no / ]
+         ]
+     );
+
 
     my @prefs = $schema->populate(
         'Preference',

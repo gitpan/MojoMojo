@@ -107,9 +107,25 @@ sub init_schema {
         },
         attachment_dir => '__path_to(t/var/uploads)__',
         allowed => {
-           src => [qw(youtube.com youporn.org iusethis.com)] ,
+            src => [qw(youtube.com youporn.org iusethis.com)] ,
+        },
+        'permissions' => { 
+            admin_role_name          => 'Admins',
+            role_members             => 'role_members',
+            user_field_name          => 'login',
+            anonymous_allowed        => 1,
+            anonymous_user_name      => 'anonymouscoward',
+            check_permission_on_view => 1,
+            cache_permission_data    => 1,
+            enforce_login            => 0,
+            create_allowed           => 1,
+            delete_allowed           => 0,
+            edit_allowed             => 1,
+            view_allowed             => 1,
+            attachment_allowed       => 0,
         },
         'View::Email' => { sender => { mailer => 'Test' } },
+        'system_mail' => 'admin@localhost',
     };
     YAML::DumpFile('t/var/mojomojo.yml', $config);
 
@@ -148,15 +164,17 @@ Populate the schema with some test data. For now, path permissions.
 sub create_test_data {
     my ($self, $schema)=@_;
     my @roles = $schema->resultset('Role')->search();
+
+
     $schema->populate('PathPermissions',
         [
             [ qw/path role apply_to_subpages create_allowed delete_allowed edit_allowed view_allowed attachment_allowed / ],
-            [ '/admin', $roles[0]->id, qw/ no yes yes yes yes yes yes/ ],
-            [ '/admin', $roles[0]->id, qw/ yes yes yes yes yes yes yes/ ],
-            [ '/help', $roles[0]->id, qw/no yes yes yes yes yes yes/ ],
-            [ '/help', $roles[0]->id, qw/ yes yes yes yes yes yes yes/ ],
+            [ '/admin', $roles[0]->id, qw/ no yes yes yes yes yes/ ],
+            [ '/admin', $roles[0]->id, qw/ yes yes yes yes yes yes/ ],
+            [ '/help', $roles[0]->id, qw/no yes yes yes yes yes / ],
+            [ '/help', $roles[0]->id, qw/ yes yes yes yes yes yes/ ],
         ]
-    )
+    );
 }
 
 1;

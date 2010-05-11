@@ -30,7 +30,8 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '0.999042';
+our $VERSION = '1.00';
+use 5.008004;
 
 MojoMojo->config->{authentication}{dbic} = {
     user_class     => 'DBIC::Person',
@@ -71,6 +72,10 @@ __PACKAGE__->config('Controller::HTML::FormFu' => {
     localize_from_context  => 1,
 });
 
+__PACKAGE__->config( setup_components => {
+    search_extra => [ '::Extensions' ],
+});
+
 MojoMojo->setup();
 
 # Check for deployed database
@@ -109,13 +114,13 @@ MojoMojo - A Catalyst & DBIx::Class powered Wiki.
 
 =head1 SYNOPSIS
 
-  # Set up database (be sure to edit mojomojo.conf first)
+  # Set up database (see mojomojo.conf first)
 
   ./script/mojomojo_spawn_db.pl
 
   # Standalone mode
 
-  ./bin/mojomo_server.pl
+  ./script/mojomo_server.pl
 
   # In apache conf
   <Location /mojomojo>
@@ -128,9 +133,10 @@ MojoMojo - A Catalyst & DBIx::Class powered Wiki.
 Mojomojo is a sort of content management system, borrowing many concepts from
 wikis and blogs. It allows you to maintain a full tree-structure of pages,
 and to interlink them in various ways. It has full version support, so you can
-always go back to a previous version and see what's changed with an easy AJAX-
-based diff system. There are also a bunch of other features like built-in
-fulltext search, live AJAX preview of editing, and RSS feeds for every wiki page.
+always go back to a previous version and see what's changed with an easy diff
+system. There are also a bunch of other features like live AJAX preview while
+editing, page tags, built-in fulltext search, image galleries, and RSS feeds
+for every wiki page.
 
 To find out more about how you can use MojoMojo, please visit
 http://mojomojo.org or read the installation instructions in
@@ -307,20 +313,27 @@ sub prepare_path {
     $c->req->base( URI->new($base) );
     my ( $path, $action );
     $path = $c->req->path;
-    my $index = index( $path, '.' );
 
-    if ( $index == -1 ) {
+    if( $path =~ /^special(?:\/|$)(.*)/ ) {
+        $c->stash->{path} = $path;
+        $c->req->path($1);
+    } else {
+        my $index = index( $path, '.' );
 
-        # no action found, default to view
-        $c->stash->{path} = $path || '/';
-        $c->req->path('view');
+        if ( $index == -1 ) {
+
+            # no action found, default to view
+            $c->stash->{path} = $path;
+            $c->req->path('view');
+        }
+        else {
+
+            # set path in stash, and set req.path to action
+            $c->stash->{path} = substr( $path, 0, $index );
+            $c->req->path( substr( $path, $index + 1 ) );
+        }
     }
-    else {
-
-        # set path in stash, and set req.path to action
-        $c->stash->{path} = '/' . substr( $path, 0, $index );
-        $c->req->path( substr( $path, $index + 1 ) );
-    }
+    $c->stash->{path}='/'.$c->stash->{path} unless ($path=~m!^/!);
 }
 
 =head2 base_uri
@@ -363,36 +376,6 @@ sub uri_for_static {
     return ( $self->config->{static_path} || '/.static/' ) . $asset;
 }
 
-#  Permissions are checked prior to most actions, including view if that is
-#  turned on in the configuration. The permission system works as follows.
-#  1. There is a base set of rules which may be defined in the application
-#     config, these are:
-#          $c->config->{permissions}{view_allowed} = 1; # or 0
-#     similar entries exist for delete, edit, create and attachment.
-#     if these config variables are not defined, default is to allow
-#     anyone to do anything.
-#
-#   2. Global rules that apply to everyone may be specified by creating a
-#      record with a role-id of 0.
-#
-#   3. Rules are defined using a combination of path, and role and may be
-#      applied to subpages or not.
-#
-#   4. All rules matching a given user's roles and the current path are used to
-#      determine the final yes/no on each permission. Rules are evaluated from
-#      least-specific path to most specific. This means that when checking
-#      permissions on /foo/bar/baz, permission rules set for /foo will be
-#      overridden by rules set on /foo/bar when editing /foo/bar/baz. When two
-#      rules (from different roles) are found for the same path prefix, explicit
-#      allows override denys. Null entries for a given permission are always
-#      ignored and do not effect the permissions defined at earlier level. This
-#      allows you to change certain permissions (such as create) only while not
-#      affecting previously determined permissions for the other actions. Finally -
-#      apply_to_subpages yes/no is exclusive. Meaning that a rule for /foo with
-#      apply_to_subpages set to yes will apply to /foo/bar but not to /foo alone.
-#      The endpoint in the path is always checked for a rule explicitly for that
-#      page - meaning apply_to_subpages = no.
-
 sub _cleanup_path {
     my ( $c, $path ) = @_;
     ## make some changes to the path - We have to do this
@@ -430,6 +413,36 @@ sub _expand_path_elements {
 
     return @paths_to_check;
 }
+
+#  Permissions are checked prior to most actions, including view if that is
+#  turned on in the configuration. The permission system works as follows.
+#  1. There is a base set of rules which may be defined in the application
+#     config, these are:
+#          $c->config->{permissions}{view_allowed} = 1; # or 0
+#     similar entries exist for delete, edit, create and attachment.
+#     if these config variables are not defined, default is to allow
+#     anyone to do anything.
+#
+#   2. Global rules that apply to everyone may be specified by creating a
+#      record with a role-id of 0.
+#
+#   3. Rules are defined using a combination of path, and role and may be
+#      applied to subpages or not.
+#
+#   4. All rules matching a given user's roles and the current path are used to
+#      determine the final yes/no on each permission. Rules are evaluated from
+#      least-specific path to most specific. This means that when checking
+#      permissions on /foo/bar/baz, permission rules set for /foo will be
+#      overridden by rules set on /foo/bar when editing /foo/bar/baz. When two
+#      rules (from different roles) are found for the same path prefix, explicit
+#      allows override denys. Null entries for a given permission are always
+#      ignored and do not effect the permissions defined at earlier level. This
+#      allows you to change certain permissions (such as create) only while not
+#      affecting previously determined permissions for the other actions. Finally -
+#      apply_to_subpages yes/no is exclusive. Meaning that a rule for /foo with
+#      apply_to_subpages set to yes will apply to /foo/bar but not to /foo alone.
+#      The endpoint in the path is always checked for a rule explicitly for that
+#      page - meaning apply_to_subpages = no.
 
 sub get_permissions_data {
     my ( $c, $current_path, $paths_to_check, $role_ids ) = @_;
@@ -638,13 +651,8 @@ sub check_permissions {
             }
         }
     }
-
+  
     my %perms = map { $_ => $rulescomparison{$_}{'allowed'} } keys %rulescomparison;
-
-    # Fast fix for security issue of attachments being deletable by non-authenticated users
-    # Overrides permissions for anonymous users to fix http://mojomojo.ideascale.com/akira/dtd/22284-2416
-    # TODO "attachment" is a rather vague permission: it seems to apply to creating, editing and deleting attachments
-    @perms{'attachment', 'delete'} = (0, 0) if not $user;
 
     return \%perms;
 }
@@ -715,12 +723,13 @@ Andy Grundman C<andy@hybridized.org>
 
 Jonathan Rockway C<jrockway@jrockway.us>
 
-A number of other contributors over the years.
-
+A number of other contributors over the years:
+https://www.ohloh.net/p/mojomojo/contributors
 
 =head1 COPYRIGHT
 
-Copyright 2005-2009, Marcus Ramberg
+Unless explicitly stated otherwise, all modules and scripts in this distribution are:
+Copyright 2005-2010, Marcus Ramberg
 
 =head1 LICENSE
 

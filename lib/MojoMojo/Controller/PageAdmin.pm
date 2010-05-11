@@ -85,6 +85,12 @@ sub delete : Global FormConfig {
             push @deleted_pages, $page->name_orig;
             push @ids_to_delete, $page->id;
 
+            # Handling Circular Constraints:
+            # Must set page version column to NULL (undef in Perl speak)
+            # to remove the page(id, version) -> page_version(page, version)
+            # constraint which then allows a page_version record to be deleted.
+            $page->update({version => undef});
+
             # remove page from search index
             $c->model('Search')->delete_page($page);
         }
@@ -196,7 +202,8 @@ sub edit : Global FormConfig {
     # prepare the list of available syntax highlighters
     if ($kate_installed) {
         my $syntax = new Syntax::Highlight::Engine::Kate;
-        $c->stash->{syntax_formatters} = [ $syntax->languageList() ];
+        # 'Alerts' is a hidden Kate module, so delete it from list
+        $c->stash->{syntax_formatters} = [ grep ( !/^Alerts$/ , $syntax->languageList() ) ];
     }    
 
     if ( $form->submitted_and_valid ) {

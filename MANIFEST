@@ -19,6 +19,7 @@ lib/MojoMojo/Controller/Attachment.pm
 lib/MojoMojo/Controller/Comment.pm
 lib/MojoMojo/Controller/Export.pm
 lib/MojoMojo/Controller/Gallery.pm
+lib/MojoMojo/Controller/Image.pm
 lib/MojoMojo/Controller/Journal.pm
 lib/MojoMojo/Controller/JSON.pm
 lib/MojoMojo/Controller/Jsrpc.pm
@@ -28,14 +29,22 @@ lib/MojoMojo/Controller/Root.pm
 lib/MojoMojo/Controller/Tag.pm
 lib/MojoMojo/Controller/User.pm
 lib/MojoMojo/Declaw.pm
+lib/MojoMojo/Extension.pm
+lib/MojoMojo/Extensions/Counter.pm
 lib/MojoMojo/Formatter.pm
 lib/MojoMojo/Formatter/Amazon.pm
 lib/MojoMojo/Formatter/Comment.pm
 lib/MojoMojo/Formatter/CPANHyperlink.pm
 lib/MojoMojo/Formatter/Defang.pm
+lib/MojoMojo/Formatter/Dir.pm
 lib/MojoMojo/Formatter/DocBook.pm
 lib/MojoMojo/Formatter/DocBook/Colorize.pm
 lib/MojoMojo/Formatter/Emote.pm
+lib/MojoMojo/Formatter/File.pm
+lib/MojoMojo/Formatter/File/DocBook.pm
+lib/MojoMojo/Formatter/File/Image.pm
+lib/MojoMojo/Formatter/File/Pod.pm
+lib/MojoMojo/Formatter/File/Text.pm
 lib/MojoMojo/Formatter/Include.pm
 lib/MojoMojo/Formatter/IRCLog.pm
 lib/MojoMojo/Formatter/Main.pm
@@ -44,6 +53,7 @@ lib/MojoMojo/Formatter/Pod.pm
 lib/MojoMojo/Formatter/Redirect.pm
 lib/MojoMojo/Formatter/RSS.pm
 lib/MojoMojo/Formatter/SyntaxHighlight.pm
+lib/MojoMojo/Formatter/Text.pm
 lib/MojoMojo/Formatter/Textile.pm
 lib/MojoMojo/Formatter/TOC.pm
 lib/MojoMojo/Formatter/Wiki.pm
@@ -131,6 +141,7 @@ root/base/edithelp/main.tt
 root/base/edithelp/markdown.tt
 root/base/edithelp/textile.tt
 root/base/export.tt
+root/base/extensions/counter.tt
 root/base/feeds.tt
 root/base/footer.tt
 root/base/gallery.tt
@@ -205,6 +216,7 @@ root/forms/user/password.yml
 root/forms/user/prefs.yml
 root/forms/user/register.yml
 root/static/catalyst.png
+root/static/Crystal_Clear_action_stop.png
 root/static/css/jquery.autocomplete.css
 root/static/css/progress.css
 root/static/emote/47_47.gif
@@ -290,7 +302,6 @@ root/static/gfx/maximize_width_2.png
 root/static/gfx/poweredby.png
 root/static/gfx/uploadbutton.png
 root/static/js/edit.js
-root/static/js/fat.js
 root/static/js/jquery.autocomplete.js
 root/static/js/jquery.cookies.2.0.1.min.js
 root/static/js/jquery.editinplace.js
@@ -316,7 +327,6 @@ root/static/overrides.css
 root/static/pod.css
 root/static/reset.css
 root/static/robots.txt
-root/static/shrinkedhead.jpg
 root/static/spinner.gif
 root/static/themes/catalyst/generic.css
 root/static/themes/catalyst/images/global/box_bg_gray.png
@@ -348,8 +358,9 @@ root/static/themes/catalyst/planet.css
 root/static/themes/catalyst/theme.css
 root/static/themes/catapulse/config.rb
 root/static/themes/catapulse/ie.css
+root/static/themes/catapulse/images/bg.gif
+root/static/themes/catapulse/images/catalyst_logo.png
 root/static/themes/catapulse/images/grid.png
-root/static/themes/catapulse/images/mainbg.jpg
 root/static/themes/catapulse/print.css
 root/static/themes/catapulse/src/ie.sass
 root/static/themes/catapulse/src/print.sass
@@ -413,7 +424,6 @@ root/themes/purple-pleasure/header.tt
 root/themes/purple-pleasure/navbar.tt
 root/themes/purple-pleasure/page/tags.tt
 root/themes/purple-pleasure/page/wrapper.tt
-script/hash_passwords.pl
 script/mojomojo_cgi.pl
 script/mojomojo_create.pl
 script/mojomojo_fastcgi.pl
@@ -423,14 +433,15 @@ script/mojomojo_server.pl
 script/mojomojo_spawn_db.pl
 script/mojomojo_test.pl
 script/mojomojo_update_db.pl
-script/textile2markdown.pl
 script/update_po.sh
 script/util/dbk2xhtml.pl
 script/util/delete_page.pl
 script/util/dir2mojomojo.pl
+script/util/hash_passwords.pl
 script/util/init_db_re.pl
 script/util/search_and_replace.pl
-script/wikispaces2markdown.pl
+script/util/textile2markdown.pl
+script/util/wikispaces2markdown.pl
 t/01app.t
 t/02pod.t
 t/03podcoverage.t
@@ -443,6 +454,7 @@ t/c/attachment.t
 t/c/bottomnav.t
 t/c/comment.t
 t/c/email.t
+t/c/image.t
 t/c/jsrpc.t
 t/c/page.t
 t/c/page_delete.t
@@ -458,7 +470,9 @@ t/formatter_amazon.t
 t/formatter_comment.t
 t/formatter_cpanhyperlink.t
 t/formatter_defang.t
+t/formatter_dir.t
 t/formatter_docbook.t
+t/formatter_file.t
 t/formatter_include.t
 t/formatter_irclog.t
 t/formatter_markdown.t
@@ -472,6 +486,7 @@ t/formatter_wiki.t
 t/formatter_youtube.t
 t/lib/FakeCatalystObject.pm
 t/lib/MojoMojoTestSchema.pm
+t/notabs.t
 t/permissions.t
 t/revisions.t
 t/schema_DBIC.t
@@ -481,10 +496,12 @@ t/schema_DBIC_Page.t
 t/schema_DBIC_Person.t
 t/schema_DBIC_Tag.t
 t/selenium.t
+t/special-page.t
 t/unicode.t
 t/var/bugs.jpg
+t/var/files/catalyst.png
 t/var/files/test.pod
-t/var/files/test.tst
+t/var/files/test.txt
 t/var/files/test.xml
 t/var/mojomojo.yml
 t/wikispaces2markdown.t
