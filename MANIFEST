@@ -45,6 +45,7 @@ lib/MojoMojo/Formatter/File/DocBook.pm
 lib/MojoMojo/Formatter/File/Image.pm
 lib/MojoMojo/Formatter/File/Pod.pm
 lib/MojoMojo/Formatter/File/Text.pm
+lib/MojoMojo/Formatter/GoogleSearch.pm
 lib/MojoMojo/Formatter/Include.pm
 lib/MojoMojo/Formatter/IRCLog.pm
 lib/MojoMojo/Formatter/Main.pm
@@ -57,6 +58,7 @@ lib/MojoMojo/Formatter/Text.pm
 lib/MojoMojo/Formatter/Textile.pm
 lib/MojoMojo/Formatter/TOC.pm
 lib/MojoMojo/Formatter/Wiki.pm
+lib/MojoMojo/Formatter/WikipediaLink.pm
 lib/MojoMojo/Formatter/YouTube.pm
 lib/MojoMojo/I18N.pm
 lib/MojoMojo/I18N/ca.js.po
@@ -204,11 +206,11 @@ root/base/user/recover_pass.tt
 root/base/user/register.tt
 root/base/user/user_search.tt
 root/base/user/validate.tt
+root/forms/admin/delete.yml
 root/forms/admin/role_form.yml
 root/forms/admin/settings.yml
 root/forms/comment/comment.yml
 root/forms/defaults.yml
-root/forms/pageadmin/delete.yml
 root/forms/pageadmin/edit.yml
 root/forms/user/editprofile.yml
 root/forms/user/login.yml
@@ -437,7 +439,9 @@ script/update_po.sh
 script/util/dbk2xhtml.pl
 script/util/delete_page.pl
 script/util/dir2mojomojo.pl
+script/util/dump_content.pl
 script/util/hash_passwords.pl
+script/util/import_content.pl
 script/util/init_db_re.pl
 script/util/search_and_replace.pl
 script/util/textile2markdown.pl
@@ -473,6 +477,7 @@ t/formatter_defang.t
 t/formatter_dir.t
 t/formatter_docbook.t
 t/formatter_file.t
+t/formatter_googlesearch.t
 t/formatter_include.t
 t/formatter_irclog.t
 t/formatter_markdown.t
@@ -483,6 +488,7 @@ t/formatter_syntax_highlight.t
 t/formatter_textile.t
 t/formatter_toc.t
 t/formatter_wiki.t
+t/formatter_wikipedialink.t
 t/formatter_youtube.t
 t/lib/FakeCatalystObject.pm
 t/lib/MojoMojoTestSchema.pm
