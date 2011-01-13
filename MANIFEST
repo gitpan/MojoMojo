@@ -45,7 +45,9 @@ lib/MojoMojo/Formatter/File/DocBook.pm
 lib/MojoMojo/Formatter/File/Image.pm
 lib/MojoMojo/Formatter/File/Pod.pm
 lib/MojoMojo/Formatter/File/Text.pm
+lib/MojoMojo/Formatter/GoogleCalendar.pm
 lib/MojoMojo/Formatter/GoogleSearch.pm
+lib/MojoMojo/Formatter/IDLink.pm
 lib/MojoMojo/Formatter/Include.pm
 lib/MojoMojo/Formatter/IRCLog.pm
 lib/MojoMojo/Formatter/Main.pm
@@ -75,6 +77,7 @@ lib/MojoMojo/I18N/it.js.po
 lib/MojoMojo/I18N/it.po
 lib/MojoMojo/I18N/ja.js.po
 lib/MojoMojo/I18N/ja.po
+lib/MojoMojo/I18N/ko.po
 lib/MojoMojo/I18N/no.js.po
 lib/MojoMojo/I18N/no.po
 lib/MojoMojo/I18N/pl.js.po
@@ -436,6 +439,7 @@ script/mojomojo_spawn_db.pl
 script/mojomojo_test.pl
 script/mojomojo_update_db.pl
 script/update_po.sh
+script/util/bust_cache.pl
 script/util/dbk2xhtml.pl
 script/util/delete_page.pl
 script/util/dir2mojomojo.pl
@@ -478,6 +482,7 @@ t/formatter_dir.t
 t/formatter_docbook.t
 t/formatter_file.t
 t/formatter_googlesearch.t
+t/formatter_idlink.t
 t/formatter_include.t
 t/formatter_irclog.t
 t/formatter_markdown.t

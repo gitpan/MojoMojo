@@ -3,7 +3,7 @@ abstract: 'A Catalyst & DBIx::Class powered Wiki.'
 author:
   - 'Marcus Ramberg C<marcus@nordaaker.com>'
 build_requires:
-  Email::Sender::Simple: 0.100110
+  Email::Sender::Simple: 0.102370
   ExtUtils::MakeMaker: 6.42
   SQL::Translator: 0.09006
   Test::Differences: 0
@@ -107,4 +107,4 @@ resources:
   homepage: http://mojomojo.org
   license: http://dev.perl.org/licenses/
   repository: http://github.com/marcusramberg/mojomojo/
-version: 1.02
+version: 1.03
