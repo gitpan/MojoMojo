@@ -1,4 +1,5 @@
 Changes
+inc/File/Copy/Recursive.pm
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -45,6 +46,7 @@ lib/MojoMojo/Formatter/File/DocBook.pm
 lib/MojoMojo/Formatter/File/Image.pm
 lib/MojoMojo/Formatter/File/Pod.pm
 lib/MojoMojo/Formatter/File/Text.pm
+lib/MojoMojo/Formatter/Gist.pm
 lib/MojoMojo/Formatter/GoogleCalendar.pm
 lib/MojoMojo/Formatter/GoogleSearch.pm
 lib/MojoMojo/Formatter/IDLink.pm
@@ -481,6 +483,7 @@ t/formatter_defang.t
 t/formatter_dir.t
 t/formatter_docbook.t
 t/formatter_file.t
+t/formatter_gist.t
 t/formatter_googlesearch.t
 t/formatter_idlink.t
 t/formatter_include.t
