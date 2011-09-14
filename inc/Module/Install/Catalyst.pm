@@ -32,10 +32,7 @@ sub catalyst {
     my $self = shift;
 
     if($Module::Install::AUTHOR) {
-        $self->admin->copy_package(
-            'File::Copy::Recursive',
-            $INC{"File/Copy/Recursive.pm"},
-        );
+        $self->include("File::Copy::Recursive");
     }
 
     print <<EOF;
@@ -48,7 +45,7 @@ EOF
 EOF
 }
 
-#line 85
+#line 82
 
 sub catalyst_files {
     my $self = shift;
@@ -72,21 +69,21 @@ sub catalyst_files {
     }
 }
 
-#line 113
+#line 110
 
 sub catalyst_ignore_all {
     my ( $self, $ignore ) = @_;
     @IGNORE = @$ignore;
 }
 
-#line 124
+#line 121
 
 sub catalyst_ignore {
     my ( $self, @ignore ) = @_;
     push @IGNORE, @ignore;
 }
 
-#line 133
+#line 130
 
 # Workaround for a namespace conflict
 sub catalyst_par {
@@ -112,35 +109,35 @@ Please run "make catalyst_par" to create the PAR package!
 EOF
 }
 
-#line 161
+#line 158
 
 sub catalyst_par_core {
     my ( $self, $core ) = @_;
     $core ? ( $PAROPTS{'B'} = $core ) : $PAROPTS{'B'}++;
 }
 
-#line 170
+#line 167
 
 sub catalyst_par_classes {
     my ( $self, @classes ) = @_;
     push @CLASSES, @classes;
 }
 
-#line 179
+#line 176
 
 sub catalyst_par_engine {
     my ( $self, $engine ) = @_;
     $ENGINE = $engine;
 }
 
-#line 188
+#line 185
 
 sub catalyst_par_multiarch {
     my ( $self, $multiarch ) = @_;
     $multiarch ? ( $PAROPTS{'m'} = $multiarch ) : $PAROPTS{'m'}++;
 }
 
-#line 221
+#line 218
 
 sub catalyst_par_options {
     my ( $self, $optstring ) = @_;
@@ -160,14 +157,14 @@ sub catalyst_par_options {
     }
 }
 
-#line 243
+#line 240
 
 sub catalyst_par_script {
     my ( $self, $script ) = @_;
     $SCRIPT = $script;
 }
 
-#line 252
+#line 249
 
 sub catalyst_par_usage {
     my ( $self, $usage ) = @_;
@@ -320,6 +317,6 @@ EOF
     return 1;
 }
 
-#line 414
+#line 411
 
 1;

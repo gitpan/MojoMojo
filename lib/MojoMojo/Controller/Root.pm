@@ -24,6 +24,7 @@ sub begin : Private {
     else {
         $c->languages([$c->pref('default_lang')]) if $c->pref('default_lang');
     }
+    # $c->stash->{path} is set by MojoMojo::prepare_path, which overrides the built-in Catalyst method
     if ( $c->stash->{path} ) {
         my ( $path_pages, $proto_pages ) =
             $c->model('DBIC::Page')->path_pages( $c->stash->{path} );
@@ -102,19 +103,33 @@ sub end : Private {
 =head2 auto
 
 Runs for all requests, checks if user is in need of validation, and
-intercepts the request if so.
+intercepts the request if so. Also, if the requested page doesn't exist,
+prevents any other actions from running, and detaches straight to
+L<MojoMojo::Controller::Page/suggest>.
 
 =cut
 
 sub auto : Private {
     my ( $self, $c ) = @_;
+    
+    # Prevent most actions from running on non-existent pages. This fixes issues #36 and #80.
+    # 'render' should be allowed so that jsrpc/render can be used to preview newly created pages while the first version is being typed in
+    my $proto_pages = $c->stash->{proto_pages};
+    return 1 if $c->action->class =~ m/^MojoMojo::Extensions::/;
+    $c->detach('MojoMojo::Controller::Page', 'suggest')
+        if ($proto_pages && @$proto_pages && $c->action->name !~ /^(edit|render|login|logout|register|recover_pass)$/);
+
     if ( $c->pref('enforce_login') ) {
         # allow a few actions
         if ( grep $c->action->name eq $_, qw/login logout recover_pass register/ ) {
             return 1;
         }
         if ( !$c->user_exists ) {
-            $c->res->redirect( $c->uri_for('/.login') );
+                $c->res->redirect(
+                        $c->uri_for(     
+                                $c->stash->{path} . '.login' # send them to the login for this page
+                        )
+                );
         }
     }
 

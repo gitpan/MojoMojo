@@ -1,4 +1,6 @@
+app.psgi
 Changes
+dotcloud.yml
 inc/File/Copy/Recursive.pm
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
@@ -431,6 +433,7 @@ root/themes/purple-pleasure/header.tt
 root/themes/purple-pleasure/navbar.tt
 root/themes/purple-pleasure/page/tags.tt
 root/themes/purple-pleasure/page/wrapper.tt
+script/mojomojo.psgi
 script/mojomojo_cgi.pl
 script/mojomojo_create.pl
 script/mojomojo_fastcgi.pl
