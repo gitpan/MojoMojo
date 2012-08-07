@@ -288,8 +288,8 @@ EOF
 
     # Create package
     local $SIG{__WARN__} = sub { };
-    open my $olderr, '>&STDERR';
-    open STDERR, '>', File::Spec->devnull;
+
+    # STDERR used to be redirected to null, but this hid errors from PAR::Packer
     my %opt = (
         %{$PAROPTS},
         # take user defined options first and override them with harcoded defaults
@@ -309,14 +309,12 @@ EOF
         args      => ['par.pl'],
     )->go;
 
-    open STDERR, '>&', $olderr;
-
     unlink $par_pl;
     chdir $root;
     rmove( File::Spec->catfile( 'blib', $par ), $par );
     return 1;
 }
 
-#line 411
+#line 409
 
 1;
