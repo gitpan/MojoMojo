@@ -31,7 +31,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 use 5.008004;
 
 MojoMojo->config->{authentication}{dbic} = {
@@ -137,7 +137,7 @@ L<MojoMojo::Installation> to try it out yourself.
 
 =head2 prepare
 
-Accomodate a forcing of SSL if needed in a reverse proxy setup.
+Accommodate a forcing of SSL if needed in a reverse proxy setup.
 
 =cut
 
