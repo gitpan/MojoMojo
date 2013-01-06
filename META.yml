@@ -107,8 +107,8 @@ requires:
   perl: 5.8.4
 resources:
   MailingList: http://n2.nabble.com/mojomojo-f2358427.html
-  bugtracker: http://github.com/marcusramberg/mojomojo/issues
+  bugtracker: http://github.com/mojomojo/mojomojo/issues
   homepage: http://mojomojo.org
   license: http://dev.perl.org/licenses/
-  repository: http://github.com/marcusramberg/mojomojo/
-version: 1.07
+  repository: http://github.com/mojomojo/mojomojo/
+version: 1.08
