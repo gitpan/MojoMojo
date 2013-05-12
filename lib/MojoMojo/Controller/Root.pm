@@ -60,7 +60,7 @@ sub default : Path {
 sub set_lang :Global {
     my ($self,$c) = @_;
     $c->session->{lang}=$c->req->params->{lang};
-    $c->res->redirect($c->req->params->{redir});
+    $c->res->redirect( $c->uri_for( $c->stash->{path} ) );
 }
 
 =head2 render
@@ -116,6 +116,8 @@ sub auto : Private {
     # 'render' should be allowed so that jsrpc/render can be used to preview newly created pages while the first version is being typed in
     my $proto_pages = $c->stash->{proto_pages};
     return 1 if $c->action->class =~ m/^MojoMojo::Extensions::/;
+    return $c->res->body('Page does not exist.') 
+        if ($proto_pages && @$proto_pages && $c->action->name eq 'inline');
     $c->detach('MojoMojo::Controller::Page', 'suggest')
         if ($proto_pages && @$proto_pages && $c->action->name !~ /^(edit|render|login|logout|register|recover_pass)$/);
 

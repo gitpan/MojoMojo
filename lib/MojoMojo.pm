@@ -31,7 +31,7 @@ use Module::Pluggable::Ordered
     except      => qr/^MojoMojo::Plugin::/,
     require     => 1;
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 use 5.008004;
 
 MojoMojo->config->{authentication}{dbic} = {
@@ -354,7 +354,6 @@ sub prepare_path {
         $c->req->path($1);
     } else {
         # find the *last* period, so that pages can have periods in their name.
-        # This fixes http://github.com/marcusramberg/mojomojo/issues/#issue/58
         my $index = index( $path, '.' );
 
         if ( $index == -1 ) {
